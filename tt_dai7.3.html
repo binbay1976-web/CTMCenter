@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tính Toán Thiết Kế Bộ Truyền Đai Cao Cấp</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #2c3e50; }
+    .container { max-width: 1100px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #2980b9; border-bottom: 3px solid #3498db; padding-bottom: 15px; }
+    h3 { color: #16a085; border-left: 5px solid #1abc9c; padding-left: 10px; background: #e8f8f5; padding: 8px; margin-top: 25px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;}
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;}
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px;}
+    label { font-weight: bold; display: block; margin-top: 10px; font-size: 0.85em; color: #34495e; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #bdc3c7; border-radius: 4px; font-size: 1em; }
+    input[readonly] { background-color: #e9ecef; color: #7f8c8d; border: 1px dashed #bdc3c7; }
+    .note { font-size: 0.85em; color: #e67e22; font-style: italic; display: block; margin-top: 5px; }
+    .belt-section { display: none; padding: 20px; background: #fdfefe; border: 1px dashed #3498db; border-radius: 5px; margin-top: 15px; }
+    button { width: 100%; background-color: #2980b9; color: white; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; text-transform: uppercase; }
+    button:hover { background-color: #2471a3; }
+    .result-box { margin-top: 30px; padding: 25px; background-color: #f9f9f9; border: 2px solid #2ecc71; border-radius: 8px; overflow-x: auto; display: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
+    th, td { padding: 10px; border: 1px solid #dee2e6; text-align: center; }
+    th { background-color: #2ecc71; color: white; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .highlight { color: #c0392b; font-weight: bold; }
+    
+    details > summary {
+        list-style: none; cursor: pointer; background: #8e44ad; color: white; 
+        font-weight: bold; padding: 12px 20px; border-radius: 6px; display: inline-block;
+        transition: background 0.3s ease;
+    }
+    details > summary:hover { background: #732d91; }
+    details > summary::-webkit-details-marker { display: none; }
+</style>
+<script>
+// --- GIỮ NGUYÊN CSDL ĐAI HÌNH THANG ---
+const beltDatabase = {
+    'thuong': {
+        'O': {bt: 8.5, b: 10, h: 6, y0: 2.1, A: 47, qm: 0.06, d1: '50 ÷ 100', L: '400 ÷ 2000', t: 12, e: 8, h0: 2.5},
+        'Z': {bt: 42, b: 50, h: 30, y0: 11, A: 1170, qm: 0.06, d1: '800 ÷ 1600', L: '6300 ÷ 18000', t: 44.5, e: 29, h0: 11},
+        'A': {bt: 11, b: 13, h: 8, y0: 2.8, A: 81, qm: 0.105, d1: '90 ÷ 200', L: '560 ÷ 4000', t: 15, e: 10, h0: 3.3},
+        'B': {bt: 14, b: 17, h: 10.5, y0: 4, A: 138, qm: 0.178, d1: '140 ÷ 280', L: '800 ÷ 6300', t: 19, e: 12.5, h0: 4.2},
+        'C': {bt: 19, b: 22, h: 13.5, y0: 4.8, A: 230, qm: 0.3, d1: '200 ÷ 400', L: '1800 ÷ 10600', t: 25.5, e: 17, h0: 5.7},
+        'D': {bt: 27, b: 32, h: 19, y0: 6.9, A: 476, qm: 0.6, d1: '315 ÷ 630', L: '3150 ÷ 15000', t: 37, e: 24, h0: 8.1}
+    },
+    'hep': {
+        'Y0': {bt: 8.5, b: 10, h: 8, y0: 2, A: 56, qm: 0.07, d1: '63 ÷ 180', L: '630 ÷ 3550', t: 12, e: 8, h0: 2.5},
+        'YA': {bt: 11, b: 12.7, h: 10, y0: 2.8, A: 105, qm: 0.12, d1: '90 ÷ 200', L: '700 ÷ 4000', t: 15, e: 10, h0: 3},
+        'YB1': {bt: 14, b: 16.3, h: 13, y0: 3.5, A: 167, qm: 0.19, d1: '140 ÷ 280', L: '1200 ÷ 6000', t: 19, e: 12.5, h0: 4},
+        'YB2': {bt: 14, b: 16.3, h: 14, y0: 4.0, A: 180, qm: 0.21, d1: '160 ÷ 300', L: '1200 ÷ 6000', t: 26, e: 17, h0: 5}
+    },
+    'rong': {
+        'W1': {bt: 16, b: 20, h: 10, y0: 3.2, A: 150, qm: 0.18, d1: '140 ÷ 250', L: '1000 ÷ 5000', t: 20, e: 15, h0: 5},
+        'W2': {bt: 20, b: 25, h: 13, y0: 4.5, A: 240, qm: 0.32, d1: '180 ÷ 350', L: '1200 ÷ 6000', t: 25, e: 18, h0: 6}
+    }
+};
+
+// --- DỮ LIỆU BẢNG 4.1 (ĐAI DẸT) ---
+const table4_1 = {
+    'B-800': {
+        3: {colot: 4.5, khonglot: 3.75, b: '20 ÷ 112'},
+        4: {colot: 6.0, khonglot: 5.0, b: '20 ÷ 250'},
+        5: {colot: 7.5, khonglot: 6.25, b: '20 ÷ 250'},
+        6: {colot: 9.0, khonglot: 7.5, b: '80 ÷ 250'}
+    },
+    'BKNL-65': {
+        3: {colot: 3.0, khonglot: 3.0, b: '20 ÷ 112'},
+        4: {colot: 4.8, khonglot: 4.0, b: '20 ÷ 250'},
+        5: {colot: 6.0, khonglot: 5.0, b: '20 ÷ 250'},
+        6: {colot: 7.2, khonglot: 6.0, b: '80 ÷ 250'}
+    }
+};
+
+// --- DỮ LIỆU ĐAI NHIỀU CHÊM (TRANG 64) ---
+const polyVDatabase = {
+    'K': {t: 2.4, H: 4.0, qm: 0.02, d1_min: 40},
+    'L': {t: 4.8, H: 10.0, qm: 0.06, d1_min: 100},
+    'M': {t: 9.5, H: 17.0, qm: 0.20, d1_min: 250}
+};
+
+function updateMainBelt() {
+    document.querySelectorAll('.belt-section').forEach(el => el.style.display = 'none');
+    var mainType = document.getElementById('belt_type').value;
+    if (mainType === 'vbelt') document.getElementById('sec_vbelt').style.display = 'block';
+    if (mainType === 'flat') {
+        document.getElementById('sec_flatbelt').style.display = 'block';
+        updateFlatBeltCategory();
+    }
+    if (mainType === 'polyv') {
+        document.getElementById('sec_polyv').style.display = 'block';
+        updatePolyVData();
+    }
+    if (mainType === 'timing') document.getElementById('sec_timing').style.display = 'block';
+}
+
+function updatePolyVData() {
+    var prof = document.getElementById('polyv_profile').value;
+    var data = polyVDatabase[prof];
+    document.getElementById('pv_t').value = data.t;
+    document.getElementById('pv_qm').value = data.qm;
+    document.getElementById('pv_d1_hint').innerText = "Nên chọn d1 ≥ " + data.d1_min + " mm";
+}
+
+function updateSubBeltCategory() {
+    var cat = document.getElementById('vbelt_category').value;
+    var profileSelect = document.getElementById('vbelt_profile');
+    profileSelect.innerHTML = '';
+    for (var profile in beltDatabase[cat]) {
+        var opt = document.createElement('option');
+        opt.value = profile;
+        opt.innerHTML = "Đai " + profile;
+        profileSelect.appendChild(opt);
+    }
+    updateBeltProfileData();
+}
+
+function updateBeltProfileData() {
+    var cat = document.getElementById('vbelt_category').value;
+    var prof = document.getElementById('vbelt_profile').value;
+    var data = beltDatabase[cat][prof];
+    document.getElementById('v_bt').value = data.bt;
+    document.getElementById('v_b').value = data.b;
+    document.getElementById('v_h').value = data.h;
+    document.getElementById('v_y0').value = data.y0;
+    document.getElementById('v_A').value = data.A;
+    document.getElementById('v_t').value = data.t;
+    document.getElementById('v_e').value = data.e;
+    document.getElementById('v_h0').value = data.h0;
+    document.getElementById('v_qm').value = data.qm;
+    document.getElementById('d1_hint').innerText = "Gợi ý chọn d1 theo tiêu chuẩn: " + data.d1 + " mm";
+    document.getElementById('L_hint').innerText = "Gợi ý chọn L theo tiêu chuẩn: " + data.L + " mm";
+}
+
+function onDaTypeChange() {
+    var type = document.getElementById('f_type').value;
+    var b_sel = document.getElementById('f_b_group');
+    if(!b_sel) return;
+    b_sel.innerHTML = '';
+    if (type === 'don') {
+        b_sel.add(new Option("10, 16, 20, 25", "g1"));
+        b_sel.add(new Option("32, 40, 50", "g2"));
+        b_sel.add(new Option("63, 71", "g3"));
+        b_sel.add(new Option("80, 90, 100, 112", "g4"));
+        b_sel.add(new Option("125, 140", "g5"));
+        b_sel.add(new Option("160, 180, 200, 224, 250, 280, 355, 400, 450, 500, 560", "g6"));
+    } else {
+        b_sel.add(new Option("80, 90, 100, 112", "k1"));
+        b_sel.add(new Option("125, 140", "k2"));
+        b_sel.add(new Option("160, 180, 200, 224, 250, 280, 355, 400, 450, 500, 560", "k3"));
+    }
+    calcFlatBeltHints();
+}
+
+function onSyntheticTypeChange() {
+    var type = document.getElementById('f_type_synthetic').value;
+    var d_sel = document.getElementById('f_delta_synthetic');
+    var b_sel = document.getElementById('f_b_sel');
+    if (!b_sel || !d_sel) return;
+    d_sel.innerHTML = '';
+    b_sel.innerHTML = '';
+    if (type === 'capron_phu') {
+        d_sel.add(new Option("δ = 0,4 ÷ 0,6 mm", "0.5"));
+        var widths = [10, 15, 20, 25, 30];
+        widths.forEach(val => b_sel.add(new Option(val + " mm", val)));
+    } else {
+        d_sel.add(new Option("δ = 1,0 ÷ 1,2 mm", "1.1"));
+        var widths = [40, 50, 60, 80, 100];
+        widths.forEach(val => b_sel.add(new Option(val + " mm", val)));
+    }
+    calcFlatBeltHints(); 
+}
+
+function updateFlatBeltCategory() {
+    var mat = document.getElementById('flat_material').value;
+    var container = document.getElementById('flat_dynamic_fields');
+    var html = '';
+
+    if (mat === 'vaicaosu') {
+        html += `
+        <div class="grid-3">
+            <div><label>Ký hiệu đai (Bảng 4.1):</label><select name="f_symbol" id="f_symbol" onchange="calcFlatBeltHints()"><option value="B-800">Б-800 hoặc Б-820</option><option value="BKNL-65">BKNL-65 hoặc BKNL-65-2</option></select></div>
+            <div><label>Số lớp đai (Bảng 4.1):</label><select name="f_layers" id="f_layers" onchange="calcFlatBeltHints()"><option value="3">3 lớp</option><option value="4">4 lớp</option><option value="5">5 lớp</option><option value="6">6 lớp</option></select></div>
+            <div><label>Lớp lót:</label><select name="f_lining" id="f_lining" onchange="calcFlatBeltHints()"><option value="colot">Có lớp lót</option><option value="khonglot">Không có lớp lót</option></select></div>
+        </div>
+        <div class="grid-2">
+            <div><label>Chiều dày đai δ (mm) [Tra Bảng 4.1]:</label><input type="text" id="f_delta_disp" readonly style="background:#e8f8f5; font-weight:bold; color:#16a085;"></div>
+            <div><label>Phạm vi chiều rộng b (mm) [Bảng 4.1]:</label><div id="f_b_hint" style="margin-top:8px; color:#c0392b; font-weight:bold;"></div></div>
+        </div>`;
+    } else if (mat === 'vaibong') {
+        html += `
+        <div class="grid-2">
+            <div><label>Số lớp đai (Bảng 4.2):</label><select name="f_layers" id="f_layers" onchange="calcFlatBeltHints()"><option value="4">4 lớp</option><option value="6">6 lớp</option><option value="8">8 lớp</option></select></div>
+            <div><label>Chiều dày đai δ (mm) [Bảng 4.2]:</label><input type="text" id="f_delta_disp" readonly style="background:#e8f8f5; font-weight:bold; color:#16a085;"></div>
+        </div>
+        <div><label>Gợi ý chiều rộng b (mm) tiêu chuẩn [Bảng 4.2]:</label><div id="f_b_hint" style="color:#c0392b; font-weight:bold;"></div></div>`;
+    } else if (mat === 'da') {
+        html += `
+        <div class="grid-2">
+            <div><label>Loại đai da (Bảng 4.3):</label><select name="f_type" id="f_type" onchange="onDaTypeChange()"><option value="don">Loại Đơn</option><option value="kep">Loại Kép</option></select></div>
+            <div><label>Chọn nhóm chiều rộng b (mm):</label><select name="f_b_group" id="f_b_group" onchange="calcFlatBeltHints()"></select></div>
+        </div>
+        <div><label>Gợi ý khoảng chiều dày δ (mm) tương ứng:</label><div id="f_delta_hint" style="color:#c0392b; font-weight:bold;"></div></div>`;
+    } else if (mat === 'soilen') {
+        html += `
+        <div class="grid-2">
+            <div><label>Số lớp đai (Bảng 4.4):</label><select name="f_layers" id="f_layers" onchange="calcFlatBeltHints()"><option value="3">3 lớp</option><option value="4">4 lớp</option><option value="5">5 lớp</option></select></div>
+            <div><label>Chiều dày đai δ (mm) [Bảng 4.4]:</label><input type="text" id="f_delta_disp" readonly style="background:#e8f8f5; font-weight:bold; color:#16a085;"></div>
+        </div>
+        <div><label>Chiều rộng b (mm) tiêu chuẩn [Bảng 4.4]:</label><div id="f_b_hint" style="color:#c0392b; font-weight:bold;"></div></div>`;
+    } else if (mat === 'soitonghop') {
+        html += `
+        <div class="grid-3">
+            <div><label>Loại sợi tổng hợp (Bảng 4.5):</label><select name="f_type_synthetic" id="f_type_synthetic" onchange="onSyntheticTypeChange()"><option value="capron_phu">Sợi caprôn phủ poliamit trộn cao su nitrin</option><option value="capron_cot">Sợi caprôn trên cốt vải chéo phủ nhựa nairit</option></select></div>
+            <div><label>Gợi ý chiều dày đai δ:</label><select id="f_delta_synthetic" onchange="onSyntheticTypeChange()"></select></div>
+            <div><label>Chọn chiều rộng b:</label><select name="f_b_sel" id="f_b_sel" onchange="calcFlatBeltHints()"></select></div>
+        </div>
+        <div style="margin-top:10px;"><label>Gợi ý các chiều dài trong danh nghĩa l (mm) [Bảng 4.5]:</label><div id="f_l_hint" style="color:#c0392b; font-weight:bold; margin-top:5px; background: #fff5f5; padding: 10px; border-radius: 4px; border: 1px solid #ffcccc;"></div></div>`;
+    }
+
+    html += `
+        <hr style="border: 1px dashed #bdc3c7; margin-top: 15px;">
+        <div class="grid-2">
+            <div><label>CHỐT Chiều dày đai δ (mm):</label><input type="number" step="any" name="f_delta" id="f_delta_input" value="5" required></div>
+            <div><label>CHỌN Chiều rộng đai b (mm):</label><input type="text" name="f_b_chon" id="f_b_input"> <span class="note">Để trống máy sẽ tự tính lý thuyết (b_lt)</span></div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    if (mat === 'soitonghop') {
+        onSyntheticTypeChange();
+    } else if (mat === 'da') {
+        onDaTypeChange();
+    } else {
+        calcFlatBeltHints();
+    }
+}
+
+function calcFlatBeltHints() {
+    var mat = document.getElementById('flat_material').value;
+    if (mat === 'vaicaosu') {
+        var sym = document.getElementById('f_symbol').value;
+        var layers = document.getElementById('f_layers').value;
+        var lining = document.getElementById('f_lining').value;
+        var data = table4_1[sym][layers][lining];
+        if(document.getElementById('f_delta_disp')) document.getElementById('f_delta_disp').value = data;
+        document.getElementById('f_delta_input').value = data;
+        document.getElementById('f_b_hint').innerText = "Phạm vi: " + table4_1[sym][layers].b + " mm";
+    } else if (mat === 'vaibong') {
+        var layers = document.getElementById('f_layers').value;
+        var deltas = {'4': 4.5, '6': 6.5, '8': 8.5};
+        if(document.getElementById('f_delta_disp')) document.getElementById('f_delta_disp').value = deltas[layers];
+        document.getElementById('f_delta_input').value = deltas[layers];
+        if (layers === '4') document.getElementById('f_b_hint').innerText = "30, 40, 50, 60, 75, 90, 100";
+        else if (layers === '6') document.getElementById('f_b_hint').innerText = "30, 40, 50, 60, 75, 90, 100, 115, 125, 150, 175";
+        else if (layers === '8') document.getElementById('f_b_hint').innerText = "30, 40, 50, 60, 75, 90, 100, 115, 125, 150, 175, 200, 225, 250";
+    } else if (mat === 'da') {
+        var b_group = document.getElementById('f_b_group').value;
+        var hint = ""; var default_delta = 4.5;
+        if (b_group === 'g1') { hint = "3,0 ÷ 3,5 mm"; default_delta = 3.25; }
+        else if (b_group === 'g2') { hint = "3,5 ÷ 4,0 mm"; default_delta = 3.75; }
+        else if (b_group === 'g3') { hint = "4,0 ÷ 4,5 mm"; default_delta = 4.25; }
+        else if (b_group === 'g4') { hint = "4,5 ÷ 5,0 mm"; default_delta = 4.75; }
+        else if (b_group === 'g5') { hint = "5,0 ÷ 5,5 mm"; default_delta = 5.25; }
+        else if (b_group === 'g6') { hint = "5,5 ÷ 6,0 mm"; default_delta = 5.75; }
+        else if (b_group === 'k1') { hint = "7,5 ÷ 8,0 mm"; default_delta = 7.75; }
+        else if (b_group === 'k2') { hint = "9,0 ÷ 9,5 mm"; default_delta = 9.25; }
+        else if (b_group === 'k3') { hint = "9,5 ÷ 10,0 mm"; default_delta = 9.75; }
+        document.getElementById('f_delta_hint').innerText = hint;
+        document.getElementById('f_delta_input').value = default_delta;
+    } else if (mat === 'soilen') {
+        var layers = document.getElementById('f_layers').value;
+        var deltas = {'3': 6, '4': 9, '5': 11};
+        if(document.getElementById('f_delta_disp')) document.getElementById('f_delta_disp').value = deltas[layers];
+        document.getElementById('f_delta_input').value = deltas[layers];
+        if (layers === '3') document.getElementById('f_b_hint').innerText = "50, 60, 75, 90";
+        else if (layers === '4') document.getElementById('f_b_hint').innerText = "100, 115, 125, 150, 175";
+        else if (layers === '5') document.getElementById('f_b_hint').innerText = "200, 225, 250, 300, 400, 500";
+    } else if (mat === 'soitonghop') {
+        var type = document.getElementById('f_type_synthetic').value;
+        var b_val = document.getElementById('f_b_sel').value;
+        var d_val = document.getElementById('f_delta_synthetic').value;
+        var l_hint = document.getElementById('f_l_hint');
+        document.getElementById('f_delta_input').value = d_val;
+        document.getElementById('f_b_input').value = b_val;
+        if (type === 'capron_phu') {
+            if (b_val == '10') l_hint.innerText = "l = 250, 260, 280, 300, 320, 340";
+            else if (b_val == '15') l_hint.innerText = "l = 350, 380, 400, 420, 450, 480";
+            else if (b_val == '20') l_hint.innerText = "l = 500, 530, 560, 600, 630, 670";
+            else if (b_val == '25') l_hint.innerText = "l = 710, 750, 800, 850, 900, 950";
+            else if (b_val == '30') l_hint.innerText = "l = 1000, 1060, 1120, 1180, 1250, 1320, 1400";
+        } else {
+            if (b_val == '40') l_hint.innerText = "l = 1500, 1600, 1700, 1800, 1900, 2000";
+            else if (b_val == '50' || b_val == '60') l_hint.innerText = "l = 2120, 2240, 2360, 2500, 2650, 2800, 3000, 3150, 3350";
+            else if (b_val == '80' || b_val == '100') l_hint.innerText = "l = 3550, 3750, 4000";
+        }
+    }
+}
+
+// -------------------------------------------------------------
+// CHUYỂN ĐỔI LOGIC BACKEND (PYTHON) SANG FRONTEND (JAVASCRIPT)
+// -------------------------------------------------------------
+
+function getVal(name, defaultVal) {
+    var el = document.querySelector(`[name="${name}"]`);
+    if(!el || el.value.trim() === "") return defaultVal;
+    var val = parseFloat(el.value);
+    return isNaN(val) ? defaultVal : val;
+}
+
+function drawFlatBeltSchematicJS(d1, d2, a, alpha1, alpha2) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 900;
+    canvas.height = 600;
+    var ctx = canvas.getContext('2d');
+
+    // Thiết lập vùng tọa độ
+    var minX = -d1/2 - 50;
+    var maxX = a + d2/2 + 50;
+    var maxR = Math.max(d1, d2) / 2;
+    var minY = -maxR - 50;
+    var maxY = maxR + 50;
+
+    var scale = Math.min(canvas.width / (maxX - minX), canvas.height / (maxY - minY)) * 0.9;
+    var offsetX = -minX * scale + (canvas.width - (maxX - minX) * scale) / 2;
+    var offsetY = canvas.height / 2;
+
+    function tx(x) { return x * scale + offsetX; }
+    function ty(y) { return -y * scale + offsetY; } 
+
+    // Hàm vẽ đường tròn
+    function drawCircle(x, y, r, color, lineWidth, lineDash) {
+        ctx.beginPath();
+        ctx.arc(tx(x), ty(y), r * scale, 0, 2 * Math.PI);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        if(lineDash) ctx.setLineDash(lineDash);
+        else ctx.setLineDash([]);
+        ctx.stroke();
+    }
+
+    // Đường tròn d1
+    drawCircle(0, 0, d1/2, '#3498db', 2);
+    drawCircle(0, 0, d1/10, 'gray', 1, [5, 5]);
+
+    // Đường tròn d2
+    drawCircle(a, 0, d2/2, '#e74c3c', 2);
+    drawCircle(a, 0, d2/10, 'gray', 1, [5, 5]);
+
+    // Dây đai
+    ctx.setLineDash([]);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(tx(0), ty(d1/2)); ctx.lineTo(tx(a), ty(d2/2));
+    ctx.moveTo(tx(0), ty(-d1/2)); ctx.lineTo(tx(a), ty(-d2/2));
+    ctx.stroke();
+
+    // Đường trục
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([10, 5, 2, 5]);
+    ctx.beginPath();
+    ctx.moveTo(tx(-d1/2 - 20), ty(0));
+    ctx.lineTo(tx(a + d2/2 + 20), ty(0));
+    ctx.stroke();
+
+    // Ký hiệu a
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'gray';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`<----- a = ${a.toFixed(0)} mm ----->`, tx(a/2), ty(d1/2 + 30));
+
+    // Vẽ góc ôm (wedge)
+    ctx.fillStyle = 'rgba(39, 174, 96, 0.3)';
+    ctx.beginPath();
+    ctx.moveTo(tx(0), ty(0));
+    var startAngle = (180 - alpha1/2) * Math.PI / 180;
+    var endAngle = (180 + alpha1/2) * Math.PI / 180;
+    ctx.arc(tx(0), ty(0), (d1/2 + 15) * scale, startAngle, endAngle);
+    ctx.fill();
+
+    ctx.fillStyle = '#219150';
+    ctx.font = 'bold 14px Arial';
+    ctx.fillText(`α1 = ${alpha1.toFixed(0)}°`, tx(d1/3), ty(d1/4));
+
+    ctx.fillStyle = '#2980b9';
+    ctx.fillText(`d1=${d1.toFixed(0)}`, tx(-d1/2 - 10), ty(-d1/2 - 15));
+    ctx.fillStyle = '#c0392b';
+    ctx.fillText(`d2=${d2.toFixed(0)}`, tx(a + d2/2 + 10), ty(-d2/2 - 15));
+
+    return canvas.toDataURL('image/png');
+}
+
+function calculateForm(event) {
+    event.preventDefault(); // Ngăn load lại trang
+    
+    var belt_type = document.getElementById('belt_type').value;
+    var result_html = "";
+    
+    try {
+        if (belt_type === 'vbelt') {
+            // ================= ĐAI HÌNH THANG =================
+            var P1 = getVal('P1', 7.5);
+            var n1 = getVal('n1', 1240);
+            var u = getVal('ud', 2.22);
+            var prof = document.getElementById('vbelt_profile').value;
+            var qm = getVal('v_qm', 0.1);
+            var t_val = getVal('v_t', 15.0);
+            var e_val = getVal('v_e', 10.0);
+            var h0_val = getVal('v_h0', 3.3);
+            var d1 = getVal('v_d1', 140.0);
+            var L_tc = getVal('v_L_tc', 2000.0);
+            var Kd = getVal('v_Kd', 1.25);
+            var P0 = getVal('v_P0', 2.2);
+            var Ca = getVal('v_Ca', 0.98);
+            var Cl = getVal('v_Cl', 1.04);
+            var Cu = getVal('v_Cu', 1.13);
+            var Cz = getVal('v_Cz', 1.0);
+            var hs_tuong_doi = getVal('v_hs_tuong_doi', 0.02);
+
+            var v_dai = (Math.PI * d1 * n1) / 60000;
+            var v_check = v_dai < 25 ? "Đạt" : "CẢNH BÁO (>25 m/s)";
+            var epsilon = hs_tuong_doi;
+            var d2_lt = u * d1 * (1 - epsilon);
+            var d2 = Math.round(d2_lt / 5) * 5;
+            
+            var K = L_tc - Math.PI * (d1 + d2) / 2;
+            var delta = (d2 - d1) / 2;
+            var val_inside_sqrt = Math.max(0, Math.pow(K, 2) + 8 * Math.pow(delta, 2)); 
+            var a_thuc = (K + Math.sqrt(val_inside_sqrt)) / 4;
+            
+            var alpha1 = a_thuc > 0 ? 180 - 57 * ((d2 - d1) / a_thuc) : 180;
+            
+            var Z_calc = (Kd * P1) / (P0 * Ca * Cl * Cu * Cz);
+            var phan_thap_phan = Z_calc - Math.floor(Z_calc);
+            var Z_chon = phan_thap_phan < 0.3 ? Math.floor(Z_calc) : Math.ceil(Z_calc);
+            Z_chon = Math.max(1, Z_chon);
+            
+            var Ft = v_dai > 0 ? (1000 * P1) / v_dai : 0;
+            var F0 = v_dai > 0 ? (780 * P1 * Kd) / (v_dai * Ca * Z_chon) + qm * Math.pow(v_dai, 2) : 0;
+            var Fr = 2 * F0 * Z_chon * Math.sin((alpha1 / 2) * Math.PI / 180);
+            
+            var B = (Z_chon - 1) * t_val + 2 * e_val;
+            var da1 = d1 + 2 * h0_val;
+            var da2 = d2 + 2 * h0_val;
+
+            result_html = `
+            <h2 style="text-align:center; color:#27ae60; margin-top:0;">BẢNG KẾT QUẢ THIẾT KẾ ĐAI HÌNH THANG (${prof})</h2>
+            <table>
+            <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
+            <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td style="color:green;">${v_check}</td></tr>
+            <tr><td>Đường kính vòng chia bánh nhỏ</td><td>d1</td><td><b style="color:blue;">${d1.toFixed(0)} mm</b></td><td>Thông số chọn</td></tr>
+            <tr><td>Đường kính vòng chia bánh lớn</td><td>d2</td><td><b style="color:blue;">${d2.toFixed(0)} mm</b></td><td>Đã làm tròn chuẩn</td></tr>
+            <tr><td>Chiều dài đai</td><td>L</td><td><b style="color:blue;">${L_tc.toFixed(0)} mm</b></td><td>Thông số chọn</td></tr>
+            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><b class="highlight">${a_thuc.toFixed(2)} mm</b></td><td>Tính lùi từ L</td></tr>
+            <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td>Thỏa mãn > 120°</td></tr>
+            <tr><td>Số lượng đai lý thuyết</td><td>Z_lt</td><td>${Z_calc.toFixed(3)} đai</td><td>-</td></tr>
+            <tr><td><b>Số lượng đai thực tế</b></td><td><b>Z</b></td><td><b class="highlight" style="font-size:1.2em;">${Z_chon} đai</b></td><td>Theo quy tắc làm tròn</td></tr>
+            <tr> <td>Chiều rộng bánh đai</td><td><b>B</b></td><td><b>${B.toFixed(2)} mm</b></td><td>B = (Z-1)t + 2e</td></tr>
+            <tr> <td>Đường kính ngoài bánh nhỏ</td><td><b>da1</b></td><td><b>${da1.toFixed(2)} mm</b></td><td>da1 = d1 + 2h0</td></tr>
+            <tr> <td>Đường kính ngoài bánh lớn</td><td><b>da2</b></td><td><b>${da2.toFixed(2)} mm</b></td><td>da2 = d2 + 2h0</td></tr>
+            <tr><td>Lực vòng truyền tải</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>-</td></tr>
+            <tr><td>Lực căng ban đầu 1 đai</td><td>F0</td><td><b class="highlight">${F0.toFixed(1)} N</b></td><td>Có tính lực ly tâm</td></tr>
+            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class="highlight">${Fr.toFixed(1)} N</b></td><td>Dùng để thiết kế Trục</td></tr>
+            </table>
+            `;
+
+        } else if (belt_type === 'flat') {
+            // ================= ĐAI DẸT =================
+            var P1 = getVal('P1', 7.5);
+            var n1 = getVal('n1', 1240);
+            var u = getVal('ud_f', 3.5);
+            var mat = document.getElementById('flat_material').value;
+
+            var C_d1 = getVal('f_Cd1', 5.8); 
+            var K_a = getVal('f_Ka', 1.5);   
+            var epsilon = getVal('f_epsilon', 0.01);
+            var delta = getVal('f_delta', 5.0);
+            var b_chon_raw = document.querySelector('[name="f_b_chon"]').value;
+
+            var sigma_0 = getVal('f_sigma0', 1.8);
+            var sigma_F0 = getVal('f_sigmap0', 2.25);
+            var Kd = getVal('f_Kd', 1.25);
+            var Cv = getVal('f_Cv', 0.97);
+            var Ca = getVal('f_Ca', 0.94);
+            var Cb = getVal('f_Cb', 1.0);
+
+            var T1 = n1 !== 0 ? 9.55 * Math.pow(10, 6) * (Math.abs(P1) / Math.abs(n1)) : 0;
+            var d1_lt = C_d1 * Math.pow(Math.abs(T1), 1/3);
+            
+            var standard_d = [100, 112, 125, 140, 160, 180, 200, 224, 250, 280, 315, 355, 400, 450, 500, 560, 630, 710, 800, 900, 1000];
+            var d1 = 100;
+            if (d1_lt > 0) {
+                d1 = standard_d.reduce((prev, curr) => Math.abs(curr - d1_lt) < Math.abs(prev - d1_lt) ? curr : prev);
+            }
+
+            var v_dai = (Math.PI * d1 * n1) / 60000;
+            var v_check = v_dai <= 25 ? "Đạt" : "Cảnh báo (>25 m/s)";
+
+            var d2_lt = u * d1 * (1 - epsilon);
+            var d2 = d2_lt > 100 ? standard_d.reduce((prev, curr) => Math.abs(curr - d2_lt) < Math.abs(prev - d2_lt) ? curr : prev) : Math.round(d2_lt);
+
+            var u_thuc = (d1 > 0 && epsilon !== 1) ? d2 / (d1 * (1 - epsilon)) : u;
+            var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
+            var u_check = delta_u <= 4 ? "Đạt" : "Cảnh báo (> 4%)";
+
+            var a_lt = K_a * (d1 + d2);
+            var a = Math.round(a_lt / 10) * 10; 
+
+            var L_calc = a > 0 ? 2 * a + Math.PI * (d1 + d2) / 2 + Math.pow(d2 - d1, 2) / (4 * a) : 0;
+            var i_vong = L_calc > 0 ? v_dai / (L_calc / 1000) : 0;
+            var i_check = (3 <= i_vong && i_vong <= 5) ? "Đạt" : (i_vong < 3 ? "< 3" : "> 5");
+
+            var alpha1 = a > 0 ? 180 - ((d2 - d1) / a) * 57 : 180;
+            var alpha2 = a > 0 ? 180 + ((d2 - d1) / a) * 57 : 180;
+            var alpha_check = alpha1 >= 150 ? "Đạt" : "Cảnh báo (< 150°)";
+
+            var Ft = v_dai > 0 ? (1000 * P1) / v_dai : 0;
+            var sigma_F_cp = sigma_F0 * Ca * Cv * Cb;
+            
+            var b_lt = (delta * sigma_F_cp) > 0 ? (Ft * Kd) / (delta * sigma_F_cp) : 0;
+            
+            var b_chon_str = String(b_chon_raw).trim();
+            var b, b_note;
+            if (b_chon_str !== '' && b_chon_str !== 'None') {
+                var parsed_b = parseFloat(b_chon_str);
+                if (!isNaN(parsed_b)) {
+                    b = parsed_b;
+                    b_note = "Lấy theo form người dùng nhập";
+                } else {
+                    b = Math.ceil(b_lt);
+                    b_note = "Lỗi nhập b (không phải số), tự tính tròn lên";
+                }
+            } else {
+                b = Math.ceil(b_lt);
+                b_note = "Máy tự tính tròn lên";
+            }
+
+            var F0 = sigma_0 * delta * b;
+            var Fr = 2 * F0 * Math.sin((Math.max(0, alpha1) / 2) * Math.PI / 180);
+
+            var schematic_img = drawFlatBeltSchematicJS(d1, d2, a, alpha1, alpha2);
+            var img_html = schematic_img ? `
+            <div class="plot-container" style="text-align:center; margin-bottom: 25px;">
+                <details style="cursor: pointer; outline: none;">
+                    <summary>🖼️ Bấm vào đây để Hiện / Ẩn Sơ đồ truyền động đai</summary>
+                    <div style="margin-top: 15px;">
+                        <img src="${schematic_img}" alt="Sơ đồ đai dẹt" style="max-width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    </div>
+                </details>
+            </div>
+            ` : "<p style='color:red; text-align:center;'><em>Không thể vẽ sơ đồ.</em></p>";
+
+            var mat_dict = {'vaicaosu': 'Vải Cao Su', 'vaibong': 'Vải Bông', 'da': 'Da', 'soilen': 'Sợi Len', 'soitonghop': 'Sợi Tổng Hợp'};
+
+            result_html = `
+            <h2 style='text-align:center; color:#8e44ad; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI DẸT (${mat_dict[mat] || ''})</h2>
+            ${img_html}
+            <table>
+                <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
+                <tr><td>Momen xoắn trục chủ động</td><td>T1</td><td>${T1.toFixed(0)} N.mm</td><td>Gợi ý d1 nên từ ${(5.2 * Math.pow(T1, 1/3)).toFixed(0)} ÷ ${(6.4 * Math.pow(T1, 1/3)).toFixed(0)} mm</td></tr>
+                <tr><td>Đường kính bánh dẫn</td><td>d1</td><td><b style="color:blue;">${d1.toFixed(0)} mm</b></td><td>Tính theo CT (4.1) & chuẩn hóa</td></tr>
+                <tr><td>Đường kính bánh bị dẫn</td><td>d2</td><td><b style="color:blue;">${d2.toFixed(0)} mm</b></td><td>Làm tròn chuẩn từ ${d2_lt.toFixed(1)} mm</td></tr>
+                <tr><td>Sai lệch tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=4 ? 'green' : 'red'};">${u_check} (≤ 4%)</td></tr>
+                <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td style="color:${v_dai<=25 ? 'green' : 'red'};">${v_check}</td></tr>
+                <tr><td>Khoảng cách trục tính toán</td><td>a</td><td><b>${a.toFixed(0)} mm</b></td><td>Tính theo CT (4.3) </td></tr>
+                <tr><td>Chiều dài đai tính toán</td><td>l</td><td><b>${L_calc.toFixed(0)} mm</b></td><td>Cần cộng thêm 100-400mm nối đai</td></tr>
+                <tr><td>Số vòng chạy 1 giây</td><td>i</td><td>${i_vong.toFixed(2)} 1/s</td><td>${i_check} (Nên 3 ÷ 5 1/s)</td></tr>
+                <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)}°</td><td style="color:${alpha1>=150 ? 'green' : 'red'};">${alpha_check} (≥ 150°)</td></tr>
+                <tr><td>Lực vòng có ích</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>Ft = 1000.P1 / v</td></tr>
+                <tr><td>Ứng suất cho phép</td><td>[σF]</td><td>${sigma_F_cp.toFixed(2)} MPa</td><td>[σF] = [σF0].Cα.Cv.Cb</td></tr>
+                <tr><td>Chiều rộng đai (Lý thuyết)</td><td>b_lt</td><td>${b_lt.toFixed(2)} mm</td><td>b = Ft.Kđ / ([σF].δ)</td></tr>
+                <tr><td><b>Chiều rộng đai (Thực tế)</b></td><td><b>b</b></td><td><b class='highlight' style='font-size:1.2em;'>${b.toFixed(0)} mm</b></td><td>${b_note}</td></tr>
+                <tr><td>Lực căng ban đầu</td><td>F0</td><td>${F0.toFixed(1)} N</td><td>F0 = σ0.δ.b</td></tr>
+                <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class='highlight'>${Fr.toFixed(1)} N</b></td><td>Fr = 2.F0.sin(α1/2)</td></tr>
+            </table>
+            `;
+
+        } else if (belt_type === 'polyv') {  
+            // ================= ĐAI NHIỀU CHÊM =================
+            var P1 = getVal('P1', 7.5);
+            var n1 = getVal('n1', 1240);
+            var u = getVal('pv_u', 3.5);
+            var prof = document.getElementById('polyv_profile').value || 'L';
+            
+            var t_val = getVal('pv_t', 4.8);
+            var qm_1chem = getVal('pv_qm', 0.06);
+            
+            var e_val, delta_pv, d_min_pv;
+            if (prof === 'K') { e_val = 3.5; delta_pv = 2.0; d_min_pv = 40; }
+            else if (prof === 'M') { e_val = 9.0; delta_pv = 7.0; d_min_pv = 250; }
+            else { e_val = 4.6; delta_pv = 4.8; d_min_pv = 100; }
+            
+            var T1_pv = n1 !== 0 ? 9.55 * Math.pow(10, 6) * (Math.abs(P1) / Math.abs(n1)) : 0;
+            var d1_sb = 3 * Math.pow(Math.abs(T1_pv), 1/3);
+
+            var d1_raw = document.querySelector('[name="pv_d1"]').value;
+            var standard_d = [40, 45, 50, 56, 63, 71, 80, 90, 100, 112, 125, 140, 160, 180, 200, 224, 250, 280, 315, 355, 400, 450, 500, 560, 630, 710, 800, 900, 1000];
+            
+            var d1_str = String(d1_raw).trim();
+            var d1, d1_note;
+            var d1_calc = Math.max(d1_sb, d_min_pv);
+            var valid_ds = standard_d.filter(x => x >= d1_calc);
+
+            if (d1_str !== '' && d1_str !== 'None') {
+                var parsed_d1 = parseFloat(d1_str);
+                if (!isNaN(parsed_d1)) {
+                    d1 = parsed_d1;
+                    d1_note = "Lấy theo form người dùng nhập";
+                } else {
+                    d1 = valid_ds.length > 0 ? valid_ds[0] : Math.ceil(d1_calc);
+                    d1_note = "Lỗi nhập (không phải số), máy tự tính";
+                }
+            } else {
+                d1 = valid_ds.length > 0 ? valid_ds[0] : Math.ceil(d1_calc);
+                d1_note = "Máy tự tính và làm tròn chuẩn";
+            }
+            
+            var L_tc = getVal('pv_L', 1800.0);
+            var Kd = getVal('pv_Kd', 1.25);
+            var P0 = getVal('pv_P0', 8.5);
+            var Ca = getVal('pv_Ca', 0.89);
+            var Cl = getVal('pv_Cl', 1.04);
+            var Cu = getVal('pv_Cu', 1.14);
+
+            var v_dai = (Math.PI * d1 * n1) / 60000;
+            var v_check = v_dai <= 40 ? "Đạt" : "CẢNH BÁO (>40 m/s)";
+            
+            var d2_lt = u * d1 * (1 - 0.01);
+            var d2 = Math.round(d2_lt / 5) * 5; 
+            
+            var u_thuc = d1 > 0 ? d2 / (d1 * 0.99) : 0;
+            var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
+            var u_check = delta_u <= 4 ? "Đạt" : "Cảnh báo (> 4%)";
+
+            var K = L_tc - Math.PI * (d1 + d2) / 2;
+            var delta = (d2 - d1) / 2;
+            var val_inside_sqrt = Math.max(0, Math.pow(K, 2) + 8 * Math.pow(delta, 2)); 
+            var a_thuc = (K + Math.sqrt(val_inside_sqrt)) / 4;
+            
+            var alpha1 = a_thuc > 0 ? 180 - 57 * ((d2 - d1) / a_thuc) : 180;
+            var alpha_check = alpha1 >= 120 ? "Đạt" : "Cảnh báo (< 120°)";
+
+            var Z_calc = (P0 * Ca * Cl * Cu) > 0 ? (10 * P1 * Kd) / (P0 * Ca * Cl * Cu) : 0;
+            var Z_chon = Math.ceil(Z_calc);
+            Z_chon = Math.max(1, Z_chon); 
+            
+            var B_dai = (Z_chon - 1) * t_val + 2 * e_val;
+            
+            var da1 = d1 - delta_pv;
+            var da2 = d2 - delta_pv;
+
+            var Ft = v_dai > 0 ? (1000 * P1) / v_dai : 0;
+            var F0 = v_dai > 0 ? (780 * P1 * Kd) / (v_dai * Ca * Z_chon) + qm_1chem * Math.pow(v_dai, 2) : 0;
+            var Fr = 2 * F0 * Z_chon * Math.sin((Math.max(0, alpha1) / 2) * Math.PI / 180);
+            
+            result_html = `
+            <h2 style='text-align:center; color:#d35400; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI NHIỀU CHÊM (${prof})</h2>
+            <table>
+            <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
+            <tr><td>Momen xoắn trục chủ động</td><td>T1</td><td>${T1_pv.toFixed(0)} N.mm</td><td>d1_sb = 3.∛T1 ≈ ${d1_sb.toFixed(1)} mm</td></tr>
+            <tr><td>Đường kính vòng chia bánh nhỏ</td><td>d1</td><td><b style="color:blue;">${d1.toFixed(0)} mm</b></td><td>${d1_note}</td></tr>
+            <tr><td>Đường kính vòng chia bánh lớn</td><td>d2</td><td><b style="color:blue;">${d2.toFixed(0)} mm</b></td><td>Làm tròn chuẩn</td></tr>
+            <tr><td>Sai lệch tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=4 ? 'green' : 'red'};">${u_check}</td></tr>
+            <tr><td>Chiều dài đai chọn</td><td>L</td><td><b style="color:blue;">${L_tc.toFixed(0)} mm</b></td><td>Nên tra bảng chuẩn</td></tr>
+            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><b class="highlight">${a_thuc.toFixed(2)} mm</b></td><td>Tính ngược từ L</td></tr>
+            <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td style="color:${alpha1>=120 ? 'green' : 'red'};">${alpha_check}</td></tr>
+            <tr><td>Số lượng chêm lý thuyết</td><td>z_lt</td><td>${Z_calc.toFixed(3)} chêm</td><td>z = 10.P.Kđ / ([P0]Cα.Cl.Cu)</td></tr>
+            <tr><td><b>Số lượng chêm thực tế</b></td><td><b>z</b></td><td><b class="highlight" style="font-size:1.2em;">${Z_chon} chêm</b></td><td>Làm tròn lên</td></tr>
+            <tr><td>Chiều rộng bánh đai</td><td>B</td><td><b>${B_dai.toFixed(2)} mm</b></td><td>B = (z-1)t + 2e (CT 4.17)</td></tr>
+            <tr><td>Đường kính ngoài bánh đai nhỏ</td><td>da1</td><td><b>${da1.toFixed(2)} mm</b></td><td>da1 = d1 - δ (CT 4.24)</td></tr>
+            <tr><td>Đường kính ngoài bánh đai lớn</td><td>da2</td><td><b>${da2.toFixed(2)} mm</b></td><td>da2 = d2 - δ (CT 4.24)</td></tr>
+            <tr><td>Lực vòng có ích</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>Ft = 1000.P1 / v</td></tr>
+            <tr><td>Lực căng ban đầu của 1 chêm</td><td>F0</td><td><b class="highlight">${F0.toFixed(1)} N</b></td><td>CT tương tự đai thang</td></tr>
+            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class="highlight">${Fr.toFixed(1)} N</b></td><td>Dùng để thiết kế Trục</td></tr>
+            </table>
+            <p class="note" style="text-align:right;">* Trình tự tính và công thức đối chiếu theo Tài liệu Thiết kế DĐCK Tập 1, Trang 64-67.</p>
+            `;
+
+        } else if (belt_type === 'timing') {
+            // ================= ĐAI RĂNG =================
+            var P1 = getVal('P1', 7.5);
+            var n1 = getVal('n1', 1240);
+            var u = getVal('timing_u', 2.0);
+            
+            var m = getVal('timing_m', 5.0);
+            var z1 = parseInt(getVal('timing_z1', 24));
+            var a_sb = getVal('timing_a', 500.0);
+            var Kd = getVal('timing_Kd', 1.3);
+
+            var p = Math.PI * m;
+            var z2 = Math.round(u * z1);
+            var u_thuc = z1 > 0 ? z2 / z1 : 0;
+            var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
+            var u_check = delta_u === 0 ? "Đạt" : (delta_u <= 2 ? "Chấp nhận" : "Cảnh báo");
+
+            var d1 = m * z1;
+            var d2 = m * z2;
+            var v_dai = (Math.PI * d1 * n1) / 60000;
+
+            var L_sb = 2 * a_sb + Math.PI * (d1 + d2) / 2 + Math.pow(d2 - d1, 2) / (4 * Math.max(1, a_sb));
+            var z_dai_calc = p > 0 ? L_sb / p : 0;
+            var z_dai = Math.round(z_dai_calc);
+            
+            var L_thuc = z_dai * p;
+            var K = L_thuc - Math.PI * (d1 + d2) / 2;
+            var delta = (d2 - d1) / 2;
+            var val_inside_sqrt = Math.max(0, Math.pow(K, 2) + 8 * Math.pow(delta, 2)); 
+            var a_thuc = (K + Math.sqrt(val_inside_sqrt)) / 4;
+            
+            var alpha1 = a_thuc > 0 ? 180 - 57 * ((d2 - d1) / a_thuc) : 180;
+            var z0 = z1 * (alpha1 / 360);
+            var z0_check = z0 >= 6 ? "Đạt" : "CẢNH BÁO (< 6 răng)";
+
+            var Ft = v_dai > 0 ? (1000 * P1) / v_dai : 0;
+            var Fr = 1.2 * Ft;
+
+            result_html = `
+            <h2 style='text-align:center; color:#2c3e50; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI RĂNG (m = ${m.toFixed(0)})</h2>
+            <table>
+            <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
+            <tr><td>Bước răng</td><td>p</td><td>${p.toFixed(2)} mm</td><td>p = π.m</td></tr>
+            <tr><td>Số răng bánh dẫn</td><td>z1</td><td><b style="color:blue;">${z1} răng</b></td><td>Lấy theo form nhập</td></tr>
+            <tr><td>Số răng bánh bị dẫn</td><td>z2</td><td><b style="color:blue;">${z2} răng</b></td><td>Làm tròn z2 = u.z1</td></tr>
+            <tr><td>Sai số Tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=2 ? 'green' : 'red'};">${u_check}</td></tr>
+            <tr><td>Đường kính vòng chia d1</td><td>d1</td><td><b>${d1.toFixed(2)} mm</b></td><td>d1 = m.z1</td></tr>
+            <tr><td>Đường kính vòng chia d2</td><td>d2</td><td><b>${d2.toFixed(2)} mm</b></td><td>d2 = m.z2</td></tr>
+            <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td>Nên nhỏ hơn 50 m/s</td></tr>
+            <tr><td>Số răng của đai</td><td>z_đai</td><td><b class="highlight" style="font-size:1.2em;">${z_dai} răng</b></td><td>Làm tròn từ ${z_dai_calc.toFixed(1)}</td></tr>
+            <tr><td>Chiều dài đai thực tế</td><td>L</td><td><b>${L_thuc.toFixed(2)} mm</b></td><td>L = z_đai . p</td></tr>
+            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><b class="highlight">${a_thuc.toFixed(2)} mm</b></td><td>Tính từ L thực</td></tr>
+            <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td>-</td></tr>
+            <tr><td><b>Số răng ăn khớp bánh nhỏ</b></td><td><b>z0</b></td><td><b class="highlight">${z0.toFixed(1)} răng</b></td><td style="color:${z0>=6 ? 'green' : 'red'}; font-weight:bold;">${z0_check}</td></tr>
+            <tr><td>Lực vòng truyền tải</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>Ft = 1000.P1 / v</td></tr>
+            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class="highlight">${Fr.toFixed(1)} N</b></td><td>Fr ≈ 1,2 Ft (Sách T.67)</td></tr>
+            </table>
+            `;
+        } else {
+            result_html = "<p>Phần này đang chờ phát triển thêm...</p>";
+        }
+    } catch (e) {
+        result_html = `<p style='color:red;'><b>Lỗi tính toán:</b> ${e.message}. Vui lòng kiểm tra lại số liệu nhập.</p>`;
+    }
+
+    var resultBox = document.getElementById('result_box');
+    resultBox.innerHTML = result_html;
+    resultBox.style.display = 'block';
+}
+
+window.onload = function() {
+    updateMainBelt();
+    updateSubBeltCategory();
+};
+</script>
+</head>
+<body>
+<div class="container">
+<h2>CHƯƠNG TRÌNH THIẾT KẾ CÁC BỘ TRUYỀN ĐAI</h2>
+<form onsubmit="calculateForm(event)">
+<h3>I. Chọn loại đai và Thông số Động học</h3>
+<div class="grid-3">
+<div>
+<label>1. LỰA CHỌN LOẠI ĐAI CHÍNH:</label>
+<select name="belt_type" id="belt_type" onchange="updateMainBelt()">
+<option value="vbelt">Đai hình thang (V-Belt)</option>
+<option value="flat">Đai dẹt (Flat Belt)</option>
+<option value="polyv">Đai nhiều chêm (Poly-V Belt)</option>
+<option value="timing">Đai răng (Timing Belt)</option>
+</select>
+</div>
+<div><label>Công suất trục chủ động P1 (kW):</label><input type="number" step="any" name="P1" value="7.5" required></div>
+<div><label>Vòng quay trục chủ động n1 (vg/ph):</label><input type="number" step="any" name="n1" value="1240" required></div>
+</div>
+
+<div id="sec_vbelt" class="belt-section">
+<div class="grid-2">
+<div>
+<label>2. CHỌN NHÓM ĐAI HÌNH THANG:</label>
+<select name="vbelt_category" id="vbelt_category" onchange="updateSubBeltCategory()">
+<option value="thuong">Đai hình thang THƯỜNG (7 loại)</option>
+<option value="hep">Đai hình thang HẸP (Dẹp - 4 loại)</option>
+<option value="rong">Đai hình thang RỘNG</option>
+</select>
+</div>
+<div>
+<label>3. CHỌN KÝ HIỆU ĐAI (Tự động nạp thông số):</label>
+<select name="vbelt_profile" id="vbelt_profile" onchange="updateBeltProfileData()"></select>
+</div>
+</div>
+<h4 style="color:#2980b9; margin-bottom: 5px;">Thông số kích thước tiết diện đai và rãnh</h4>
+<div class="grid-4">
+<div><label>bt (mm):</label><input type="text" name="v_bt" id="v_bt" readonly></div>
+<div><label>b (mm):</label><input type="text" name="v_b" id="v_b" readonly></div>
+<div><label>h (mm):</label><input type="text" name="v_h" id="v_h" readonly></div>
+<div><label>y0 (mm):</label><input type="text" name="v_y0" id="v_y0" readonly></div>
+</div>
+<div class="grid-4">
+<div><label>Diện tích A (mm2):</label><input type="text" name="v_A" id="v_A" readonly></div>
+<div><label>Bước rãnh t (mm):</label><input type="text" name="v_t" id="v_t" readonly></div>
+<div><label>KC mép rãnh e (mm):</label><input type="text" name="v_e" id="v_e" readonly></div>
+<div><label>Độ sâu h0 (mm):</label><input type="text" name="v_h0" id="v_h0" readonly></div>
+<input type="hidden" name="v_qm" id="v_qm"> 
+</div>
+<h3>II. Thông số thiết kế (Đầu vào)</h3>
+<span class="note">*Các thông số d2, khoảng cách trục a, góc ôm, lực căng, bề rộng B... sẽ được máy tự tính.</span>
+<div class="grid-3">
+<div><label>Tỉ số truyền u_đai:</label><input type="number" step="any" name="ud" value="2.22"></div>
+<div><label>Chọn đường kính đai nhỏ d1 (mm):</label><input type="number" step="any" name="v_d1" value="140"><span class="note" id="d1_hint" style="color:#c0392b; font-weight:bold;"></span></div>
+<div><label>Chọn chiều dài đai tiêu chuẩn L (mm):</label><input type="number" step="any" name="v_L_tc" value="2000"><span class="note" id="L_hint" style="color:#c0392b; font-weight:bold;"></span></div>
+</div>
+<h4 style="color:#2980b9;">Các hệ số tra bảng</h4>
+<div class="grid-4">
+<div><label>Hệ số tải trọng động (Kđ):</label><input type="number" step="any" name="v_Kd" value="1.25"></div>
+<div><label>Công suất cho phép 1 đai (P0):</label><input type="number" step="any" name="v_P0" value="2.2"></div>
+<div><label>Hệ số góc ôm đai (Cα):</label><input type="number" step="any" name="v_Ca" value="0.98"></div>
+<div><label>Hệ số chiều dài đai (Cl):</label><input type="number" step="any" name="v_Cl" value="1.04"></div>
+<div><label>Hệ số tỉ số truyền (Cu):</label><input type="number" step="any" name="v_Cu" value="1.13"></div>
+<div><label>Hệ số phân bố tải (Cz):</label><input type="number" step="any" name="v_Cz" value="1"></div>
+<div><label>Hệ số tương đối (&epsilon;):</label><input type="number" step="any" name="v_hs_tuong_doi" value="0.02"></div>
+</div>
+</div>
+
+<div id="sec_flatbelt" class="belt-section">
+<div class="grid-2">
+<div><label>2. VẬT LIỆU ĐAI DẸT:</label>
+<select name="flat_material" id="flat_material" onchange="updateFlatBeltCategory()">
+<option value="vaicaosu">Đai vải cao su (Bảng 4.1)</option>
+<option value="vaibong">Đai sợi bông (Bảng 4.2)</option>
+<option value="da">Đai da (Bảng 4.3)</option>
+<option value="soilen">Đai sợi len (Bảng 4.4)</option>
+<option value="soitonghop">Đai sợi tổng hợp (Bảng 4.5)</option>
+</select>
+</div>
+<div><label>Tỉ số truyền u:</label><input type="number" step="any" name="ud_f" value="3.5"></div>
+</div>
+<div id="flat_dynamic_fields"></div>
+<h4 style="color:#16a085;">III. Thông số thiết kế & Hệ số tra bảng</h4>
+<div class="grid-3">
+<div><label>Hệ số tính d1 (5.2 ÷ 6.4):</label><input type="number" step="any" name="f_Cd1" value="5.8"></div>
+<div><label>Hệ số khoảng cách a (1.5 ÷ 2.0):</label><input type="number" step="any" name="f_Ka" value="1.5"></div>
+<div><label>Hệ số trượt (ε):</label><input type="number" step="any" name="f_epsilon" value="0.01"></div>
+</div>
+<div class="grid-4">
+<div><label>Ứng suất căng σ0 (MPa):</label><input type="number" step="any" name="f_sigma0" value="1.8"></div>
+<div><label>Ứng suất cho phép [σF0] (MPa):</label><input type="number" step="any" name="f_sigmap0" value="2.25"></div>
+<div><label>Hệ số góc ôm Cα:</label><input type="number" step="any" name="f_Ca" value="0.94"></div>
+<div><label>Hệ số vận tốc Cv:</label><input type="number" step="any" name="f_Cv" value="0.97"></div>
+<div><label>Hệ số tải trọng (Kđ):</label><input type="number" step="any" name="f_Kd" value="1.25"></div>
+<div><label>Hệ số bố trí Cb:</label><input type="number" step="any" name="f_Cb" value="1.0"></div>
+</div>
+</div>
+
+<div id="sec_polyv" class="belt-section">
+    <h4 style="color:#d35400; border-bottom: 2px solid #e67e22; padding-bottom: 5px;">II. Thông số Đai Nhiều Chêm (Theo Trang 64-67)</h4>
+    <div class="grid-3">
+        <div><label>Loại tiết diện (Bảng 4.25):</label>
+            <select name="polyv_profile" id="polyv_profile" onchange="updatePolyVData()">
+                <option value="K">Tiết diện K</option>
+                <option value="L" selected>Tiết diện L</option>
+                <option value="M">Tiết diện M</option>
+            </select>
+        </div>
+        <div><label>Bước chêm t (mm):</label><input type="text" name="pv_t" id="pv_t" readonly></div>
+        <div><label>Khối lượng 1m chêm qm (kg/m):</label><input type="text" name="pv_qm" id="pv_qm" readonly></div>
+    </div>
+    <div class="grid-3">
+        <div><label>Tỉ số truyền u:</label><input type="number" step="any" name="pv_u" value="3.5"></div>
+        
+        <div>
+            <label>Đường kính bánh nhỏ d1 (mm):</label>
+            <input type="text" name="pv_d1" placeholder="Để trống máy sẽ tự tính">
+            <span class="note" style="color:#2980b9;">Gợi ý (CT 4.22): d1 ≈ 3.∛T1</span>
+            <span class="note" id="pv_d1_hint" style="color:#c0392b; font-weight:bold; margin-top: 2px;"></span>
+        </div>
+        
+        <div><label>Chiều dài đai L chọn sơ bộ (mm):</label><input type="number" step="any" name="pv_L" value="1800"></div>
+    </div>
+    <h4 style="color:#d35400;">Hệ số tính toán số chêm z</h4>
+    <div class="grid-4">
+        <div><label>Hệ số tải trọng (Kđ):</label><input type="number" step="any" name="pv_Kd" value="1.25"></div>
+        <div><label>Công suất cho phép [P0] (kW):</label><input type="number" step="any" name="pv_P0" value="8.5"></div>
+        <div><label>Hệ số góc ôm Cα:</label><input type="number" step="any" name="pv_Ca" value="0.89"></div>
+        <div><label>Hệ số chiều dài Cl:</label><input type="number" step="any" name="pv_Cl" value="1.04"></div>
+        <div><label>Hệ số tỉ số truyền Cu:</label><input type="number" step="any" name="pv_Cu" value="1.14"></div>
+    </div>
+</div>
+<div id="sec_timing" class="belt-section">
+    <h4 style="color:#2c3e50; border-bottom: 2px solid #34495e; padding-bottom: 5px;">II. Thông số Đai Răng (Theo Trang 67-72)</h4>
+    <div class="grid-3">
+        <div><label>Mô đun tiêu chuẩn m (mm):</label>
+            <select name="timing_m" id="timing_m">
+                <option value="2">m = 2 (p = 6.28 mm)</option>
+                <option value="3">m = 3 (p = 9.42 mm)</option>
+                <option value="4">m = 4 (p = 12.57 mm)</option>
+                <option value="5" selected>m = 5 (p = 15.71 mm)</option>
+                <option value="7">m = 7 (p = 21.99 mm)</option>
+                <option value="10">m = 10 (p = 31.42 mm)</option>
+            </select>
+        </div>
+        <div><label>Số răng bánh nhỏ z1 (Nên ≥ 10÷15):</label><input type="number" step="any" name="timing_z1" value="24"></div>
+        <div><label>Tỉ số truyền u:</label><input type="number" step="any" name="timing_u" value="2.0"></div>
+    </div>
+    <div class="grid-3">
+        <div><label>Khoảng cách trục a sơ bộ (mm):</label><input type="number" step="any" name="timing_a" value="500"></div>
+        <div><label>Hệ số tải trọng (Kđ):</label><input type="number" step="any" name="timing_Kd" value="1.3"></div>
+    </div>
+</div>
+
+<button type="submit">Tính Toán Tự Động</button>
+</form>
+
+<div id="result_box" class="result-box">
+</div>
+
+</div>
+</body>
+</html>

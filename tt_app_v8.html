@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiết Kế Hệ Thống Cơ Khí - Động Học Toàn Diện</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase;}
+        h3 { color: #2980b9; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 1.1em;}
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .grid-4 { display: grid; grid-template-columns: 1.5fr 1fr 1.5fr 1fr; gap: 10px; align-items: center; }
+        label { font-weight: 600; display: block; margin-top: 10px; font-size: 0.85em; color: #34495e; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ced4da; border-radius: 5px; }
+        .note { font-size: 0.85em; color: #e67e22; font-style: italic; display: block; margin-top: 5px;}
+        .load-cycle { background: #fff9c4; padding: 15px; border: 1px dashed #fbc02d; margin-top: 15px; border-radius: 5px; display: none; }
+        button { width: 100%; background-color: #3498db; color: white; padding: 15px; margin-top: 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; text-transform: uppercase;}
+        button:hover { background-color: #2980b9; }
+        .result-box { margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-left: 6px solid #2ecc71; border-radius: 5px; display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em;}
+        th, td { padding: 10px; border: 1px solid #dee2e6; text-align: center; }
+        th { background-color: #2ecc71; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>TÍNH TOÁN ĐỘNG CƠ VÀ ĐỘNG HỌC HỆ THỐNG</h2>
+    
+    <h3>I. Thông số băng tải & Chế độ làm việc</h3>
+    <div class="grid-3">
+        <div><label>Lực kéo P (N):</label><input type="number" id="P" value="1650"></div>
+        <div><label>Vận tốc V (m/s):</label><input type="number" id="V" value="1.3"></div>
+        <div><label>Đk tang D (mm):</label><input type="number" id="D" value="310"></div>
+        <div><label>Thời gian phục vụ (năm):</label><input type="number" id="years" value="5"></div>
+        <div><label>Số ngày làm việc/năm:</label><input type="number" id="days" value="280"></div>
+        <div><label>Số giờ làm việc/ngày:</label><input type="number" id="hours" value="21"></div>
+    </div>
+
+    <h3>II. Đặc tính tải trọng (Theo sơ đồ tải)</h3>
+    <div class="grid-2">
+        <div><label>Đặc tính tải trọng:</label>
+            <select id="load_type" onchange="toggleLoadCycle()">
+                <option value="constant">Tải trọng không đổi</option>
+                <option value="variable">Tải trọng thay đổi</option>
+            </select>
+        </div>
+        <div><label>Đặc tính rung động:</label>
+            <select id="vibration">
+                <option value="Nhẹ">Rung động nhẹ</option>
+                <option value="Vừa">Rung động vừa</option>
+                <option value="Nặng">Rung động nặng</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="load_cycle_inputs" class="load-cycle">
+        <b>Nhập chu kỳ tải trọng (Tỷ số M_i/M_max và Thời gian t_i)</b>
+        <div class="grid-3">
+            <div><label>Giai đoạn 1:</label><input type="number" id="p1" value="1.0"> <input type="number" id="t1" value="3"></div>
+            <div><label>Giai đoạn 2:</label><input type="number" id="p2" value="0.714"> <input type="number" id="t2" value="4"></div>
+            <div><label>Giai đoạn 3:</label><input type="number" id="p3" value="0.428"> <input type="number" id="t3" value="4"></div>
+        </div>
+        <span class="note">*Nhập M/Mmax tương ứng với P_i/P_max.</span>
+    </div>
+
+    <h3>III. Hiệu suất các bộ truyền & Ổ lăn (Bảng 2.3)</h3>
+    <div class="grid-4">
+        <label>Khớp nối (η_kn):</label> <input type="number" id="eta_kn" value="0.99">
+        <label>Số lượng (k_kn):</label> <input type="number" id="k_kn" value="1">
+        
+        <label>Ổ lăn (η_ol):</label> <input type="number" id="eta_ol" value="0.99">
+        <label>Số cặp ổ (k_ol):</label> <input type="number" id="k_ol" value="4">
+        
+        <label>Bánh răng (η_br):</label> <input type="number" id="eta_br" value="0.96">
+        <label>Số cặp BR (k_br):</label> <input type="number" id="k_br" value="2">
+        
+        <label>Bộ truyền đai (η_đai):</label> <input type="number" id="eta_dai" value="0.95">
+        <label>Số bộ đai (k_đai):</label> <input type="number" id="k_dai" value="1">
+    </div>
+
+    <h3>IV. Chọn Tỉ số truyền & Thông số Động cơ (Bảng 2.4)</h3>
+    <div class="grid-3">
+        <div><label>u_đai sơ bộ:</label><input type="number" id="u_dai_sb" value="2"></div>
+        <div><label>u_hộp giảm tốc sơ bộ:</label><input type="number" id="u_hgt_sb" value="8"></div>
+        <div><label>ĐC đã chọn - Pđc (kW):</label><input type="number" id="Pdc_chon" value="2.2"></div>
+        
+        <div><label>ĐC đã chọn - nđc (vg/ph):</label><input type="number" id="ndc_chon" value="1420"></div>
+        <div><label>Phân phối u_br1 (Cấp nhanh):</label><input type="number" id="u_br1" value="3.3"></div>
+        <div><label>Phân phối u_br2 (Cấp chậm):</label><input type="number" id="u_br2" value="2.42"></div>
+    </div>
+    
+    <button onclick="calculate()">Thực Hiện Tính Toán Động Học</button>
+
+    <div id="resultBox" class="result-box">
+        <h3 style="text-align:center; margin-top: 0; color:#27ae60;">1. THÔNG SỐ TẢI TRỌNG VÀ CHỌN ĐỘNG CƠ</h3>
+        <div class="grid-2">
+            <div id="res_col1"></div>
+            <div id="res_col2"></div>
+        </div>
+
+        <h3 style="text-align:center;">2. PHÂN PHỐI TỈ SỐ TRUYỀN THỰC TẾ</h3>
+        <div id="res_ts_truyen"></div>
+
+        <h3 style="text-align:center;">3. BẢNG THỐNG KÊ THÔNG SỐ ĐỘNG HỌC</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Thông số</th>
+                    <th>Trục Động Cơ</th>
+                    <th>Trục I</th>
+                    <th>Trục II</th>
+                    <th>Trục III</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <p class="note" style="margin-top:10px; text-align: right;">*Công suất các trục được tính ngược từ bộ phận công tác (Pt) thông qua hiệu suất từng bộ truyền (P_trước = P_sau / η).</p>
+    </div>
+</div>
+
+<script>
+    function toggleLoadCycle() {
+        var loadType = document.getElementById("load_type").value;
+        document.getElementById("load_cycle_inputs").style.display = (loadType === "variable") ? "block" : "none";
+    }
+
+    function calculate() {
+        // 1. Lấy dữ liệu
+        const P_force = parseFloat(document.getElementById('P').value);
+        const V_vel = parseFloat(document.getElementById('V').value);
+        const D = parseFloat(document.getElementById('D').value);
+        const years = parseFloat(document.getElementById('years').value);
+        const days = parseFloat(document.getElementById('days').value);
+        const hours = parseFloat(document.getElementById('hours').value);
+        const vibration = document.getElementById('vibration').value;
+        const load_type = document.getElementById('load_type').value;
+
+        const Lh = years * days * hours;
+        const Plv = (P_force * V_vel) / 1000;
+        
+        let Pt, load_text;
+        if (load_type === 'constant') {
+            Pt = Plv;
+            load_text = "Tải trọng không đổi";
+        } else {
+            const p1 = parseFloat(document.getElementById('p1').value);
+            const t1 = parseFloat(document.getElementById('t1').value);
+            const p2 = parseFloat(document.getElementById('p2').value);
+            const t2 = parseFloat(document.getElementById('t2').value);
+            const p3 = parseFloat(document.getElementById('p3').value);
+            const t3 = parseFloat(document.getElementById('t3').value);
+            
+            const sum_t = t1 + t2 + t3;
+            const sum_p2_t = (p1**2)*t1 + (p2**2)*t2 + (p3**2)*t3;
+            const K_eq = sum_t > 0 ? Math.sqrt(sum_p2_t / sum_t) : 1;
+            Pt = Plv * K_eq;
+            load_text = `Thay đổi, P_tđ = Plv * ${K_eq.toFixed(3)}`;
+        }
+
+        // 2. Hiệu suất
+        const e_kn = parseFloat(document.getElementById('eta_kn').value);
+        const k_kn = parseInt(document.getElementById('k_kn').value);
+        const e_ol = parseFloat(document.getElementById('eta_ol').value);
+        const k_ol = parseInt(document.getElementById('k_ol').value);
+        const e_br = parseFloat(document.getElementById('eta_br').value);
+        const k_br = parseInt(document.getElementById('k_br').value);
+        const e_dai = parseFloat(document.getElementById('eta_dai').value);
+        const k_dai = parseInt(document.getElementById('k_dai').value);
+
+        const eta_total = Math.pow(e_kn, k_kn) * Math.pow(e_ol, k_ol) * Math.pow(e_br, k_br) * Math.pow(e_dai, k_dai);
+        const Pct = Pt / eta_total;
+
+        // 3. Tỉ số truyền
+        const u_dai_sb = parseFloat(document.getElementById('u_dai_sb').value);
+        const u_hgt_sb = parseFloat(document.getElementById('u_hgt_sb').value);
+        const nlv = (60 * 1000 * V_vel) / (Math.PI * D);
+        const nsb = nlv * (u_dai_sb * u_hgt_sb);
+
+        const ndc_chon = parseFloat(document.getElementById('ndc_chon').value);
+        const u_br1 = parseFloat(document.getElementById('u_br1').value);
+        const u_br2 = parseFloat(document.getElementById('u_br2').value);
+
+        const u_ht = ndc_chon / nlv;
+        const u_h = u_br1 * u_br2;
+        const u_dai_act = u_ht / u_h;
+
+        // 4. Tính toán ngược các trục
+        const P_3 = Pt / (Math.pow(e_ol, 1) * Math.pow(e_kn, k_kn));
+        const n_3 = nlv;
+        const T_3 = 9.55 * Math.pow(10, 6) * (P_3 / n_3);
+
+        const P_2 = P_3 / (Math.pow(e_ol, 1) * Math.pow(e_br, 1));
+        const n_2 = n_3 * u_br2;
+        const T_2 = 9.55 * Math.pow(10, 6) * (P_2 / n_2);
+
+        const P_1 = P_2 / (Math.pow(e_ol, 1) * Math.pow(e_br, 1));
+        const n_1 = n_2 * u_br1;
+        const T_1 = 9.55 * Math.pow(10, 6) * (P_1 / n_1);
+
+        const P_dc = P_1 / (Math.pow(e_ol, 1) * Math.pow(e_dai, k_dai));
+        const n_dc = ndc_chon;
+        const T_dc = 9.55 * Math.pow(10, 6) * (P_dc / n_dc);
+
+        // 5. Hiển thị kết quả
+        document.getElementById('res_col1').innerHTML = `
+            <p><b>- Tổng thời gian làm việc (Lh):</b> ${Lh.toLocaleString()} giờ</p>
+            <p><b>- Rung động:</b> ${vibration}</p>
+            <p><b>- Công suất làm việc (Plv):</b> ${Plv.toFixed(3)} kW</p>
+            <p><b>- Công suất tính toán (Pt):</b> ${Pt.toFixed(3)} kW <br> <span class="note">(${load_text})</span></p>`;
+        
+        document.getElementById('res_col2').innerHTML = `
+            <p><b>- Hiệu suất tổng hệ thống (η):</b> ${eta_total.toFixed(3)}</p>
+            <p><b>- Công suất ĐC cần thiết (Pct):</b> <span style="color:red; font-weight:bold;">${Pct.toFixed(3)} kW</span></p>
+            <p><b>- Số vòng quay LV (nlv):</b> ${nlv.toFixed(3)} vg/ph</p>
+            <p><b>- Vòng quay sơ bộ (nsb):</b> ${nsb.toFixed(3)} vg/ph</p>`;
+
+        document.getElementById('res_ts_truyen').innerHTML = `
+            <p>- Tỉ số truyền chung hệ thống: u_ht = nđc / nlv = <b>${u_ht.toFixed(3)}</b></p>
+            <p>- Tỉ số truyền hộp giảm tốc: u_h = u_br1 × u_br2 = <b>${u_h.toFixed(3)}</b></p>
+            <p>- Tỉ số truyền đai thực tế: u_đ = u_ht / u_h = <b>${u_dai_act.toFixed(3)}</b></p>`;
+
+        document.getElementById('tableBody').innerHTML = `
+            <tr><td><b>P (kW)</b></td><td>${P_dc.toFixed(3)}</td><td>${P_1.toFixed(3)}</td><td>${P_2.toFixed(3)}</td><td>${P_3.toFixed(3)}</td></tr>
+            <tr><td><b>u</b></td><td>-</td><td>${u_dai_act.toFixed(3)}</td><td>${u_br1.toFixed(3)}</td><td>${u_br2.toFixed(3)}</td></tr>
+            <tr><td><b>n (vg/ph)</b></td><td>${n_dc.toFixed(3)}</td><td>${n_1.toFixed(3)}</td><td>${n_2.toFixed(3)}</td><td>${n_3.toFixed(3)}</td></tr>
+            <tr><td><b>T (N.mm)</b></td><td>${T_dc.toLocaleString(undefined, {minimumFractionDigits: 3})}</td><td>${T_1.toLocaleString(undefined, {minimumFractionDigits: 3})}</td><td>${T_2.toLocaleString(undefined, {minimumFractionDigits: 3})}</td><td>${T_3.toLocaleString(undefined, {minimumFractionDigits: 3})}</td></tr>`;
+
+        document.getElementById('resultBox').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

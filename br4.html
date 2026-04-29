@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương Trình 4: Bánh Răng Côn Cung Tròn</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #1e293b; }
+    .container { max-width: 1250px; margin: auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #0f172a; border-bottom: 3px solid #3b82f6; padding-bottom: 15px; text-transform: uppercase; margin-top: 0;}
+    
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+    label { font-weight: 600; font-size: 14px; color: #475569; display: block; margin-bottom: 5px; margin-top: 10px;}
+    input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 15px; background-color: #f8fafc; }
+    button { width: 100%; color: white; padding: 15px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; background-color: #2563eb;}
+    button:hover { background-color: #1d4ed8; }
+    
+    .result-box { margin-top: 20px; padding: 25px; border: 2px solid #10b981; border-radius: 8px; background-color: #f8fafc; display: none;}
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; background: white;}
+    th, td { padding: 10px; border: 1px solid #e2e8f0; text-align: left; }
+    th { background-color: #eff6ff; color: #1e3a8a; font-weight: 600; text-align: center;}
+    td { text-align: center; }
+    tr:nth-child(even) { background-color: #f8fafc; }
+    
+    .highlight { color: #dc2626; font-weight: bold; }
+    .success { color: #16a34a; font-weight: bold; }
+    .step-title { background-color: #2563eb !important; color: white !important; font-weight: bold; text-align: center; font-size: 16px;}
+    .material-panel { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px;}
+    
+    .canvas-container { text-align: center; margin: 20px auto; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; padding: 15px; max-width: 800px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+    canvas { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>THIẾT KẾ BÁNH RĂNG CÔN CUNG TRÒN</h1>
+    
+    <form id="main_form">
+        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">BƯỚC 0: CÁC THÔNG SỐ ĐẦU VÀO</h3>
+        <div class="grid-4">
+            <div><label>Công suất P1 (kW):</label><input type="number" step="any" id="P1" value="15.7" required></div>
+            <div><label>Vòng quay n1 (vg/ph):</label><input type="number" step="any" id="n1" value="187.5" required></div>
+            <div><label>Tỉ số truyền u:</label><input type="number" step="any" id="ud" value="5" required></div>
+            <div><label>T.gian phục vụ Lh (h):</label><input type="number" step="any" id="Lh" value="5000" required></div>
+        </div>
+        <div class="grid-3">
+            <div><label>Góc xoắn β sơ bộ (20° - 40°):</label>
+                <input type="number" step="any" id="beta_sb" value="35" min="20" max="40">
+            </div>
+            <div><label>Chiều tải trọng (KFC):</label>
+                <select id="kfc">
+                    <option value="1.0">Quay 1 chiều (KFC = 1.0)</option>
+                    <option value="0.75">Quay 2 chiều (KFC = 0.75)</option>
+                </select>
+            </div>
+            <div><label>Hệ số quá tải Kqt:</label><input type="number" step="any" id="Kqt" value="2.0"></div>
+        </div>
+
+        <div style="background:#e0f2fe; padding:15px; border:1px solid #38bdf8; border-radius:8px; margin-bottom: 20px;">
+            <h4 style="margin-top:0; color:#0369a1; border-bottom: 1px solid #7dd3fc; padding-bottom: 5px;">QUYỀN ĐIỀU KHIỂN HỆ SỐ & TRA BẢNG</h4>
+            <div class="grid-5" style="margin-bottom:0;">
+                <div><label>Chế độ KHβ, KFβ:</label>
+                    <select id="k_mode" onchange="toggleKMode()">
+                        <option value="auto">Tự động (Côn cung: 1.13 & 1.28)</option>
+                        <option value="manual">Nhập tay</option>
+                    </select>
+                </div>
+                <div class="manual-k" style="display:none;"><label>Nhập KHβ:</label><input type="number" step="any" id="KHb_user" value="1.13"></div>
+                <div class="manual-k" style="display:none;"><label>Nhập KFβ:</label><input type="number" step="any" id="KFb_user" value="1.28"></div>
+                <div><label>Hệ số nhám ZR:</label><input type="number" step="any" id="ZR" value="0.95"></div>
+                <div><label>Hệ số Mô-đun (0.01-0.02):</label><input type="number" step="0.001" id="m_coef" value="0.015"></div>
+            </div>
+        </div>
+
+        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">BƯỚC 1 & 2: VẬT LIỆU, ỨNG SUẤT VÀ SƠ ĐỒ BỐ TRÍ</h3>
+        <div class="grid-2">
+            <div class="material-panel">
+                <h4 style="margin-top:0; color:#1d4ed8;">VẬT LIỆU BÁNH 1 (CHỦ ĐỘNG)</h4>
+                <label>Mác thép:</label>
+                <select id="b1_mat" onchange="updateGenMaterial('b1')"></select>
+                <label id="b1_hard_label">Nhập độ cứng:</label>
+                <input type="number" step="1" id="b1_hard_val" value="52">
+                <label>Lựa chọn phôi (σb & σch):</label><select id="b1_opt"></select>
+                <label>Công thức σHlim:</label><select id="b1_sH_form"></select>
+                <label>Công thức σFlim:</label><select id="b1_sF_form"></select>
+            </div>
+            <div class="material-panel">
+                <h4 style="margin-top:0; color:#1d4ed8;">VẬT LIỆU BÁNH 2 (BỊ DẪN)</h4>
+                <label>Mác thép:</label>
+                <select id="b2_mat" onchange="updateGenMaterial('b2')"></select>
+                <label id="b2_hard_label">Nhập độ cứng:</label>
+                <input type="number" step="1" id="b2_hard_val" value="230">
+                <label>Lựa chọn phôi (σb & σch):</label><select id="b2_opt"></select>
+                <label>Công thức σHlim:</label><select id="b2_sH_form"></select>
+                <label>Công thức σFlim:</label><select id="b2_sF_form"></select>
+            </div>
+        </div>
+        
+        <div style="background:#fffbeb; padding:15px; border:1px solid #f59e0b; border-radius:8px;">
+            <div class="grid-2" style="margin-bottom:0;">
+                <div>
+                    <label>Sơ đồ bố trí ổ (Trục):</label>
+                    <select id="bo_tri" disabled>
+                        <option value="chia" selected>Bố trí Chia / Công sôn (Bánh nón)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Hệ số chiều rộng vành răng (Kbe): <span style="color:#d97706; font-size:12px;">Răng Côn thường lấy 0.25 - 0.3</span></label>
+                    <input type="number" step="0.001" id="Kbe" value="0.25">
+                </div>
+            </div>
+        </div>
+        <button type="button" onclick="calculateSpiralBevelGear()">Thực Hiện Thiết Kế Côn Cung Tròn</button>
+    </form>
+
+    <div id="result_area" class="result-box"></div>
+</div>
+
+<script>
+    const GENERAL_MATERIAL_DB = {
+        'C45_TH': {name: 'Thép 45 (Thường hóa)', type: 'mem', hard_type: 'HB', hard_min: 170, hard_max: 217, options: [{label: 'S ≤ 100mm', sch: 340, sb: 600}]},
+        'C45_TC': {name: 'Thép 45 (Tôi cải thiện)', type: 'mem', hard_type: 'HB', hard_min: 192, hard_max: 285, options: [{label: 'S > 60mm', sch: 450, sb: 750}, {label: 'S ≤ 60mm', sch: 580, sb: 850}]},
+        '40X_TC': {name: 'Thép 40X (Tôi cải thiện)', type: 'mem', hard_type: 'HB', hard_min: 230, hard_max: 280, options: [{label: 'S ≤ 100mm', sch: 550, sb: 850}, {label: 'S ≤ 60mm', sch: 700, sb: 950}]},
+        '40XH_TBM': {name: 'Thép 40XH (Tôi bề mặt)', type: 'cung', hard_type: 'HRC', hard_min: 45, hard_max: 55, options: [{label: 'Lõi tôi cải thiện', sch: 1400, sb: 1600}]},
+        '20X_ThC': {name: 'Thép 20X (Thấm C, Tôi)', type: 'cung', hard_type: 'HRC', hard_min: 56, hard_max: 63, options: [{label: 'S ≤ 60mm', sch: 400, sb: 650}]},
+        '18CrMnTi_ThC': {name: 'Thép 18CrMnTi (Thấm C, Tôi)', type: 'cung', hard_type: 'HRC', hard_min: 58, hard_max: 63, options: [{label: 'Tiết diện vừa', sch: 850, sb: 1100}]}
+    };
+
+    const SHLIM_FORMULAS = [
+        {id: 'fH1', name: '2.HB + 70 (Thường hóa, Tôi CT)', type: 'mem'},
+        {id: 'fH2', name: '18.HRC + 150 (Tôi thể tích)', type: 'cung'},
+        {id: 'fH3', name: '17.HRC + 200 (Tôi bề mặt)', type: 'cung'},
+        {id: 'fH4', name: '23.HRC (Thấm Cacbon)', type: 'cung'}
+    ];
+
+    const SFLIM_FORMULAS = [
+        {id: 'fF1', name: '1.8.HB (Thường hóa, Tôi CT)', type: 'mem'},
+        {id: 'fF2', name: '550 MPa (Tôi thể tích)', type: 'cung'},
+        {id: 'fF3', name: '900 MPa (Tôi bề mặt)', type: 'cung'},
+        {id: 'fF4', name: '750 MPa (Thấm cacbon thép không Mo)', type: 'cung'}
+    ];
+
+    function initUI() {
+        const b1Select = document.getElementById('b1_mat');
+        const b2Select = document.getElementById('b2_mat');
+        for (let key in GENERAL_MATERIAL_DB) {
+            b1Select.add(new Option(GENERAL_MATERIAL_DB[key].name, key));
+            b2Select.add(new Option(GENERAL_MATERIAL_DB[key].name, key));
+        }
+        b1Select.value = '40XH_TBM';
+        b2Select.value = '40X_TC';
+        updateGenMaterial('b1');
+        updateGenMaterial('b2');
+    }
+
+    function toggleKMode() {
+        const mode = document.getElementById('k_mode').value;
+        document.querySelectorAll('.manual-k').forEach(el => el.style.display = mode === 'manual' ? 'block' : 'none');
+    }
+
+    function updateGenMaterial(prefix) {
+        const matKey = document.getElementById(prefix + '_mat').value;
+        const matData = GENERAL_MATERIAL_DB[matKey];
+        
+        document.getElementById(prefix + '_hard_label').innerHTML = `Độ cứng ${matData.hard_type} (${matData.hard_min} - ${matData.hard_max}):`;
+        const hardInput = document.getElementById(prefix + '_hard_val');
+        hardInput.min = matData.hard_min; hardInput.max = matData.hard_max;
+        
+        const optSelect = document.getElementById(prefix + '_opt');
+        optSelect.innerHTML = '';
+        matData.options.forEach((opt, idx) => {
+            optSelect.add(new Option(`${opt.label} (σb=${opt.sb}, σch=${opt.sch})`, idx));
+        });
+
+        const hForm = document.getElementById(prefix + '_sH_form');
+        const fForm = document.getElementById(prefix + '_sF_form');
+        hForm.innerHTML = ''; fForm.innerHTML = '';
+        
+        SHLIM_FORMULAS.forEach(f => { if (f.type === matData.type) hForm.add(new Option(f.name, f.id)); });
+        SFLIM_FORMULAS.forEach(f => { if (f.type === matData.type) fForm.add(new Option(f.name, f.id)); });
+        
+        if(prefix==='b1' && matData.hard_type==='HRC' && hardInput.value < 40) hardInput.value = 52;
+        if(prefix==='b2' && matData.hard_type==='HB' && hardInput.value < 100) hardInput.value = 230;
+    }
+
+    function get_standard_module(m_calc) {
+        const stds = [1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 16.0];
+        for (let m of stds) if (m >= m_calc) return m;
+        return stds[stds.length - 1];
+    }
+
+    function calculate_shlim(id, h) { return id==='fH1' ? 2*h+70 : id==='fH2' ? 18*h+150 : id==='fH3' ? 17*h+200 : 23*h; }
+    function calculate_sflim(id, h) { return id==='fF1' ? 1.8*h : id==='fF2' ? 550 : id==='fF3' ? 900 : 750; }
+
+    function drawSpiralBevelCanvas(canvasId, de1, de2, Re, mte, b) {
+        const canvas = document.getElementById(canvasId);
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width; const H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const delta1 = Math.atan2(de1, de2);
+        const L1 = Re * Math.cos(delta1);
+        const L2 = Re * Math.sin(delta1);
+        const ha = mte || Re/10;
+        const k = 1 - b/Re;
+
+        const n_up = {x: -Math.sin(delta1), y: Math.cos(delta1)};
+        const n_dn = {x: -Math.sin(delta1), y: -Math.cos(delta1)};
+        const A1 = {x: L1 + ha*n_up.x, y: L2 + ha*n_up.y};
+        const A2 = {x: L1 + ha*n_dn.x, y: -L2 + ha*n_dn.y};
+        const A1in = {x: k*A1.x, y: k*A1.y};
+        const A2in = {x: k*A2.x, y: k*A2.y};
+        const back_x1 = A1.x + 1.5*ha;
+
+        const m_rt = {x: Math.cos(delta1), y: -Math.sin(delta1)};
+        const m_lt = {x: -Math.cos(delta1), y: -Math.sin(delta1)};
+        const B1 = {x: L1 + ha*m_rt.x, y: L2 + ha*m_rt.y};
+        const B2 = {x: -L1 + ha*m_lt.x, y: L2 + ha*m_lt.y};
+        const B1in = {x: k*B1.x, y: k*B1.y};
+        const B2in = {x: k*B2.x, y: k*B2.y};
+        const back_y2 = B1.y + 1.5*ha;
+
+        const pts = [
+            {x: -back_x1*0.2, y: 0}, {x: back_x1*1.2, y: 0},
+            {x: 0, y: -back_y2*0.2}, {x: 0, y: back_y2*1.2},
+            A1, A2, A1in, A2in, B1, B2, B1in, B2in
+        ];
+        
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        for(let p of pts) {
+            if(p.x < minX) minX = p.x;
+            if(p.x > maxX) maxX = p.x;
+            if(p.y < minY) minY = p.y;
+            if(p.y > maxY) maxY = p.y;
+        }
+
+        const padding = 40;
+        const boxW = maxX - minX;
+        const boxH = maxY - minY;
+        const scale = Math.min((W - padding*2)/boxW, (H - padding*2)/boxH);
+
+        const cx = W/2 - ((maxX + minX)/2)*scale;
+        const cy = H/2 - ((maxY + minY)/2)*scale;
+
+        function sx(x) { return cx + x * scale; }
+        function sy(y) { return cy - y * scale; }
+
+        function drawPoly(points, fillStyle, strokeStyle) {
+            ctx.beginPath();
+            ctx.moveTo(sx(points[0].x), sy(points[0].y));
+            for(let i=1; i<points.length; i++) {
+                ctx.lineTo(sx(points[i].x), sy(points[i].y));
+            }
+            ctx.closePath();
+            ctx.fillStyle = fillStyle; ctx.fill();
+            ctx.lineWidth = 2; ctx.strokeStyle = strokeStyle; ctx.stroke();
+        }
+
+        drawPoly([A1in, A1, {x: back_x1, y: A1.y}, {x: back_x1, y: A2.y}, A2, A2in], 'rgba(59, 130, 246, 0.3)', '#1e3a8a');
+        drawPoly([B1in, B1, {x: B1.x, y: back_y2}, {x: B2.x, y: back_y2}, B2, B2in], 'rgba(239, 68, 68, 0.3)', '#991b1b');
+
+        // Vẽ Cung tròn tạo độ xoắn Beta_m
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = 'rgba(30, 58, 138, 0.6)';
+        for(let i=1; i<=5; i++) {
+            let f = i/6.0;
+            let pt_top = {x: A1in.x + f*(A1.x-A1in.x), y: A1in.y + f*(A1.y-A1in.y)};
+            let pt_bot = {x: A2in.x + f*(A2.x-A2in.x), y: A2in.y + f*(A2.y-A2in.y)};
+            
+            ctx.beginPath();
+            for(let j=0; j<=10; j++) {
+                let t = j/10.0;
+                let bulge = 0.12 * Re * Math.sin(t * Math.PI);
+                let bx = pt_top.x + t*(pt_bot.x - pt_top.x) + bulge; 
+                let by = pt_top.y + t*(pt_bot.y - pt_top.y);
+                if(j==0) ctx.moveTo(sx(bx), sy(by));
+                else ctx.lineTo(sx(bx), sy(by));
+            }
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = 'rgba(153, 27, 27, 0.6)';
+        for(let i=1; i<=5; i++) {
+            let f = i/6.0;
+            let pt_left = {x: B2in.x + f*(B2.x-B2in.x), y: B2in.y + f*(B2.y-B2in.y)};
+            let pt_right = {x: B1in.x + f*(B1.x-B1in.x), y: B1in.y + f*(B1.y-B1in.y)};
+            
+            ctx.beginPath();
+            for(let j=0; j<=10; j++) {
+                let t = j/10.0;
+                let bulge = 0.12 * Re * Math.sin(t * Math.PI);
+                let bx = pt_left.x + t*(pt_right.x - pt_left.x);
+                let by = pt_left.y + t*(pt_right.y - pt_left.y) + bulge; 
+                if(j==0) ctx.moveTo(sx(bx), sy(by));
+                else ctx.lineTo(sx(bx), sy(by));
+            }
+            ctx.stroke();
+        }
+
+        ctx.setLineDash([5, 5]); ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(L1), sy(L2)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(L1), sy(-L2)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(-L1), sy(L2)); ctx.stroke();
+
+        ctx.setLineDash([10, 5, 2, 5]); ctx.strokeStyle = 'black'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(sx(-back_x1*0.2), sy(0)); ctx.lineTo(sx(back_x1*1.2), sy(0)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sx(0), sy(-back_y2*0.2)); ctx.lineTo(sx(0), sy(back_y2*1.2)); ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(sx(0), sy(0), 4, 0, Math.PI*2); ctx.fillStyle = 'black'; ctx.fill();
+
+        ctx.fillStyle = '#1e293b'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'center';
+        ctx.fillText(`Re = ${Re.toFixed(2)} mm`, sx(back_x1/2), sy(-back_y2*0.15));
+    }
+
+    function calculateSpiralBevelGear() {
+        try {
+            const P1 = parseFloat(document.getElementById('P1').value);
+            const n1 = parseFloat(document.getElementById('n1').value);
+            const u = parseFloat(document.getElementById('ud').value);
+            const Lh = parseFloat(document.getElementById('Lh').value);
+            const Kqt = parseFloat(document.getElementById('Kqt').value);
+            const KFC = parseFloat(document.getElementById('kfc').value);
+            const Kbe = parseFloat(document.getElementById('Kbe').value);
+            const ZR = parseFloat(document.getElementById('ZR').value);
+            const k_mode = document.getElementById('k_mode').value;
+            const KHb_user = parseFloat(document.getElementById('KHb_user').value);
+            const KFb_user = parseFloat(document.getElementById('KFb_user').value);
+            const beta_sb_deg = parseFloat(document.getElementById('beta_sb').value);
+
+            const mat1 = GENERAL_MATERIAL_DB[document.getElementById('b1_mat').value];
+            const mat1_props = mat1.options[parseInt(document.getElementById('b1_opt').value)];
+            const b1_hard_val = parseFloat(document.getElementById('b1_hard_val').value);
+            const HB1 = mat1.hard_type === 'HB' ? b1_hard_val : b1_hard_val * 10;
+            const sHlim1_0 = calculate_shlim(document.getElementById('b1_sH_form').value, b1_hard_val);
+            const sFlim1_0 = calculate_sflim(document.getElementById('b1_sF_form').value, b1_hard_val);
+
+            const mat2 = GENERAL_MATERIAL_DB[document.getElementById('b2_mat').value];
+            const mat2_props = mat2.options[parseInt(document.getElementById('b2_opt').value)];
+            const b2_hard_val = parseFloat(document.getElementById('b2_hard_val').value);
+            const HB2 = mat2.hard_type === 'HB' ? b2_hard_val : b2_hard_val * 10;
+            const sHlim2_0 = calculate_shlim(document.getElementById('b2_sH_form').value, b2_hard_val);
+            const sFlim2_0 = calculate_sflim(document.getElementById('b2_sF_form').value, b2_hard_val);
+
+            let mat_check = "ĐẠT", mat_color = "success";
+            if (mat1.type === 'cung' && mat2.type === 'cung') mat_check = "ĐẠT (Hai bánh tôi cứng)";
+            else if (HB1 < HB2 + 10) { mat_check = "CẢNH BÁO (Nên HB1 > HB2 + 10-15)"; mat_color = "highlight"; }
+
+            const sH_max_cp = Math.min(2.8 * mat1_props.sch, 2.8 * mat2_props.sch);
+            const sF1_max_cp = 0.8 * mat1_props.sch; const sF2_max_cp = 0.8 * mat2_props.sch;
+
+            const NHO1 = 30 * Math.pow(HB1, 2.4), NHO2 = 30 * Math.pow(HB2, 2.4);
+            const n2 = n1 / u;
+            const NHE2 = 60 * 1 * n2 * Lh, NHE1 = u * NHE2;
+            const KHL1 = NHE1 >= NHO1 ? 1.0 : Math.pow(NHO1/NHE1, 1/6);
+            const KHL2 = NHE2 >= NHO2 ? 1.0 : Math.pow(NHO2/NHE2, 1/6);
+            const SH1 = mat1.type === 'mem' ? 1.1 : 1.2; const SH2 = mat2.type === 'mem' ? 1.1 : 1.2;
+            
+            const sH_cp1_base = (sHlim1_0 / SH1) * KHL1;
+            const sH_cp2_base = (sHlim2_0 / SH2) * KHL2;
+            const sF_cp1 = (sFlim1_0 / 1.75) * KFC;
+            const sF_cp2 = (sFlim2_0 / 1.75) * KFC;
+
+            const T1 = 9.55 * Math.pow(10, 6) * P1 / n1;
+            
+            // CÔN CUNG TRÒN: Ứng suất theo trung bình cộng
+            const sH_cp_tb = 0.5 * (sH_cp1_base + sH_cp2_base);
+            const sH_cp_min = Math.min(sH_cp1_base, sH_cp2_base);
+            const sH_cp_base = Math.min(sH_cp_tb, 1.25 * sH_cp_min);
+            const sH_cp_sobo = sH_cp_base * 1.0;
+            const sH_cp_cx = sH_cp_base * ZR;
+
+            const KHb_use = k_mode === 'manual' ? KHb_user : 1.13;
+            const KFb_use = k_mode === 'manual' ? KFb_user : 1.28;
+            
+            const beta_m_deg = beta_sb_deg;
+            const beta_m_rad = beta_m_deg * Math.PI / 180;
+            const KR = 41.75;
+            
+            const Re_calc = KR * Math.sqrt(u**2 + 1) * Math.pow((T1 * KHb_use) / ((1 - Kbe) * Kbe * u * sH_cp_sobo**2), 1/3);
+            const Re_sobo = Math.round(Re_calc * 100) / 100;
+            
+            const de1_calc = 2 * Re_sobo / Math.sqrt(u**2 + 1);
+            const z1p = Math.max(10, Math.round(de1_calc / 4.8));
+            const z1_raw = HB1 < 350 ? 1.6 * z1p : 1.3 * z1p;
+            const z1_temp = Math.round(z1_raw);
+            
+            const dm1_calc = (1 - 0.5 * Kbe) * de1_calc;
+            const mtm_calc = dm1_calc / z1_temp;
+            
+            // MÔ ĐUN PHÁP TUYẾN
+            const mnm = get_standard_module(mtm_calc * Math.cos(beta_m_rad));
+            const mtm = mnm / Math.cos(beta_m_rad);
+            
+            let z1 = Math.round(dm1_calc / mtm);
+            let z2 = Math.round(u * z1);
+            let um = z2 / z1;
+            const delta_u = Math.abs(um - u) / u * 100;
+            
+            const delta1_rad = Math.atan(1 / um);
+            const delta2_rad = Math.PI/2 - delta1_rad;
+            const delta1_deg = delta1_rad * 180 / Math.PI;
+            const delta2_deg = delta2_rad * 180 / Math.PI;
+            
+            const x1 = z1 > 0 ? (2 * (1 - 1/(um**2)) * Math.pow(Math.cos(beta_m_rad), 3)) / z1 : 0;
+            const x2 = -x1; const xe1 = x1; const xe2 = x2;
+            
+            const dm1 = z1 * mtm;
+            const mte = mtm / (1 - 0.5 * Kbe);
+            const Re_thuc = 0.5 * mte * Math.sqrt(z1**2 + z2**2);
+            let b = Math.round(Kbe * Re_thuc);
+            
+            const zv1 = z1 / (Math.cos(delta1_rad) * Math.pow(Math.cos(beta_m_rad), 3));
+            const zv2 = z2 / (Math.cos(delta2_rad) * Math.pow(Math.cos(beta_m_rad), 3));
+            const eps_alpha = (1.88 - 3.2*(1/z1 + 1/z2)) * Math.cos(beta_m_rad);
+            const Zeps = Math.sqrt(1 / eps_alpha);
+            const ZM = 274; const ZH = 1.5;
+            
+            let v = Math.PI * dm1 * n1 / 60000;
+            const KHa = 1.13;
+            const vH = 0.002 * 73 * v * Math.sqrt(dm1 * (um + 1) / um);
+            const KHv = 1 + vH * b * dm1 / (2 * T1 * KHb_use * KHa);
+            const KH = KHb_use * KHa * KHv;
+            
+            let sH_thuc = ZM * ZH * Zeps * Math.sqrt((2 * T1 * KH * Math.sqrt(um**2 + 1)) / (0.85 * b * (dm1**2) * um));
+            let check_sH = sH_thuc <= sH_cp_cx ? "ĐẠT" : "KHÔNG ĐẠT";
+            let color_sH = sH_thuc <= sH_cp_cx ? "success" : "highlight";
+
+            let aw_suggestion_html = "";
+            let b_msg_html = "";
+            let need_recalc = false;
+            
+            if (sH_thuc > sH_cp_cx) {
+                let error_pct = ((sH_thuc - sH_cp_cx) / sH_cp_cx) * 100;
+                if (error_pct <= 5.0) {
+                    let b_old = b;
+                    let b_new = Math.ceil(b * Math.pow(sH_thuc / sH_cp_cx, 2));
+                    if (b_new % 2 !== 0) b_new += 1;
+                    if (b_new / Re_thuc <= 0.3) {
+                        sH_thuc = sH_thuc * Math.sqrt(b / b_new);
+                        b = b_new; check_sH = "ĐẠT (Sau khi tăng b)"; color_sH = "success";
+                        b_msg_html = `<tr><td colspan='3' style='background-color:#fef3c7; color:#b45309; padding:15px;'>Đã tự động tăng chiều rộng vành răng từ ${b_old} mm lên ${b} mm.</td></tr>`;
+                    } else { need_recalc = true; }
+                } else { need_recalc = true; }
+            }
+
+            let mnm_new = mnm, mtm_new = mtm, z1_new = z1, z2_new = z2, um_new = um, dm1_new = dm1;
+            let mte_new = mte, Re_thuc_new = Re_thuc, b_new = b, sH_thuc_new = sH_thuc;
+            let v_new = v; // SỬA LỖI Ở ĐÂY: KHAI BÁO v_new NGOÀI VÒNG LẶP
+
+            if (need_recalc) {
+                let Re_test = Re_thuc * Math.pow(sH_thuc / sH_cp_cx, 2/3);
+                for (let loop_idx = 0; loop_idx < 15; loop_idx++) {
+                    let de1_calc_new = 2 * Re_test / Math.sqrt(u**2 + 1);
+                    let z1p_new = Math.max(10, Math.round(de1_calc_new / 4.8));
+                    let z1_temp_new = Math.round(HB1 < 350 ? 1.6 * z1p_new : 1.3 * z1p_new);
+                    let dm1_calc_new = (1 - 0.5 * Kbe) * de1_calc_new;
+                    
+                    mnm_new = get_standard_module(dm1_calc_new / z1_temp_new * Math.cos(beta_m_rad));
+                    if (loop_idx > 0 && mnm_new <= mnm) {
+                        const std_m = [1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 16.0];
+                        let idx = std_m.indexOf(mnm);
+                        if (idx !== -1 && idx < std_m.length - 1) mnm_new = std_m[idx+1];
+                    }
+                    
+                    mtm_new = mnm_new / Math.cos(beta_m_rad);
+                    z1_new = Math.round(dm1_calc_new / mtm_new);
+                    z2_new = Math.round(u * z1_new);
+                    um_new = z2_new / z1_new;
+                    dm1_new = z1_new * mtm_new;
+                    mte_new = mtm_new / (1 - 0.5 * Kbe);
+                    Re_thuc_new = 0.5 * mte_new * Math.sqrt(z1_new**2 + z2_new**2);
+                    b_new = Math.round(Kbe * Re_thuc_new);
+                    if (b_new % 2 !== 0) b_new += 1;
+                    
+                    v_new = Math.PI * dm1_new * n1 / 60000; // TÍNH LẠI v_new (KHÔNG DÙNG LET NỮA)
+                    let KHv_new = 1 + (0.002 * 73 * v_new * Math.sqrt(dm1_new * (um_new + 1) / um_new)) * b_new * dm1_new / (2 * T1 * KHb_use * 1.13);
+                    let eps_alpha_new = (1.88 - 3.2*(1/z1_new + 1/z2_new)) * Math.cos(beta_m_rad);
+                    
+                    sH_thuc_new = ZM * ZH * Math.sqrt(1 / eps_alpha_new) * Math.sqrt((2 * T1 * KHb_use * 1.13 * KHv_new * Math.sqrt(um_new**2 + 1)) / (0.85 * b_new * (dm1_new**2) * um_new));
+                    if (sH_thuc_new <= sH_cp_cx) break;
+                    else Re_test += 5.0;
+                }
+                
+                let Re_need_disp = Re_thuc * Math.pow(sH_thuc / sH_cp_cx, 2/3);
+                aw_suggestion_html = `
+                <tr><td colspan="3" style="background-color:#fef3c7; color:#b45309; padding:15px;">
+                    <b>⚠️ BÁO CÁO CỦA VÒNG LẶP KIỂM NGHIỆM LẠI :</b><br>
+                    Do ứng suất sinh ra (${sH_thuc.toFixed(1)} MPa) lớn hơn giới hạn chính xác ([σH] = ${sH_cp_cx.toFixed(1)} MPa).<br>
+                    Công thức lặp nội suy: Re(cần) ≈ ${Re_thuc.toFixed(1)} × (${sH_thuc.toFixed(1)}/${sH_cp_cx.toFixed(1)})<sup>2/3</sup> ≈ ${Re_need_disp.toFixed(2)} mm.<br>
+                    <b style="color:#047857;">Hệ thống đã bỏ qua kiểm nghiệm Uốn ở bảng này, tự động chạy vòng lặp tìm Re chuẩn và chốt ở BẢNG 2!</b>
+                </td></tr>
+                `;
+            }
+
+            let html_uon_quatai_b1 = "";
+            if (!need_recalc) {
+                let YF1 = 3.47 + 13.2 / zv1; let YF2 = 3.47 + 13.2 / zv2;
+                let vF = 0.006 * 73 * v * Math.sqrt(dm1 * (um + 1) / um);
+                let KFv = 1 + vF * b * dm1 / (2 * T1 * KFb_use * 1.37);
+                let KF = KFb_use * 1.37 * KFv;
+                
+                let Ybeta = 1 - beta_m_deg / 140;
+                let Yeps = 1 / eps_alpha;
+                
+                let sF1_thuc = (2 * T1 * KF * Yeps * Ybeta * YF1) / (0.85 * b * mnm * dm1);
+                let sF2_thuc = sF1_thuc * YF2 / YF1;
+                
+                let sH_max = sH_thuc * Math.sqrt(Kqt);
+                let sF1_max = sF1_thuc * Kqt; let sF2_max = sF2_thuc * Kqt;
+
+                let hae1 = mte + xe1 * mnm; let hae2 = mte + xe2 * mnm;
+                let hfe1 = 1.2 * mte - xe1 * mnm; let hfe2 = 1.2 * mte - xe2 * mnm;
+                let he = hae1 + hfe1;
+                
+                let de1 = mte * z1; let de2 = mte * z2;
+                let da1 = de1 + 2 * hae1 * Math.cos(delta1_rad);
+                let da2 = de2 + 2 * hae2 * Math.cos(delta2_rad);
+                let df1 = de1 - 2 * hfe1 * Math.cos(delta1_rad);
+                let df2 = de2 - 2 * hfe2 * Math.cos(delta2_rad);
+
+                let Ft1 = 2 * T1 / dm1;
+                let Fr1_ref = Ft1 * Math.tan(20 * Math.PI / 180) * Math.cos(delta1_rad) / Math.cos(beta_m_rad);
+                let Fa1_ref = Ft1 * Math.tan(20 * Math.PI / 180) * Math.sin(delta1_rad) / Math.cos(beta_m_rad);
+
+                html_uon_quatai_b1 = `
+                <tr><td colspan="3" class="step-title">BƯỚC 6: KIỂM NGHIỆM ĐỘ BỀN UỐN MỎI</td></tr>
+                <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><b style="color:#047857;">${sF1_thuc.toFixed(1)} MPa</b></td><td class="${sF1_thuc<=sF_cp1?'success':'highlight'}">${sF1_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
+                <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><b style="color:#047857;">${sF2_thuc.toFixed(1)} MPa</b></td><td class="${sF2_thuc<=sF_cp2?'success':'highlight'}">${sF2_thuc<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
+
+                <tr><td colspan="3" class="step-title">BƯỚC 7 & 8: TỔNG KẾT KÍCH THƯỚC CHẾ TẠO VÀ LỰC</td></tr>
+                <tr><th>Đường kính trung bình (dm1)</th><td>${dm1.toFixed(2)} mm</td><td>Tính lực tại trung bình</td></tr>
+                <tr><th>Đường kính vòng ngoài (de1/de2)</th><td>${de1.toFixed(2)} / ${de2.toFixed(2)} mm</td><td>de = mte.z</td></tr>
+                <tr><th>Đường kính vòng đỉnh (da1/da2)</th><td>${da1.toFixed(2)} / ${da2.toFixed(2)} mm</td><td>da = de + 2.hae.cos(δ)</td></tr>
+                <tr><th>Đường kính vòng chân (df1/df2)</th><td>${df1.toFixed(2)} / ${df2.toFixed(2)} mm</td><td>df = de - 2.hfe.cos(δ)</td></tr>
+                
+                <tr><td colspan="3" class="step-title" style="background-color:#f59e0b !important;">THÔNG SỐ CHIỀU CAO RĂNG NGOÀI NÓN (CHẾ TẠO)</td></tr>
+                <tr><th>Hệ số dịch chỉnh (x1 / x2)</th><td><b style="color:#047857;">${x1.toFixed(3)} / ${x2.toFixed(3)}</b></td><td>x1 = (2(1-1/u²).cos³β)/z1</td></tr>
+                <tr><th>Chiều cao răng ngoài tổng (he)</th><td><b>${he.toFixed(2)} mm</b></td><td>he = hae + hfe</td></tr>
+                <tr><th>C.cao đầu răng ngoài (hae1 / hae2)</th><td>${hae1.toFixed(2)} / ${hae2.toFixed(2)} mm</td><td>hae = mte + x.mnm</td></tr>
+                <tr><th>C.cao chân răng ngoài (hfe1 / hfe2)</th><td>${hfe1.toFixed(2)} / ${hfe2.toFixed(2)} mm</td><td>hfe = 1.2mte - x.mnm</td></tr>
+
+                <tr><td colspan="3" class="step-title">TÍNH TOÁN LỰC TỔNG QUÁT (DÙNG CHO TRỤC)</td></tr>
+                <tr><th>Lực vòng trung bình (Ft1 = Ft2)</th><td><b style="color:#d97706;">${Ft1.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>Đẩy vuông góc</td></tr>
+                <tr><th>Lực Hướng Tâm B1 / Dọc trục B2</th><td><b style="color:#d97706;">~ ${Fr1_ref.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>(Độ lớn ước tính)</td></tr>
+                <tr><th>Lực Dọc Trục B1 / Hướng Tâm B2</th><td><b style="color:#d97706;">~ ${Fa1_ref.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>(Độ lớn ước tính)</td></tr>
+                `;
+            }
+
+            let resultHtml = `
+            <div class="gen-theme">
+            <h2 style="text-align:center; color:#1e3a8a;">BẢNG 1: TÍNH NHÁP SƠ BỘ (R<sub>e</sub> = ${Re_thuc.toFixed(2)} mm)</h2>
+            <div class="canvas-container"><canvas id="canvas_b1" width="700" height="350"></canvas></div>
+            <table>
+                <tr><td colspan="3" class="step-title">BƯỚC 1 & 2: VẬT LIỆU VÀ ỨNG SUẤT</td></tr>
+                <tr><th>Mác thép & Độ cứng</th><td>B1: ${mat1.name} (${mat1.hard_type} ${b1_hard_val.toFixed(1)})<br>B2: ${mat2.name} (${mat2.hard_type} ${b2_hard_val.toFixed(1)})</td><td><span class="${mat_color}">${mat_check}</span></td></tr>
+                <tr><th>Tiếp xúc Cơ sở ([σH1] / [σH2])</th><td>${sH_cp1_base.toFixed(1)} / ${sH_cp2_base.toFixed(1)} MPa</td><td>Chưa tính độ nhám ZR</td></tr>
+                <tr><th>Tiếp xúc CHUNG ([σH])</th><td><b style="color:#b91c1c;">${sH_cp_cx.toFixed(1)}</b> MPa</td><td>Tr.bình cộng (Khác nón thẳng)</td></tr>
+                <tr><th>Uốn cho phép ([σF1] / [σF2])</th><td>${sF_cp1.toFixed(1)} / ${sF_cp2.toFixed(1)} MPa</td><td>Từ Bảng 6.2</td></tr>
+                
+                <tr><td colspan="3" class="step-title">BƯỚC 3 & 4: CHIỀU DÀI NÓN VÀ KÍCH THƯỚC HÌNH HỌC</td></tr>
+                <tr><th>Chiều dài nón ngoài (Re)</th><td><b style="color:#1d4ed8; font-size:1.1em;">${Re_thuc.toFixed(2)} mm</b></td><td>Tính lại từ tiêu chuẩn (KR=${KR})</td></tr>
+                <tr><th>Mô đun P.Tuyến T.Bình (mnm)</th><td><b style="color:#047857;">${mnm} mm</b></td><td>Quy chuẩn theo tiêu chuẩn cắt Răng</td></tr>
+                <tr><th>Mô đun vòng ngoài (mte)</th><td><b>${mte.toFixed(3)} mm</b></td><td>Tính từ mtm</td></tr>
+                <tr><th>Số răng (z1 / z2)</th><td><b>${z1} / ${z2} răng</b></td><td>-</td></tr>
+                <tr><th>Tỉ số truyền thực tế (um)</th><td><b style="color:#d97706;">${um.toFixed(3)}</b></td><td>Từ z2/z1 (Sai số Δu = ${delta_u.toFixed(2)}%)</td></tr>
+                <tr><th>Góc xoắn trung bình (βm)</th><td><b style="color:#d97706;">${beta_m_deg.toFixed(1)}°</b></td><td>Nhập từ người dùng</td></tr>
+                <tr><th>Số răng tương đương (zv1 / zv2)</th><td>${zv1.toFixed(1)} / ${zv2.toFixed(1)}</td><td>Dùng để tra bảng YF (Chia cos³βm)</td></tr>
+                <tr><th>Góc nón chia (δ1 / δ2)</th><td><b style="color:#d97706;">${delta1_deg.toFixed(2)}° / ${delta2_deg.toFixed(2)}°</b></td><td>δ1 + δ2 = 90°</td></tr>
+                <tr><th>Chiều rộng vành răng (b)</th><td><b>${b} mm</b></td><td>b = Kbe × Re</td></tr>
+                
+                <tr><td colspan="3" class="step-title">BƯỚC 5: KIỂM NGHIỆM BỀN MỎI TIẾP XÚC</td></tr>
+                <tr><th>Ứng suất tiếp xúc thực tế (σH)</th><td><b style="color:#047857;">${sH_thuc.toFixed(1)} MPa</b></td><td class="${color_sH}">${check_sH} (So với ${sH_cp_cx.toFixed(1)})</td></tr>
+                ${b_msg_html}
+                ${aw_suggestion_html}
+                ${html_uon_quatai_b1}
+            </table>
+            </div>`;
+
+            if (need_recalc) {
+                let xe1_new = z1_new > 0 ? (2 * (1 - 1/(um_new**2)) * Math.pow(Math.cos(beta_m_rad), 3)) / z1_new : 0;
+                let delta1_rad_new = Math.atan(1 / um_new);
+                let delta2_rad_new = Math.PI/2 - delta1_rad_new;
+
+                let zv1_new = z1_new / (Math.cos(delta1_rad_new) * Math.pow(Math.cos(beta_m_rad), 3));
+                let zv2_new = z2_new / (Math.cos(delta2_rad_new) * Math.pow(Math.cos(beta_m_rad), 3));
+                let YF1_new = 3.47 + 13.2 / zv1_new; let YF2_new = 3.47 + 13.2 / zv2_new;
+                
+                let vF_new = 0.006 * 73 * v_new * Math.sqrt(dm1_new * (um_new + 1) / um_new);
+                let KFv_new = 1 + vF_new * b_new * dm1_new / (2 * T1 * KFb_use * 1.37);
+                let KF_loop = KFb_use * 1.37 * KFv_new;
+                
+                let eps_alpha_new = (1.88 - 3.2*(1/z1_new + 1/z2_new)) * Math.cos(beta_m_rad);
+                let Yeps_new = 1 / eps_alpha_new;
+                let Ybeta_new = 1 - beta_m_deg / 140;
+                let sF1_thuc_new = (2 * T1 * KF_loop * Yeps_new * Ybeta_new * YF1_new) / (0.85 * b_new * mnm_new * dm1_new);
+                let sF2_thuc_new = sF1_thuc_new * YF2_new / YF1_new;
+                
+                let check_sF1_new = sF1_thuc_new <= sF_cp1 ? "ĐẠT" : "KHÔNG ĐẠT";
+                let check_sF2_new = sF2_thuc_new <= sF_cp2 ? "ĐẠT" : "KHÔNG ĐẠT";
+
+                let sH_max_new = sH_thuc_new * Math.sqrt(Kqt); 
+                let sF1_max_new = sF1_thuc_new * Kqt; 
+                let sF2_max_new = sF2_thuc_new * Kqt;
+
+                let check_sH_max_new = sH_max_new <= sH_max_cp ? "ĐẠT" : "KHÔNG ĐẠT";
+                let check_sF1_max_new = sF1_max_new <= sF1_max_cp ? "ĐẠT" : "KHÔNG ĐẠT";
+                let check_sF2_max_new = sF2_max_new <= sF2_max_cp ? "ĐẠT" : "KHÔNG ĐẠT";
+
+                let hae1_new = mte_new + xe1_new * mnm_new; let hae2_new = mte_new - xe1_new * mnm_new;
+                let hfe1_new = 1.2 * mte_new - xe1_new * mnm_new; let hfe2_new = 1.2 * mte_new + xe1_new * mnm_new;
+                let he_new = hae1_new + hfe1_new;
+                
+                let de1_new = mte_new * z1_new; let de2_new = mte_new * z2_new;
+                let da1_new = de1_new + 2 * hae1_new * Math.cos(delta1_rad_new); let da2_new = de2_new + 2 * hae2_new * Math.cos(delta2_rad_new);
+                let df1_new = de1_new - 2 * hfe1_new * Math.cos(delta1_rad_new); let df2_new = de2_new - 2 * hfe2_new * Math.cos(delta2_rad_new);
+
+                let Ft_new = 2 * T1 / dm1_new;
+                let Fr1_ref_new = Ft_new * Math.tan(20 * Math.PI / 180) * Math.cos(delta1_rad_new) / Math.cos(beta_m_rad);
+                let Fa1_ref_new = Ft_new * Math.tan(20 * Math.PI / 180) * Math.sin(delta1_rad_new) / Math.cos(beta_m_rad);
+
+                resultHtml += `
+                <br><hr style="border-top: 2px dashed #10b981; margin: 40px 0;">
+                <h2 style="text-align:center; color:#047857;">BẢNG 2: KẾT QUẢ KIỂM NGHIỆM CHÍNH THỨC (R<sub>e</sub> = ${Re_thuc_new.toFixed(1)} mm)</h2>
+                <div class="canvas-container"><canvas id="canvas_b2" width="700" height="350"></canvas></div>
+                <table>
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">BƯỚC 3 & 4: CHIỀU DÀI NÓN VÀ KÍCH THƯỚC ĐÃ CẬP NHẬT</td></tr>
+                    <tr><th>Chiều dài nón ngoài (Re)</th><td><b style="color:#047857; font-size:1.1em;">${Re_thuc_new.toFixed(2)} mm</b></td><td>Từ vòng lặp tự động sửa lỗi</td></tr>
+                    <tr><th>Mô đun P.Tuyến T.Bình (mnm)</th><td><b>${mnm_new} mm</b></td><td>Tính theo hệ số R<sub>e(cần)</sub></td></tr>
+                    <tr><th>Mô đun vòng ngoài (mte)</th><td><b>${mte_new.toFixed(3)} mm</b></td><td>Đã tính lại từ mtm</td></tr>
+                    <tr><th>Số răng (z1 / z2)</th><td><b>${z1_new} / ${z2_new} răng</b></td><td>Đã phân bổ lại</td></tr>
+                    <tr><th>Tỉ số truyền thực tế (um)</th><td><b style="color:#047857;">${um_new.toFixed(3)}</b></td><td>Sai số: ${(Math.abs(um_new-u)/u*100).toFixed(2)}%</td></tr>
+                    <tr><th>Góc nón chia (δ1 / δ2)</th><td><b style="color:#047857;">${(delta1_rad_new*180/Math.PI).toFixed(2)}° / ${(delta2_rad_new*180/Math.PI).toFixed(2)}°</b></td><td>Đã tính lại</td></tr>
+                    <tr><th>Chiều rộng vành răng (b)</th><td><b style="color:#047857;">${b_new} mm</b></td><td>Đã tính lại b = Kbe × Re_thuc</td></tr>
+                    
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">BƯỚC 5 & 6: KIỂM NGHIỆM BỀN MỎI LẦN 2</td></tr>
+                    <tr><th>Ứng suất tiếp xúc (σH)</th><td><b style="color:#047857;">${sH_thuc_new.toFixed(1)} MPa</b></td><td class="${sH_thuc_new<=sH_cp_cx?'success':'highlight'}">ĐẠT (≤ ${sH_cp_cx.toFixed(1)})</td></tr>
+                    <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><b style="color:#047857;">${sF1_thuc_new.toFixed(1)} MPa</b></td><td class="${sF1_thuc_new<=sF_cp1?'success':'highlight'}">${check_sF1_new} (≤ ${sF_cp1.toFixed(1)})</td></tr>
+                    <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><b style="color:#047857;">${sF2_thuc_new.toFixed(1)} MPa</b></td><td class="${sF2_thuc_new<=sF_cp2?'success':'highlight'}">${check_sF2_new} (≤ ${sF_cp2.toFixed(1)})</td></tr>
+
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">BƯỚC 7: KIỂM NGHIỆM QUÁ TẢI (TĨNH) LẦN 2</td></tr>
+                    <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><b style="color:#047857;">${sH_max_new.toFixed(1)} MPa</b></td><td class="${sH_max_new<=sH_max_cp?'success':'highlight'}">${check_sH_max_new} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
+                    <tr><th>Quá tải Uốn B1 (σF1max)</th><td><b style="color:#047857;">${sF1_max_new.toFixed(1)} MPa</b></td><td class="${sF1_max_new<=sF1_max_cp?'success':'highlight'}">${check_sF1_max_new} (≤ ${sF1_max_cp.toFixed(1)})</td></tr>
+                    <tr><th>Quá tải Uốn B2 (σF2max)</th><td><b style="color:#047857;">${sF2_max_new.toFixed(1)} MPa</b></td><td class="${sF2_max_new<=sF2_max_cp?'success':'highlight'}">${check_sF2_max_new} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
+
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">TỔNG KẾT CHẾ TẠO VÀ LỰC MỚI</td></tr>
+                    <tr><th>Đường kính trung bình (dm1)</th><td>${dm1_new.toFixed(2)} mm</td><td>Tính tại tiết diện trung bình</td></tr>
+                    <tr><th>Đường kính vòng ngoài (de1/de2)</th><td>${de1_new.toFixed(2)} / ${de2_new.toFixed(2)} mm</td><td>Tính tại vòng ngoài</td></tr>
+                    <tr><th>Đường kính vòng đỉnh (da1/da2)</th><td>${da1_new.toFixed(2)} / ${da2_new.toFixed(2)} mm</td><td>da = de + 2.hae.cos(δ)</td></tr>
+                    <tr><th>Đường kính vòng chân (df1/df2)</th><td>${df1_new.toFixed(2)} / ${df2_new.toFixed(2)} mm</td><td>df = de - 2.hfe.cos(δ)</td></tr>
+                    
+                    <tr><td colspan="3" class="step-title" style="background-color:#f59e0b !important;">THÔNG SỐ CHIỀU CAO RĂNG MỚI</td></tr>
+                    <tr><th>Hệ số dịch chỉnh (x1 / x2)</th><td><b style="color:#047857;">${xe1_new.toFixed(3)} / ${-xe1_new.toFixed(3)}</b></td><td>Tính toán lại chính xác</td></tr>
+                    <tr><th>Chiều cao răng ngoài tổng (he)</th><td><b style="color:#047857;">${he_new.toFixed(2)} mm</b></td><td>he = hae + hfe</td></tr>
+                    <tr><th>C.cao đầu răng ngoài (hae)</th><td>${hae1_new.toFixed(2)} / ${hae2_new.toFixed(2)} mm</td><td>hae = mte + x.mnm</td></tr>
+                    <tr><th>C.cao chân răng ngoài (hfe)</th><td>${hfe1_new.toFixed(2)} / ${hfe2_new.toFixed(2)} mm</td><td>hfe = 1.2mte - x.mnm</td></tr>
+                    
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">TÍNH TOÁN LỰC LẠI</td></tr>
+                    <tr><th>Lực vòng trung bình (Ft)</th><td><b style="color:#d97706;">${Ft_new.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>Đẩy vuông góc</td></tr>
+                    <tr><th>Lực Hướng Tâm / Dọc Trục B1</th><td><b style="color:#d97706;">~ ${Fr1_ref_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa1_ref_new.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>Ước lượng mới</td></tr>
+                </table>
+                </div>`;
+            }
+
+            const resDiv = document.getElementById('result_area');
+            resDiv.innerHTML = resultHtml;
+            resDiv.style.display = 'block';
+
+            setTimeout(() => {
+                drawSpiralBevelCanvas('canvas_b1', mte*z1, mte*z2, Re_thuc, mte, b);
+                if (need_recalc) drawSpiralBevelCanvas('canvas_b2', mte_new*z1_new, mte_new*z2_new, Re_thuc_new, mte_new, b_new);
+            }, 50);
+
+        } catch (e) {
+            document.getElementById('result_area').innerHTML = `<div style='background:#fee2e2; border-left:4px solid #ef4444; padding:15px; color:#b91c1c; font-weight:bold;'>Lỗi tính toán: ${e.message}</div>`;
+            document.getElementById('result_area').style.display = 'block';
+        }
+    }
+
+    window.onload = initUI;
+</script>
+</body>
+</html>

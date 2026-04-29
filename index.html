@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTMCenter - Phần Mềm Tính Toán Hộp Giảm Tốc</title>
+<meta name="description" content="CTMCenter - Trung tâm tính toán thiết kế hệ dẫn động cơ khí: bánh răng, đai, xích, trục vít, ổ lăn, trục.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ===========================
+   CSS VARIABLES & RESET
+=========================== */
+:root {
+  --bg-primary:    #0d1117;
+  --bg-secondary:  #161b22;
+  --bg-tertiary:   #21262d;
+  --bg-hover:      #30363d;
+  --border:        #30363d;
+  --border-light:  #21262d;
+
+  --accent-blue:   #58a6ff;
+  --accent-orange: #f0883e;
+  --accent-green:  #3fb950;
+  --accent-purple: #bc8cff;
+  --accent-red:    #ff7b72;
+  --accent-teal:   #39d353;
+
+  --text-primary:  #e6edf3;
+  --text-secondary:#8b949e;
+  --text-muted:    #6e7681;
+
+  --sidebar-w:     260px;
+  --header-h:      52px;
+
+  --transition:    0.2s ease;
+  --radius:        8px;
+  --radius-lg:     12px;
+  --shadow:        0 8px 32px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ===========================
+   LAYOUT SHELL
+=========================== */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+#header {
+  height: var(--header-h);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  z-index: 100;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: var(--sidebar-w);
+  padding-right: 16px;
+  border-right: 1px solid var(--border);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+.logo-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+.logo-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  flex: 1;
+  overflow: hidden;
+}
+.breadcrumb-sep { color: var(--text-muted); }
+.breadcrumb-current {
+  color: var(--accent-blue);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Header actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: var(--transition);
+}
+.btn-icon:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ===========================
+   MAIN BODY (sidebar + content)
+=========================== */
+#main-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===========================
+   SIDEBAR
+=========================== */
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+  transition: width var(--transition);
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 4px; }
+
+/* Sidebar section headers */
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 16px 16px 6px;
+}
+
+/* Nav items */
+.nav-module {
+  margin-bottom: 2px;
+}
+
+.nav-module-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 0 6px;
+  transition: var(--transition);
+  user-select: none;
+  position: relative;
+}
+.nav-module-header:hover { background: var(--bg-hover); }
+.nav-module-header.active-module {
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+}
+
+.nav-module-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.nav-module-info { flex: 1; overflow: hidden; }
+.nav-module-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-module-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+.nav-chevron.open { transform: rotate(90deg); }
+
+/* Sub-items */
+.nav-sub-items {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+.nav-sub-items.open { max-height: 600px; }
+
+.nav-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 42px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  position: relative;
+}
+.nav-sub-item::before {
+  content: '';
+  position: absolute;
+  left: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  transition: var(--transition);
+}
+.nav-sub-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-sub-item:hover::before { background: var(--accent-blue); }
+.nav-sub-item.active {
+  background: rgba(88, 166, 255, 0.12);
+  color: var(--accent-blue);
+  font-weight: 500;
+}
+.nav-sub-item.active::before { background: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue); }
+
+/* Direct nav items (no sub) */
+.nav-direct {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.nav-direct:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-direct.active {
+  background: rgba(88, 166, 255, 0.12);
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+.nav-direct .nav-module-icon { flex-shrink: 0; }
+
+/* Sidebar footer */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.version-badge {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.version-badge strong { color: var(--accent-blue); font-family: 'JetBrains Mono', monospace; }
+
+/* ===========================
+   CONTENT AREA
+=========================== */
+#content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-primary);
+}
+
+/* Welcome / Home screen */
+#welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+}
+
+.welcome-logo {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #58a6ff22, #bc8cff22);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 24px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.welcome-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  max-width: 480px;
+}
+
+/* Module cards grid */
+.module-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 720px;
+  width: 100%;
+}
+
+.module-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  opacity: 0;
+  transition: var(--transition);
+}
+.module-card:hover {
+  border-color: var(--border-hover, var(--accent-blue));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.module-card:hover::before { opacity: 1; }
+
+.module-card.card-htd { --border-hover: var(--accent-blue); }
+.module-card.card-htd::before { background: var(--accent-blue); }
+.module-card.card-ctm2a { --border-hover: var(--accent-orange); }
+.module-card.card-ctm2a::before { background: var(--accent-orange); }
+.module-card.card-ctm2b { --border-hover: var(--accent-green); }
+.module-card.card-ctm2b::before { background: var(--accent-green); }
+.module-card.card-ctm3 { --border-hover: var(--accent-purple); }
+.module-card.card-ctm3::before { background: var(--accent-purple); }
+
+.card-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+.card-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  margin-bottom: 8px;
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+.badge-blue { background: rgba(88,166,255,0.15); color: var(--accent-blue); }
+.badge-orange { background: rgba(240,136,62,0.15); color: var(--accent-orange); }
+.badge-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+.badge-purple { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+}
+.card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.card-subs {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.card-sub-tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* Loading bar */
+#loading-bar {
+  position: absolute;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  transition: width 0.4s ease;
+  z-index: 10;
+  border-radius: 0 2px 2px 0;
+}
+
+/* iframe container */
+#iframe-wrap {
+  display: none;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#module-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+/* Iframe loading overlay */
+#frame-loader {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 5;
+  transition: opacity 0.3s;
+}
+#frame-loader.hidden { opacity: 0; pointer-events: none; }
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===========================
+   STATUS BAR
+=========================== */
+#statusbar {
+  height: 24px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.status-item { display: flex; align-items: center; gap: 4px; }
+.status-item .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.status-sep { color: var(--border); }
+
+/* ===========================
+   MODULE COLOR THEMES
+=========================== */
+.icon-bg-blue { background: rgba(88,166,255,0.15); }
+.icon-bg-orange { background: rgba(240,136,62,0.15); }
+.icon-bg-green { background: rgba(63,185,80,0.15); }
+.icon-bg-purple { background: rgba(188,140,255,0.15); }
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+/* ===========================
+   RESPONSIVE SIDEBAR TOGGLE
+=========================== */
+#sidebar-toggle {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: var(--transition);
+}
+#sidebar-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+@media (max-width: 900px) {
+  #sidebar-toggle { display: flex; }
+  #sidebar {
+    position: absolute;
+    top: var(--header-h);
+    left: 0; bottom: 24px;
+    z-index: 50;
+    transform: translateX(-100%);
+    box-shadow: 8px 0 32px rgba(0,0,0,0.4);
+  }
+  #sidebar.open { transform: translateX(0); }
+  .logo-area { min-width: auto; border-right: none; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ======= HEADER ======= -->
+  <header id="header">
+    <div class="logo-area">
+      <div class="logo-icon">⚙️</div>
+      <div class="logo-text">
+        <span class="logo-name">CTMCenter</span>
+        <span class="logo-sub">v8.3 · Hộp Giảm Tốc</span>
+      </div>
+    </div>
+
+    <button id="sidebar-toggle" onclick="toggleSidebar()" title="Ẩn/hiện menu">☰</button>
+
+    <nav class="breadcrumb" id="breadcrumb">
+      <span>CTMCenter</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current" id="bc-current">Trang chủ</span>
+    </nav>
+
+    <div class="header-actions">
+      <div class="status-dot" title="Sẵn sàng"></div>
+      <button class="btn-icon" onclick="goHome()" title="Trang chủ">🏠</button>
+      <button class="btn-icon" onclick="reloadFrame()" title="Tải lại module">↺</button>
+      <button class="btn-icon" onclick="openFrameTab()" title="Mở trong tab mới">⊞</button>
+    </div>
+  </header>
+
+  <!-- ======= MAIN BODY ======= -->
+  <div id="main-body">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-section-title">PHẦN MỀM</div>
+
+      <!-- MODULE 1: HTD -->
+      <div class="nav-module" id="mod-htd">
+        <div class="nav-module-header" id="hdr-htd"
+             onclick="loadDirect('HTD', 'Tính Toán Hệ Dẫn Động', 'tt_app_v8.html', this)">
+          <div class="nav-module-icon icon-bg-blue">🔧</div>
+          <div class="nav-module-info">
+            <div class="nav-module-name">HTD</div>
+            <div class="nav-module-desc">Hệ dẫn động cơ khí</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 2: CTM2_a -->
+      <div class="nav-module">
+        <div class="nav-module-header" id="hdr-ctm2a" onclick="toggleModule('ctm2a')">
+          <div class="nav-module-icon icon-bg-orange">⚙️</div>
+          <div class="nav-module-info">
+            <div class="nav-module-name">CTM2.a</div>
+            <div class="nav-module-desc">Bộ truyền động</div>
+          </div>
+          <span class="nav-chevron" id="chv-ctm2a">▶</span>
+        </div>
+        <div class="nav-sub-items" id="sub-ctm2a">
+          <div class="nav-sub-item" id="sub-br1"
+               onclick="loadModule('CTM2.a', 'BR Trụ Thẳng', 'br1.html', this)">
+            ⚙️ BR Trụ Thẳng
+          </div>
+          <div class="nav-sub-item" id="sub-br2"
+               onclick="loadModule('CTM2.a', 'BR Trụ Nghiêng', 'br2.html', this)">
+            ⚙️ BR Trụ Nghiêng
+          </div>
+          <div class="nav-sub-item" id="sub-br3"
+               onclick="loadModule('CTM2.a', 'BR Côn Thẳng', 'br3.html', this)">
+            📐 BR Côn Thẳng
+          </div>
+          <div class="nav-sub-item" id="sub-br4"
+               onclick="loadModule('CTM2.a', 'BR Côn Cung Tròn', 'br4.html', this)">
+            📐 BR Côn Cung Tròn
+          </div>
+          <div class="nav-sub-item" id="sub-br5"
+               onclick="loadModule('CTM2.a', 'BR Hành Tinh', 'br5.html', this)">
+            🚀 BR Hành Tinh
+          </div>
+          <div class="nav-sub-item" id="sub-dai"
+               onclick="loadModule('CTM2.a', 'Thiết Kế Bộ Truyền Đai', 'tt_dai7.3.html', this)">
+            〰️ Thiết kế bộ truyền đai
+          </div>
+          <div class="nav-sub-item" id="sub-xich"
+               onclick="loadModule('CTM2.a', 'Thiết Kế Bộ Truyền Xích', 'tt_xich1.html', this)">
+            🔗 Thiết kế bộ truyền xích
+          </div>
+          <div class="nav-sub-item" id="sub-tv"
+               onclick="loadModule('CTM2.a', 'Thiết Kế Trục Vít', 'tt_trucvit2.html', this)">
+            🌀 Thiết kế trục vít
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 3: CTM2_b -->
+      <div class="nav-module">
+        <div class="nav-module-header" id="hdr-ctm2b"
+             onclick="loadDirect('CTM2.b', 'Tính Toán & Chọn Ổ Lăn', 'tt_olan.html', this)">
+          <div class="nav-module-icon icon-bg-green">🔩</div>
+          <div class="nav-module-info">
+            <div class="nav-module-name">CTM2.b</div>
+            <div class="nav-module-desc">Tính toán & chọn ổ lăn</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 4: CTM3 -->
+      <div class="nav-module">
+        <div class="nav-module-header" id="hdr-ctm3" onclick="toggleModule('ctm3')">
+          <div class="nav-module-icon icon-bg-purple">📐</div>
+          <div class="nav-module-info">
+            <div class="nav-module-name">CTM3</div>
+            <div class="nav-module-desc">Trục & Biểu đồ nội lực</div>
+          </div>
+          <span class="nav-chevron" id="chv-ctm3">▶</span>
+        </div>
+        <div class="nav-sub-items" id="sub-ctm3">
+          <div class="nav-sub-item"
+               onclick="loadModule('CTM3', 'Tính Trục + Lực Bánh Răng', 'tínhtruc+luc1.html', this)">
+            📏 Tính trục + Lực bánh răng
+          </div>
+          <div class="nav-sub-item"
+               onclick="loadModule('CTM3', 'Biểu Đồ Trục I (BR Thẳng)', 'bieudolucbanhrangthang.html', this)">
+            📊 Biểu đồ Trục I (BR thẳng)
+          </div>
+          <div class="nav-sub-item"
+               onclick="loadModule('CTM3', 'Biểu Đồ Trục I (BR Nghiêng)', 'bieudolucbanhrangnghiengtruc1.html', this)">
+            📊 Biểu đồ Trục I (BR nghiêng)
+          </div>
+          <div class="nav-sub-item"
+               onclick="loadModule('CTM3', 'Biểu Đồ Trục I (Nâng Cấp)', 'banrangthangtruc1phan2.html', this)">
+            📊 Biểu đồ Trục I (nâng cấp)
+          </div>
+          <div class="nav-sub-item"
+               onclick="loadModule('CTM3', 'Biểu Đồ Trục II (BR Nghiêng)', 'sodoluctrucIIrangnghieng.html', this)">
+            📊 Biểu đồ Trục II (BR nghiêng)
+          </div>
+          <div class="nav-sub-item"
+               onclick="loadModule('CTM3', 'Phản Lực Ổ Đỡ', 'tt_thu.html', this)">
+            🔍 Phản lực ổ đỡ (Sơ đồ)
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="version-badge">
+          <span>🛠</span>
+          <span>Build <strong>2026.04</strong> · Hệ dẫn động</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main id="content">
+      <div id="loading-bar"></div>
+
+      <!-- Welcome screen -->
+      <section id="welcome-screen">
+        <div class="welcome-logo">⚙️</div>
+        <h1 class="welcome-title">CTMCenter</h1>
+        <p class="welcome-subtitle">
+          Trung tâm tính toán thiết kế hệ dẫn động cơ khí.<br>
+          Chọn một module từ menu bên trái để bắt đầu.
+        </p>
+
+        <div class="module-cards">
+          <!-- HTD -->
+          <div class="module-card card-htd" onclick="loadDirect('HTD','Tính Toán Hệ Dẫn Động','tt_app_v8.html', null)">
+            <div class="card-icon">🔧</div>
+            <span class="card-badge badge-blue">HTD</span>
+            <div class="card-title">Hệ Dẫn Động Cơ Khí</div>
+            <div class="card-desc">Chọn động cơ, phân phối tỉ số truyền, thống kê động học.</div>
+            <div class="card-subs">
+              <span class="card-sub-tag">Chọn ĐC</span>
+              <span class="card-sub-tag">Động học</span>
+              <span class="card-sub-tag">Bảng thống kê</span>
+            </div>
+          </div>
+
+          <!-- CTM2_a -->
+          <div class="module-card card-ctm2a" onclick="toggleModule('ctm2a')">
+            <div class="card-icon">⚙️</div>
+            <span class="card-badge badge-orange">CTM2.a</span>
+            <div class="card-title">Thiết Kế Bộ Truyền Động</div>
+            <div class="card-desc">Bánh răng (5 loại), đai, xích, trục vít - bánh vít.</div>
+            <div class="card-subs">
+              <span class="card-sub-tag">BR Trụ thẳng</span>
+              <span class="card-sub-tag">BR Trụ nghiêng</span>
+              <span class="card-sub-tag">BR Côn</span>
+              <span class="card-sub-tag">BR Hành tinh</span>
+              <span class="card-sub-tag">Đai · Xích · TV</span>
+            </div>
+          </div>
+
+          <!-- CTM2_b -->
+          <div class="module-card card-ctm2b" onclick="loadDirect('CTM2.b','Tính Toán & Chọn Ổ Lăn','tt_olan.html', null)">
+            <div class="card-icon">🔩</div>
+            <span class="card-badge badge-green">CTM2.b</span>
+            <div class="card-title">Tính Toán & Chọn Ổ Lăn</div>
+            <div class="card-desc">Nhập tải trọng, tra bảng, kiểm nghiệm tuổi thọ ổ lăn.</div>
+            <div class="card-subs">
+              <span class="card-sub-tag">Tải trọng</span>
+              <span class="card-sub-tag">Kho ổ lăn</span>
+              <span class="card-sub-tag">Kiểm nghiệm</span>
+            </div>
+          </div>
+
+          <!-- CTM3 -->
+          <div class="module-card card-ctm3" onclick="toggleModule('ctm3')">
+            <div class="card-icon">📐</div>
+            <span class="card-badge badge-purple">CTM3</span>
+            <div class="card-title">Tính Trục & Biểu Đồ Nội Lực</div>
+            <div class="card-desc">Tính đường kính trục, vẽ biểu đồ Qy, Mx, Qx, My, T.</div>
+            <div class="card-subs">
+              <span class="card-sub-tag">Trục I</span>
+              <span class="card-sub-tag">Trục II</span>
+              <span class="card-sub-tag">BR thẳng</span>
+              <span class="card-sub-tag">BR nghiêng</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- iframe wrap -->
+      <div id="iframe-wrap">
+        <div id="frame-loader">
+          <div class="spinner"></div>
+          <div class="loader-text" id="loader-text">Đang tải module...</div>
+        </div>
+        <iframe id="module-frame"
+                title="Module CTMCenter"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals">
+        </iframe>
+      </div>
+    </main>
+
+  </div><!-- #main-body -->
+
+  <!-- STATUS BAR -->
+  <footer id="statusbar">
+    <div class="status-item">
+      <div class="dot" style="background:var(--accent-green)"></div>
+      <span id="status-text">Sẵn sàng</span>
+    </div>
+    <span class="status-sep">|</span>
+    <div class="status-item">
+      <span id="status-module">CTMCenter</span>
+    </div>
+    <span class="status-sep">|</span>
+    <div class="status-item">
+      <span>CTM v8.3</span>
+    </div>
+    <span class="status-sep" style="margin-left:auto">|</span>
+    <div class="status-item">
+      <span id="status-time"></span>
+    </div>
+  </footer>
+
+</div><!-- #app -->
+
+<script>
+/* ===========================
+   STATE
+=========================== */
+let currentFile = null;
+let currentModule = null;
+let currentItemEl = null;
+let openModules = new Set();
+
+/* ===========================
+   TIME
+=========================== */
+function updateTime() {
+  const now = new Date();
+  document.getElementById('status-time').textContent =
+    now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+/* ===========================
+   SIDEBAR TOGGLE (mobile)
+=========================== */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ===========================
+   MODULE EXPAND/COLLAPSE
+=========================== */
+function toggleModule(modId) {
+  const subEl = document.getElementById('sub-' + modId);
+  const chvEl = document.getElementById('chv-' + modId);
+  const hdrEl = document.getElementById('hdr-' + modId);
+
+  if (openModules.has(modId)) {
+    openModules.delete(modId);
+    subEl.classList.remove('open');
+    chvEl.classList.remove('open');
+    hdrEl.classList.remove('active-module');
+  } else {
+    openModules.add(modId);
+    subEl.classList.add('open');
+    chvEl.classList.add('open');
+    hdrEl.classList.add('active-module');
+  }
+}
+
+/* ===========================
+   LOAD MODULE (with sub-item)
+=========================== */
+function loadModule(modName, itemName, file, itemEl) {
+  if (currentItemEl) currentItemEl.classList.remove('active');
+  if (itemEl) { currentItemEl = itemEl; itemEl.classList.add('active'); }
+
+  _load(file, modName, itemName);
+}
+
+/* ===========================
+   LOAD DIRECT (no sub-items)
+=========================== */
+function loadDirect(modName, itemName, file, hdrEl) {
+  // Clear previous active states
+  document.querySelectorAll('.nav-direct.active, .nav-module-header.active-module').forEach(el => {
+    if (!openModules.has(el.id?.replace('hdr-',''))) {
+      el.classList.remove('active', 'active-module');
+    }
+  });
+  if (currentItemEl) currentItemEl.classList.remove('active');
+  currentItemEl = null;
+
+  if (hdrEl) hdrEl.classList.add('active-module');
+  _load(file, modName, itemName);
+}
+
+/* ===========================
+   CORE LOAD
+=========================== */
+function _load(file, modName, itemName) {
+  currentFile = file;
+  currentModule = modName;
+
+  // Update UI
+  document.getElementById('bc-current').textContent = itemName;
+  document.getElementById('status-module').textContent = modName + ' · ' + itemName;
+  document.getElementById('status-text').textContent = 'Đang tải...';
+  document.getElementById('loader-text').textContent = 'Đang tải: ' + itemName + '...';
+
+  // Show iframe wrap, hide welcome
+  document.getElementById('welcome-screen').style.display = 'none';
+  const iWrap = document.getElementById('iframe-wrap');
+  iWrap.style.display = 'flex';
+  iWrap.style.flexDirection = 'column';
+
+  // Show loader
+  const loader = document.getElementById('frame-loader');
+  loader.classList.remove('hidden');
+
+  // Loading bar animation
+  const bar = document.getElementById('loading-bar');
+  bar.style.width = '0%';
+  setTimeout(() => bar.style.width = '60%', 50);
+  setTimeout(() => bar.style.width = '85%', 400);
+
+  // Load iframe
+  const frame = document.getElementById('module-frame');
+  frame.src = '';
+  setTimeout(() => {
+    frame.src = file;
+  }, 80);
+
+  frame.onload = function() {
+    bar.style.width = '100%';
+    setTimeout(() => {
+      bar.style.width = '0%';
+      loader.classList.add('hidden');
+      document.getElementById('status-text').textContent = 'Sẵn sàng';
+    }, 300);
+  };
+
+  // Close mobile sidebar
+  if (window.innerWidth <= 900) {
+    document.getElementById('sidebar').classList.remove('open');
+  }
+}
+
+/* ===========================
+   HOME
+=========================== */
+function goHome() {
+  currentFile = null;
+  currentModule = null;
+  if (currentItemEl) { currentItemEl.classList.remove('active'); currentItemEl = null; }
+
+  document.querySelectorAll('.nav-module-header.active-module').forEach(el => {
+    if (!openModules.has(el.id?.replace('hdr-',''))) el.classList.remove('active-module');
+  });
+
+  document.getElementById('welcome-screen').style.display = 'flex';
+  document.getElementById('iframe-wrap').style.display = 'none';
+  document.getElementById('module-frame').src = '';
+  document.getElementById('bc-current').textContent = 'Trang chủ';
+  document.getElementById('status-module').textContent = 'CTMCenter';
+  document.getElementById('status-text').textContent = 'Sẵn sàng';
+}
+
+/* ===========================
+   RELOAD
+=========================== */
+function reloadFrame() {
+  if (!currentFile) return;
+  const frame = document.getElementById('module-frame');
+  const loader = document.getElementById('frame-loader');
+  loader.classList.remove('hidden');
+  document.getElementById('loader-text').textContent = 'Đang tải lại...';
+  frame.src = currentFile;
+  frame.onload = () => {
+    setTimeout(() => loader.classList.add('hidden'), 300);
+  };
+}
+
+/* ===========================
+   OPEN IN NEW TAB
+=========================== */
+function openFrameTab() {
+  if (!currentFile) return;
+  window.open(currentFile, '_blank');
+}
+
+/* ===========================
+   KEYBOARD SHORTCUTS
+=========================== */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') goHome();
+  if (e.key === 'F5' && currentFile) { e.preventDefault(); reloadFrame(); }
+});
+</script>
+</body>
+</html>

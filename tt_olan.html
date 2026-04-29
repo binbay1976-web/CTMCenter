@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần Mềm Thiết Kế & Kiểm Nghiệm Ổ Lăn (Bản Hoàn Chỉnh - Offline)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
+        .container { max-width: 1100px; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: #1e3a8a; color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 1.6em; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .tab { display: flex; background-color: #cbd5e1; }
+        .tab button { flex: 1; border: none; outline: none; cursor: pointer; padding: 15px; font-size: 16px; font-weight: bold; transition: 0.3s; color: #475569; background: transparent;}
+        .tab button:hover { background-color: #94a3b8; color: #fff;}
+        .tab button.active { background-color: #fff; color: #1d4ed8; border-top: 4px solid #1d4ed8; border-bottom: none; }
+        .tab button:disabled { color: #94a3b8; cursor: not-allowed; }
+        
+        .tabcontent { display: none; padding: 30px; min-height: 500px; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; margin-bottom: 5px; color: #334155; font-size: 0.9em; }
+        input, select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1em;}
+        input:focus, select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        
+        .btn-primary { background-color: #2563eb; color: white; border: none; padding: 15px; font-size: 1.1em; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; width: 100%; transition: background 0.3s;}
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-warning { background-color: #dc2626; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px;}
+        .btn-warning:hover { background-color: #b91c1c; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: center; border: 1px solid #e2e8f0; }
+        th { background-color: #f8fafc; color: #334155; position: sticky; top: 0; box-shadow: 0 1px 0 #cbd5e1;}
+        .highlight { color: #dc2626; font-weight: bold; }
+        .success { color: #16a34a; font-weight: bold; }
+        
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; flex-wrap: wrap; }
+        .filter-bar .form-group { flex: 1; min-width: 140px; }
+        .table-container { max-height: 500px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;}
+        .btn-select { background:#10b981; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; font-weight:bold; }
+        .btn-select:hover { background:#059669; }
+
+        .report-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .report-card h3 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #bfdbfe; padding-bottom: 10px;}
+        .status-pass { background-color: #dcfce7; color: #166534; padding: 15px; border-radius: 6px; font-weight: bold; border: 1px solid #bbf7d0;}
+        .status-fail { background-color: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; font-weight: bold; border: 1px solid #fecaca;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HỆ THỐNG TÍNH TOÁN, TRUY XUẤT VÀ KIỂM NGHIỆM Ổ LĂN</h1>
+        </div>
+
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'TabNhap')" id="btnTabNhap">BƯỚC 1: Nhập Tải Trọng</button>
+            <button class="tablinks" onclick="openTab(event, 'TabTraCuu')" id="btnTabTraCuu" disabled>BƯỚC 2: Kho Ổ Lăn (Chọn Mã)</button>
+            <button class="tablinks" onclick="openTab(event, 'TabKetQua')" id="btnTabKetQua" disabled>BƯỚC 3: Báo Cáo Kiểm Nghiệm</button>
+        </div>
+
+        <div id="TabNhap" class="tabcontent" style="display: block;">
+            <div class="form-grid">
+                <div class="form-group"><label>Lực hướng tâm Ổ 1 - Fr1 (kN)</label><input type="number" step="any" id="Fr1" value="10.1"></div>
+                <div class="form-group"><label>Lực hướng tâm Ổ 2 - Fr2 (kN)</label><input type="number" step="any" id="Fr2" value="9.88"></div>
+                <div class="form-group"><label>Lực dọc trục ngoài - Fa (kN)</label><input type="number" step="any" id="Fa" value="0.9"></div>
+                
+                <div class="form-group" style="background:#fef3c7; padding:10px; border-radius:6px;">
+                    <label>Tốc độ quay n (v/ph)</label><input type="number" step="any" id="n" value="200">
+                </div>
+                <div class="form-group" style="background:#fef3c7; padding:10px; border-radius:6px;">
+                    <label>Tuổi thọ yêu cầu Lh (giờ)</label><input type="number" step="any" id="Lh" value="20000">
+                </div>
+                <div class="form-group" style="background:#fef3c7; padding:10px; border-radius:6px;">
+                    <label title="VD: K_HE = 0.25 khi tải biến đổi">Hệ số tuổi thọ K_HE</label><input type="number" step="any" id="K_HE" value="0.25">
+                </div>
+
+                <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px;">
+                    <label>Hệ số tải trọng động (kd)</label><input type="number" step="any" id="kd" value="1.3">
+                </div>
+                <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px;">
+                    <label>Hệ số tĩnh X0 (VD: 0.6)</label><input type="number" step="any" id="X0" value="0.6">
+                </div>
+                <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px;">
+                    <label>Hệ số tĩnh Y0 (VD: 0.5)</label><input type="number" step="any" id="Y0" value="0.5">
+                </div>
+
+                <div class="form-group">
+                    <label>Loại ổ dự kiến</label>
+                    <select id="loai_o">
+                        <option value="bi_do">Ổ bi đỡ (m=3)</option>
+                        <option value="bi_do_chan">Ổ bi đỡ chặn (m=3)</option>
+                        <option value="dua_con">Ổ đũa côn (m=10/3)</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Tham số e (Tra sơ bộ theo α)</label><input type="number" step="any" id="e_param" value="0.2"></div>
+                <div class="form-group"><label>Hệ số Y</label><input type="number" step="any" id="Y_param" value="0.0"></div>
+            </div>
+            <button class="btn-primary" onclick="goToStep2()">LƯU THÔNG SỐ & MỞ KHO Ổ LĂN ➔</button>
+        </div>
+
+        <div id="TabTraCuu" class="tabcontent">
+            <div style="margin-bottom: 15px; color: #0369a1; font-weight: bold;">💡 Gợi ý: Hãy nhập đường kính ngõng trục d để tìm kiếm nhanh. Nếu C báo đỏ, hãy tăng bộ lọc C lên.</div>
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label>Lọc Loại Ổ</label>
+                    <select id="filterLoai" onchange="filterDB()">
+                        <option value="all">-- Tất cả --</option>
+                        <option value="bi_do">Ổ Bi đỡ</option>
+                        <option value="bi_do_chan">Ổ Bi đỡ chặn</option>
+                        <option value="dua_con">Ổ Đũa côn</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Đường kính d (mm)</label>
+                    <input type="number" id="filterD" placeholder="Nhập d..." oninput="filterDB()">
+                </div>
+                <div class="form-group">
+                    <label>Đường kính D (mm)</label>
+                    <input type="number" id="filterBigD" placeholder="Nhập D..." oninput="filterDB()">
+                </div>
+                <div class="form-group">
+                    <label>Bề rộng B/T (mm)</label>
+                    <input type="number" id="filterB" placeholder="Nhập B..." oninput="filterDB()">
+                </div>
+                <div class="form-group">
+                    <label>Lọc C lớn hơn (kN)</label>
+                    <input type="number" id="filterC" placeholder="C >= ..." oninput="filterDB()">
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ký hiệu</th>
+                            <th>Loại Ổ</th>
+                            <th>Cỡ Ổ</th>
+                            <th>Kích thước (d x D x B)</th>
+                            <th>C (kN)</th>
+                            <th>C0 (kN)</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dbTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="TabKetQua" class="tabcontent">
+            <div id="reportContainer">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // FULL DATABASE BẢO TOÀN TỪ P2.7, P2.11, P2.12
+        const dbOlan = [
+            // --- Ổ BI ĐỠ (BẢNG P2.7) ---
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000099", "d": 9, "D": 20, "B": 6, "C": 2.10, "C0": 1.07},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000900", "d": 10, "D": 22, "B": 6, "C": 2.62, "C0": 1.38},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000901", "d": 12, "D": 24, "B": 6, "C": 2.66, "C0": 1.38},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000902", "d": 15, "D": 28, "B": 7, "C": 2.53, "C0": 1.51},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000903", "d": 17, "D": 30, "B": 7, "C": 2.85, "C0": 1.68},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000904", "d": 20, "D": 37, "B": 9, "C": 5.14, "C0": 3.12},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000905", "d": 25, "D": 42, "B": 9, "C": 5.74, "C0": 3.75},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000906", "d": 30, "D": 47, "B": 9, "C": 5.95, "C0": 4.06},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000907", "d": 35, "D": 55, "B": 10, "C": 8.16, "C0": 5.76},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000908", "d": 40, "D": 62, "B": 12, "C": 9.54, "C0": 7.06},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000909", "d": 45, "D": 68, "B": 12, "C": 10.30, "C0": 8.29},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000911", "d": 55, "D": 80, "B": 13, "C": 12.30, "C0": 10.20},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000912", "d": 60, "D": 85, "B": 13, "C": 12.50, "C0": 10.80},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "sieu_nhe", "ten_co": "Siêu nhẹ", "kyhieu": "1000915", "d": 75, "D": 100, "B": 16, "C": 19.10, "C0": 17.20},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700105", "d": 25, "D": 47, "B": 8, "C": 6.57, "C0": 4.24},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700106", "d": 30, "D": 55, "B": 9, "C": 7.56, "C0": 5.40},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700107", "d": 35, "D": 62, "B": 9, "C": 7.74, "C0": 5.79},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700108", "d": 40, "D": 68, "B": 9, "C": 10.30, "C0": 8.06},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700109", "d": 45, "D": 75, "B": 10, "C": 10.50, "C0": 8.57},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700110", "d": 50, "D": 80, "B": 10, "C": 10.80, "C0": 9.07},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700111", "d": 55, "D": 90, "B": 11, "C": 12.90, "C0": 10.80},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_hep", "ten_co": "Đ.Biệt nhẹ hẹp", "kyhieu": "700112", "d": 60, "D": 95, "B": 11, "C": 13.20, "C0": 11.50},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "104", "d": 20, "D": 42, "B": 12, "C": 7.36, "C0": 4.54},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "105", "d": 25, "D": 47, "B": 12, "C": 7.90, "C0": 5.04},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "106", "d": 30, "D": 55, "B": 13, "C": 10.40, "C0": 7.02},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "107", "d": 35, "D": 62, "B": 14, "C": 12.50, "C0": 8.66},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "108", "d": 40, "D": 68, "B": 15, "C": 13.20, "C0": 9.45},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "109", "d": 45, "D": 75, "B": 16, "C": 16.50, "C0": 12.40},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "db_nhe_vua", "ten_co": "Đ.Biệt nhẹ vừa", "kyhieu": "110", "d": 50, "D": 80, "B": 16, "C": 16.50, "C0": 13.40},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "204", "d": 20, "D": 47, "B": 14, "C": 10.0, "C0": 6.30},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "205", "d": 25, "D": 52, "B": 15, "C": 11.0, "C0": 7.09},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "206", "d": 30, "D": 62, "B": 16, "C": 15.3, "C0": 10.20},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "207", "d": 35, "D": 72, "B": 17, "C": 20.1, "C0": 13.90},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "208", "d": 40, "D": 80, "B": 18, "C": 25.6, "C0": 18.10},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "209", "d": 45, "D": 85, "B": 19, "C": 25.7, "C0": 18.10},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "210", "d": 50, "D": 90, "B": 20, "C": 27.5, "C0": 20.20},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "211", "d": 55, "D": 100, "B": 21, "C": 34.0, "C0": 25.60},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nhe", "ten_co": "Cỡ nhẹ (2xx)", "kyhieu": "212", "d": 60, "D": 110, "B": 22, "C": 41.1, "C0": 31.50},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "304", "d": 20, "D": 52, "B": 15, "C": 12.5, "C0": 7.94},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "305", "d": 25, "D": 62, "B": 17, "C": 17.6, "C0": 11.60},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "306", "d": 30, "D": 72, "B": 19, "C": 22.0, "C0": 15.10},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "307", "d": 35, "D": 80, "B": 21, "C": 26.2, "C0": 17.90},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "308", "d": 40, "D": 90, "B": 23, "C": 31.9, "C0": 21.70},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "309", "d": 45, "D": 100, "B": 25, "C": 37.8, "C0": 26.70},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "trung", "ten_co": "Cỡ trung (3xx)", "kyhieu": "310", "d": 50, "D": 110, "B": 27, "C": 48.5, "C0": 36.30},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "403", "d": 17, "D": 62, "B": 17, "C": 17.8, "C0": 12.10},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "405", "d": 25, "D": 80, "B": 21, "C": 29.2, "C0": 20.80},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "406", "d": 30, "D": 90, "B": 23, "C": 37.2, "C0": 27.20},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "407", "d": 35, "D": 100, "B": 25, "C": 43.6, "C0": 31.90},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "408", "d": 40, "D": 110, "B": 27, "C": 50.3, "C0": 37.00},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "409", "d": 45, "D": 120, "B": 29, "C": 60.4, "C0": 53.00},
+            {"loai": "bi_do", "ten_loai": "Bi đỡ", "co": "nang", "ten_co": "Cỡ nặng (4xx)", "kyhieu": "410", "d": 50, "D": 130, "B": 31, "C": 68.5, "C0": 53.00},
+
+            // --- Ổ ĐŨA CÔN (BẢNG P2.11) ---
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007106", "d": 30, "D": 55, "B": 17.0, "C": 23.50, "C0": 19.90},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007107", "d": 35, "D": 62, "B": 18.0, "C": 25.60, "C0": 23.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007108", "d": 40, "D": 68, "B": 19.0, "C": 31.90, "C0": 28.40},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007109", "d": 45, "D": 75, "B": 20.0, "C": 40.00, "C0": 34.80},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007111", "d": 55, "D": 90, "B": 23.0, "C": 49.10, "C0": 45.20},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007113", "d": 65, "D": 100, "B": 23.0, "C": 52.90, "C0": 51.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007114", "d": 70, "D": 110, "B": 25.0, "C": 67.60, "C0": 65.80},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007115", "d": 75, "D": 115, "B": 25.0, "C": 120.00, "C0": 108.80},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007116", "d": 80, "D": 125, "B": 29.0, "C": 88.40, "C0": 88.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007118", "d": 90, "D": 140, "B": 32.0, "C": 111.00, "C0": 111.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007120", "d": 100, "D": 150, "B": 32.0, "C": 117.00, "C0": 120.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ", "kyhieu": "2007122", "d": 110, "D": 170, "B": 38.0, "C": 161.00, "C0": 166.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7202", "d": 15, "D": 35, "B": 11.75, "C": 8.78, "C0": 6.14},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7203", "d": 17, "D": 40, "B": 13.25, "C": 13.80, "C0": 9.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7204", "d": 20, "D": 47, "B": 15.25, "C": 19.10, "C0": 13.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7205", "d": 25, "D": 52, "B": 16.25, "C": 23.90, "C0": 17.90},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7206", "d": 30, "D": 62, "B": 17.25, "C": 29.80, "C0": 22.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7207", "d": 35, "D": 72, "B": 18.25, "C": 35.20, "C0": 26.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7208", "d": 40, "D": 80, "B": 19.75, "C": 42.40, "C0": 32.70},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7209", "d": 45, "D": 85, "B": 20.75, "C": 42.70, "C0": 33.40},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7210", "d": 50, "D": 90, "B": 21.75, "C": 52.90, "C0": 40.60},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7211", "d": 55, "D": 100, "B": 22.75, "C": 57.90, "C0": 46.10},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7212", "d": 60, "D": 110, "B": 23.75, "C": 72.20, "C0": 58.40},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7214", "d": 70, "D": 125, "B": 26.25, "C": 95.90, "C0": 82.10},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7215", "d": 75, "D": 130, "B": 27.25, "C": 97.60, "C0": 84.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7216", "d": 80, "D": 140, "B": 28.25, "C": 106.00, "C0": 95.20},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7217", "d": 85, "D": 150, "B": 30.25, "C": 109.00, "C0": 91.40},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7218", "d": 90, "D": 160, "B": 32.50, "C": 141.00, "C0": 125.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7219", "d": 95, "D": 170, "B": 34.50, "C": 145.00, "C0": 131.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7220", "d": 100, "D": 180, "B": 37.00, "C": 162.00, "C0": 146.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe", "ten_co": "Cỡ nhẹ (72xx)", "kyhieu": "7224", "d": 120, "D": 215, "B": 43.50, "C": 252.00, "C0": 237.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7506", "d": 30, "D": 62, "B": 21.25, "C": 34.90, "C0": 27.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7507", "d": 35, "D": 72, "B": 24.25, "C": 50.20, "C0": 40.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7508", "d": 40, "D": 80, "B": 24.75, "C": 53.90, "C0": 44.80},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7509", "d": 45, "D": 85, "B": 24.75, "C": 51.60, "C0": 42.60},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7510", "d": 50, "D": 90, "B": 24.75, "C": 59.80, "C0": 54.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7511", "d": 55, "D": 100, "B": 26.75, "C": 72.20, "C0": 61.60},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7512", "d": 60, "D": 110, "B": 29.75, "C": 84.00, "C0": 75.60},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7513", "d": 65, "D": 120, "B": 32.75, "C": 109.00, "C0": 98.90},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7514", "d": 70, "D": 125, "B": 33.25, "C": 110.00, "C0": 101.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7515", "d": 75, "D": 130, "B": 33.25, "C": 115.00, "C0": 108.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7516", "d": 80, "D": 140, "B": 35.25, "C": 133.00, "C0": 126.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7517", "d": 85, "D": 150, "B": 38.50, "C": 151.00, "C0": 141.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7518", "d": 90, "D": 160, "B": 42.50, "C": 179.00, "C0": 171.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7519", "d": 95, "D": 170, "B": 45.50, "C": 225.00, "C0": 225.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7520", "d": 100, "D": 180, "B": 49.00, "C": 232.00, "C0": 236.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7522", "d": 110, "D": 200, "B": 56.00, "C": 291.00, "C0": 296.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "nhe_rong", "ten_co": "Nhẹ rộng (75xx)", "kyhieu": "7524", "d": 120, "D": 215, "B": 61.50, "C": 351.00, "C0": 379.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7304", "d": 20, "D": 52, "B": 16.25, "C": 25.00, "C0": 16.60},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7305", "d": 25, "D": 62, "B": 18.25, "C": 29.60, "C0": 20.90},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7306", "d": 30, "D": 72, "B": 20.75, "C": 40.00, "C0": 29.90},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7307", "d": 35, "D": 80, "B": 22.75, "C": 48.10, "C0": 35.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7308", "d": 40, "D": 90, "B": 25.25, "C": 61.00, "C0": 46.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7309", "d": 45, "D": 100, "B": 27.25, "C": 76.10, "C0": 59.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7310", "d": 50, "D": 110, "B": 29.25, "C": 96.60, "C0": 75.90},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7311", "d": 55, "D": 120, "B": 31.50, "C": 102.00, "C0": 81.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7312", "d": 60, "D": 130, "B": 33.50, "C": 118.00, "C0": 96.30},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7313", "d": 65, "D": 140, "B": 36.00, "C": 134.00, "C0": 111.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7314", "d": 70, "D": 150, "B": 38.00, "C": 168.00, "C0": 137.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7315", "d": 75, "D": 160, "B": 40.00, "C": 178.00, "C0": 148.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7317", "d": 85, "D": 180, "B": 44.50, "C": 221.00, "C0": 195.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung", "ten_co": "Cỡ trung (73xx)", "kyhieu": "7318", "d": 90, "D": 190, "B": 46.50, "C": 240.00, "C0": 201.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7604", "d": 20, "D": 52, "B": 22.25, "C": 29.50, "C0": 22.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7605", "d": 25, "D": 62, "B": 25.25, "C": 45.50, "C0": 36.60},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7606", "d": 30, "D": 72, "B": 28.75, "C": 61.30, "C0": 51.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7607", "d": 35, "D": 80, "B": 32.75, "C": 71.60, "C0": 61.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7608", "d": 40, "D": 90, "B": 35.25, "C": 80.00, "C0": 67.20},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7609", "d": 45, "D": 100, "B": 38.25, "C": 104.00, "C0": 90.50},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7610", "d": 50, "D": 110, "B": 42.25, "C": 122.00, "C0": 108.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7611", "d": 55, "D": 120, "B": 45.50, "C": 148.00, "C0": 140.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7612", "d": 60, "D": 130, "B": 48.50, "C": 171.00, "C0": 157.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7613", "d": 65, "D": 140, "B": 51.00, "C": 178.00, "C0": 168.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7614", "d": 70, "D": 150, "B": 54.00, "C": 204.00, "C0": 186.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7615", "d": 75, "D": 160, "B": 58.00, "C": 249.00, "C0": 235.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7616", "d": 80, "D": 170, "B": 61.50, "C": 294.00, "C0": 291.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7618", "d": 90, "D": 190, "B": 67.50, "C": 369.00, "C0": 363.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7620", "d": 100, "D": 215, "B": 77.50, "C": 451.00, "C0": 459.00},
+            {"loai": "dua_con", "ten_loai": "Đũa côn", "co": "trung_rong", "ten_co": "Trung rộng (76xx)", "kyhieu": "7622", "d": 110, "D": 240, "B": 84.50, "C": 490.00, "C0": 505.00},
+
+            // --- Ổ BI ĐỠ CHẶN (BẢNG P2.12) ---
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "36103", "d": 17, "D": 35, "B": 10, "C": 5.71, "C0": 3.58},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "36104", "d": 20, "D": 42, "B": 12, "C": 8.30, "C0": 5.42},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36203", "d": 17, "D": 40, "B": 11, "C": 9.43, "C0": 6.24},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36204", "d": 20, "D": 47, "B": 14, "C": 12.30, "C0": 8.47},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36205", "d": 25, "D": 52, "B": 15, "C": 13.10, "C0": 9.24},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36206", "d": 30, "D": 62, "B": 16, "C": 18.20, "C0": 13.30},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36207", "d": 35, "D": 72, "B": 17, "C": 24.00, "C0": 18.10},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36208", "d": 40, "D": 80, "B": 18, "C": 30.60, "C0": 23.70},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36209", "d": 45, "D": 85, "B": 19, "C": 32.30, "C0": 25.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36210", "d": 50, "D": 90, "B": 20, "C": 33.90, "C0": 27.60},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36211", "d": 55, "D": 100, "B": 21, "C": 39.40, "C0": 34.90},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36212", "d": 60, "D": 110, "B": 22, "C": 48.20, "C0": 40.10},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36214", "d": 70, "D": 125, "B": 24, "C": 63.00, "C0": 55.90},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36216", "d": 80, "D": 140, "B": 26, "C": 73.50, "C0": 66.60},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36217", "d": 85, "D": 150, "B": 28, "C": 79.00, "C0": 72.20},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36218", "d": 90, "D": 160, "B": 30, "C": 92.80, "C0": 84.60},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "36220", "d": 100, "D": 180, "B": 34, "C": 124.00, "C0": 118.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46106", "d": 30, "D": 55, "B": 13, "C": 11.20, "C0": 8.03},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46108", "d": 40, "D": 68, "B": 15, "C": 14.60, "C0": 11.30},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46109", "d": 45, "D": 75, "B": 16, "C": 17.30, "C0": 13.70},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46111", "d": 55, "D": 90, "B": 18, "C": 25.20, "C0": 21.50},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46112", "d": 60, "D": 95, "B": 18, "C": 28.80, "C0": 25.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46114", "d": 70, "D": 110, "B": 20, "C": 35.60, "C0": 32.30},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46115", "d": 75, "D": 115, "B": 20, "C": 35.30, "C0": 32.30},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46116", "d": 80, "D": 125, "B": 22, "C": 42.30, "C0": 40.90},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46117", "d": 85, "D": 130, "B": 22, "C": 44.30, "C0": 43.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46118", "d": 90, "D": 140, "B": 24, "C": 47.40, "C0": 45.90},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46120", "d": 100, "D": 150, "B": 24, "C": 50.20, "C0": 48.50},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46122", "d": 110, "D": 170, "B": 28, "C": 74.50, "C0": 74.90},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "db_nhe", "ten_co": "Đặc biệt nhẹ (361/461)", "kyhieu": "46124", "d": 120, "D": 180, "B": 28, "C": 78.30, "C0": 82.30},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46204", "d": 20, "D": 47, "B": 14, "C": 11.60, "C0": 7.79},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46205", "d": 25, "D": 52, "B": 15, "C": 12.40, "C0": 8.50},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46206", "d": 30, "D": 62, "B": 16, "C": 17.20, "C0": 12.20},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46207", "d": 35, "D": 72, "B": 17, "C": 22.70, "C0": 16.60},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46208", "d": 40, "D": 80, "B": 18, "C": 28.90, "C0": 27.10},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46209", "d": 45, "D": 85, "B": 19, "C": 30.40, "C0": 23.60},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46210", "d": 50, "D": 90, "B": 20, "C": 31.80, "C0": 25.40},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46211", "d": 55, "D": 100, "B": 21, "C": 34.90, "C0": 32.10},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46212", "d": 60, "D": 110, "B": 22, "C": 45.40, "C0": 36.80},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46213", "d": 65, "D": 120, "B": 23, "C": 54.40, "C0": 46.80},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46214", "d": 70, "D": 125, "B": 24, "C": 59.10, "C0": 51.40},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46215", "d": 75, "D": 130, "B": 25, "C": 61.50, "C0": 54.80},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46216", "d": 80, "D": 140, "B": 26, "C": 68.90, "C0": 61.20},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46217", "d": 85, "D": 150, "B": 28, "C": 74.00, "C0": 66.40},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46218", "d": 90, "D": 160, "B": 30, "C": 81.70, "C0": 77.70},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nhe_hep", "ten_co": "Nhẹ hẹp (362/462)", "kyhieu": "46220", "d": 100, "D": 180, "B": 34, "C": 116.00, "C0": 109.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46304", "d": 20, "D": 52, "B": 15, "C": 14.00, "C0": 9.17},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46305", "d": 25, "D": 62, "B": 17, "C": 21.10, "C0": 14.90},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46306", "d": 30, "D": 72, "B": 19, "C": 25.60, "C0": 18.17},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46307", "d": 35, "D": 80, "B": 21, "C": 33.40, "C0": 25.20},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46308", "d": 40, "D": 90, "B": 23, "C": 39.20, "C0": 30.70},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46309", "d": 45, "D": 100, "B": 25, "C": 48.10, "C0": 37.70},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46310", "d": 50, "D": 110, "B": 27, "C": 56.03, "C0": 44.80},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46312", "d": 60, "D": 130, "B": 31, "C": 78.80, "C0": 66.60},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46313", "d": 65, "D": 140, "B": 33, "C": 89.00, "C0": 76.40},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46314", "d": 70, "D": 150, "B": 35, "C": 93.30, "C0": 78.30},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46318", "d": 90, "D": 190, "B": 43, "C": 129.00, "C0": 125.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46320", "d": 100, "D": 215, "B": 47, "C": 167.00, "C0": 180.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "trung_hep", "ten_co": "Trung hẹp (463xx)", "kyhieu": "46330", "d": 150, "D": 320, "B": 65, "C": 280.00, "C0": 377.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66407", "d": 35, "D": 100, "B": 25, "C": 45.40, "C0": 33.70},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66408", "d": 40, "D": 110, "B": 27, "C": 52.70, "C0": 38.80},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66409", "d": 45, "D": 120, "B": 29, "C": 64.00, "C0": 48.20},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66410", "d": 50, "D": 130, "B": 31, "C": 77.60, "C0": 61.20},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66412", "d": 60, "D": 150, "B": 35, "C": 98.00, "C0": 81.00},
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66414", "d": 70, "D": 180, "B": 42, "C": 119.00, "C0": 111.00}
+        ];
+
+        let inputData = {};
+
+        function openTab(evt, tabName) {
+            let tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            let tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+            document.getElementById(tabName).style.display = "block";
+            if(evt) evt.currentTarget.className += " active";
+        }
+
+        // --- BƯỚC 1 chuyển BƯỚC 2 ---
+        function goToStep2() {
+            inputData = {
+                Fr1: parseFloat(document.getElementById('Fr1').value) || 0,
+                Fr2: parseFloat(document.getElementById('Fr2').value) || 0,
+                Fa: parseFloat(document.getElementById('Fa').value) || 0,
+                n: parseFloat(document.getElementById('n').value) || 0,
+                Lh: parseFloat(document.getElementById('Lh').value) || 0,
+                K_HE: parseFloat(document.getElementById('K_HE').value) || 1,
+                kd: parseFloat(document.getElementById('kd').value) || 1,
+                X0: parseFloat(document.getElementById('X0').value) || 0,
+                Y0: parseFloat(document.getElementById('Y0').value) || 0,
+                e: parseFloat(document.getElementById('e_param').value) || 0,
+                Y: parseFloat(document.getElementById('Y_param').value) || 0,
+                loai_o: document.getElementById('loai_o').value
+            };
+
+            // Set filter loại ổ tự động
+            document.getElementById('filterLoai').value = inputData.loai_o;
+
+            document.getElementById('btnTabTraCuu').disabled = false;
+            document.getElementById('btnTabTraCuu').click();
+            filterDB();
+        }
+
+        // --- BƯỚC 2: BỘ LỌC KHO ---
+        function filterDB() {
+            const fLoai = document.getElementById('filterLoai').value;
+            const fd = document.getElementById('filterD').value;
+            const fD = document.getElementById('filterBigD').value;
+            const fB = document.getElementById('filterB').value;
+            const fC = document.getElementById('filterC').value;
+            const tbody = document.getElementById('dbTableBody');
+            tbody.innerHTML = '';
+            
+            dbOlan.forEach(row => {
+                let match = true;
+                if (fLoai !== 'all' && row.loai !== fLoai) match = false;
+                if (fd && row.d != fd) match = false;
+                if (fD && row.D != fD) match = false;
+                if (fB && row.B != fB) match = false;
+                if (fC && row.C < parseFloat(fC)) match = false;
+
+                if (match) {
+                    tbody.innerHTML += `<tr>
+                        <td style="font-weight:bold; color:#1e3a8a;">${row.kyhieu}</td>
+                        <td>${row.ten_loai}</td>
+                        <td>${row.ten_co}</td>
+                        <td><b class="highlight">${row.d}</b> x ${row.D} x ${row.B}</td>
+                        <td class="success">${row.C.toFixed(2)}</td>
+                        <td>${row.C0.toFixed(2)}</td>
+                        <td>
+                            <button class="btn-select" onclick='calculateAndVerify(${JSON.stringify(row)})'>Chọn Ổ Này</button>
+                        </td>
+                    </tr>`;
+                }
+            });
+        }
+
+        // --- BƯỚC 3: TÍNH TOÁN & KIỂM NGHIỆM ---
+        function calculateAndVerify(bearing) {
+            let d = inputData;
+            
+            let m_mu = 3; let hs_S = 0;
+            if (bearing.loai === 'dua_con') { m_mu = 10.0 / 3.0; hs_S = 0.83; }
+            else if (bearing.loai === 'bi_do_chan') { m_mu = 3; hs_S = 1.0; }
+            
+            let S1 = hs_S * d.e * d.Fr1;
+            let S2 = hs_S * d.e * d.Fr2;
+
+            let tong_S = S2 + d.Fa;
+            let Fa1, Fa2;
+            if (tong_S >= S1) { Fa1 = tong_S; Fa2 = S2; }
+            else { Fa1 = S1; Fa2 = S1 - d.Fa; }
+
+            let V = 1.0; let kt = 1.0;
+            let ts1 = (d.Fr1 > 0) ? (Fa1 / (V * d.Fr1)) : 0;
+            let ts2 = (d.Fr2 > 0) ? (Fa2 / (V * d.Fr2)) : 0;
+            
+            let X_lon = (bearing.loai === 'bi_do') ? 0.56 : 0.4;
+            
+            let X1 = (ts1 <= d.e) ? 1.0 : X_lon;
+            let Y1 = (ts1 <= d.e) ? 0.0 : d.Y;
+            let X2 = (ts2 <= d.e) ? 1.0 : X_lon;
+            let Y2 = (ts2 <= d.e) ? 0.0 : d.Y;
+
+            let Q1 = (X1 * V * d.Fr1 + Y1 * Fa1) * kt * d.kd;
+            let Q2 = (X2 * V * d.Fr2 + Y2 * Fa2) * kt * d.kd;
+            let Q_max = Math.max(Q1, Q2);
+
+            let Qo1 = Math.max(d.Fr1, d.X0 * d.Fr1 + d.Y0 * Fa1);
+            let Qo2 = Math.max(d.Fr2, d.X0 * d.Fr2 + d.Y0 * Fa2);
+            let Qo_max = Math.max(Qo1, Qo2);
+
+            let LhE = d.Lh * d.K_HE;
+            let L_E = (60 * d.n * LhE) / 1000000.0;
+            let C_cd = Q_max * Math.pow(L_E, 1/m_mu);
+
+            let L_Et = Math.pow(bearing.C / Q_max, m_mu);
+            let L_hEt = L_Et * 1000000 / (60 * d.n);
+            let alpha1 = L_E / L_Et;
+
+            // Render HTML Báo Cáo
+            let statusTinh = (Qo_max <= bearing.C0) ? "ĐẠT" : "KHÔNG ĐẠT";
+            let statusDong = (C_cd <= bearing.C) ? "ĐẠT" : "KHÔNG ĐẠT";
+            let finalStatus = (Qo_max <= bearing.C0 && C_cd <= bearing.C) 
+                ? `<div class="status-pass">✔️ KẾT LUẬN: Ổ mã ${bearing.kyhieu} ĐẠT YÊU CẦU.</div>` 
+                : `<div class="status-fail">❌ KẾT LUẬN: KHÔNG ĐẠT YÊU CẦU! Bấm nút "Quay Lại Kho" bên dưới để chọn mã lớn hơn.</div>
+                   <button class="btn-warning" onclick="document.getElementById('btnTabTraCuu').click(); document.getElementById('filterC').value='${(C_cd+0.1).toFixed(2)}'; filterDB();">Quay Lại Kho & Gợi Ý Mã Lớn Hơn (Tự động lọc C >= ${C_cd.toFixed(2)})</button>`;
+
+            let html = `
+            <div class="report-card">
+                <h3>BÁO CÁO KIỂM NGHIỆM Ổ LĂN: MÃ ${bearing.kyhieu} (${bearing.ten_loai})</h3>
+                <p><b>Kích thước ổ đã chọn:</b> d = ${bearing.d}mm, D = ${bearing.D}mm, B/T = ${bearing.B}mm</p>
+                <p><b>Thông số tải của ổ (Bảng P2.x):</b> C = <b class="success">${bearing.C} kN</b>, C0 = <b>${bearing.C0} kN</b></p>
+                <hr>
+                
+                <div style="display:flex; gap: 20px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:300px;">
+                        <h4>1. KIỂM NGHIỆM TẢI TĨNH</h4>
+                        <ul>
+                            <li>Tải tĩnh quy ước Max (Q0): <b>${Qo_max.toFixed(2)} kN</b></li>
+                            <li>Điều kiện: Q0 ≤ C0 bảng (${Qo_max.toFixed(2)} ≤ ${bearing.C0})</li>
+                            <li>Trạng thái: <b style="color:${statusTinh==='ĐẠT'?'#16a34a':'#dc2626'}">${statusTinh}</b></li>
+                        </ul>
+                    </div>
+                    <div style="flex:1; min-width:300px;">
+                        <h4>2. KIỂM NGHIỆM TẢI ĐỘNG</h4>
+                        <ul>
+                            <li>Tải trọng động quy ước (Q_max): <b>${Q_max.toFixed(2)} kN</b></li>
+                            <li>Khả năng tải yêu cầu (Cd): <b>${C_cd.toFixed(2)} kN</b></li>
+                            <li>Điều kiện: Cd ≤ C bảng (${C_cd.toFixed(2)} ≤ ${bearing.C})</li>
+                            <li>Trạng thái: <b style="color:${statusDong==='ĐẠT'?'#16a34a':'#dc2626'}">${statusDong}</b></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background:#e0f2fe; padding:15px; border-radius:6px; margin-top:15px;">
+                    <h4 style="margin-top:0; color:#0369a1;">3. TUỔI THỌ THỰC TẾ & ĐỘ TIN CẬY (Bước phụ)</h4>
+                    <p>Số triệu vòng thực tế L_Et: <b>${L_Et.toFixed(2)}</b> (triệu vòng) <i>(So với yêu cầu L_E = ${L_E.toFixed(2)})</i></p>
+                    <p>Thời gian làm việc thực tế L_hEt: <b>${L_hEt.toFixed(0)}</b> giờ <i>(So với yêu cầu = ${LhE.toFixed(0)} giờ)</i></p>
+                    <p>Hệ số phân bố α1 = L_E / L_Et = <b>${alpha1.toFixed(4)}</b></p>
+                    <p style="font-size:0.9em; color:#64748b;">(Bạn có thể dùng hệ số α1 này để tra bảng xác suất làm việc không hỏng R(t) theo chuẩn Weibull vào Đồ án)</p>
+                </div>
+                
+                <div style="margin-top:20px;">${finalStatus}</div>
+            </div>
+            `;
+            
+            document.getElementById('reportContainer').innerHTML = html;
+            document.getElementById('btnTabKetQua').disabled = false;
+            document.getElementById('btnTabKetQua').click();
+        }
+    </script>
+</body>
+</html>

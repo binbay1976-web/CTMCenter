@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiết Kế Bộ Truyền Xích Toàn Diện (T.K.D.Đ.C.K Tập 1)</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #2c3e50; }
+    .container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #d35400; border-bottom: 3px solid #e67e22; padding-bottom: 15px; }
+    h3 { color: #2980b9; border-left: 5px solid #3498db; padding-left: 10px; background: #ebf5fb; padding: 8px; margin-top: 25px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;}
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;}
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px;}
+    label { font-weight: bold; display: block; margin-top: 10px; font-size: 0.85em; color: #34495e; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #bdc3c7; border-radius: 4px; font-size: 1em; }
+    input[readonly] { background-color: #e9ecef; color: #7f8c8d; border: 1px dashed #bdc3c7; font-weight: bold; }
+    select#variant_select { background-color: #fff3cd; border: 2px solid #ffc107; color: #b71c1c; font-weight: bold;}
+    .note { font-size: 0.85em; color: #e74c3c; font-style: italic; display: block; margin-top: 5px; }
+    button { width: 100%; background-color: #d35400; color: white; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; text-transform: uppercase; transition: 0.3s;}
+    button:hover { background-color: #ba4a00; }
+    .result-box { margin-top: 30px; padding: 25px; background-color: #fdfefe; border: 2px solid #e67e22; border-radius: 8px; overflow-x: auto; display: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
+    th, td { padding: 10px; border: 1px solid #dee2e6; text-align: center; }
+    th { background-color: #e67e22; color: white; }
+    tr:nth-child(even) { background-color: #fae5d3; }
+    .highlight { color: #c0392b; font-weight: bold; }
+    details > summary { list-style: none; cursor: pointer; background: #8e44ad; color: white; font-weight: bold; padding: 12px 20px; border-radius: 6px; display: inline-block; transition: background 0.3s ease; }
+    details > summary:hover { background: #732d91; }
+    details > summary::-webkit-details-marker { display: none; }
+    .table-section { padding: 15px; border: 2px dashed #3498db; border-radius: 8px; background-color: #f4fbfd; margin-bottom: 20px; }
+</style>
+<script>
+// --- CƠ SỞ DỮ LIỆU JS ---
+const db_conlan = {
+    '12.7': {
+        i_allow: 60,
+        variants: [
+            {desc: 'dc=3.66, B=5.80', dc: 3.66, d1_roller: 7.75, Q: 9.0, q: 0.30, P_allow: {50: 0.19, 200: 0.68, 400: 1.23, 600: 1.68, 800: 2.06, 1000: 2.42, 1200: 2.72, 1600: 3.20}},
+            {desc: 'dc=4.45, B=8.90', dc: 4.45, d1_roller: 8.51, Q: 18.2, q: 0.65, P_allow: {50: 0.35, 200: 1.27, 400: 2.29, 600: 3.13, 800: 3.86, 1000: 4.52, 1200: 5.06, 1600: 5.95}},
+            {desc: 'dc=4.45, B=11.30', dc: 4.45, d1_roller: 8.51, Q: 18.2, q: 0.75, P_allow: {50: 0.45, 200: 1.61, 400: 2.91, 600: 3.98, 800: 4.90, 1000: 5.74, 1200: 6.43, 1600: 7.55}}
+        ]
+    },
+    '15.875': {
+        i_allow: 50,
+        variants: [
+            {desc: 'dc=5.08, B=10.11', dc: 5.08, d1_roller: 10.16, Q: 22.7, q: 0.80, P_allow: {50: 0.57, 200: 2.06, 400: 3.72, 600: 5.08, 800: 6.26, 1000: 7.34, 1200: 8.22, 1600: 9.65}},
+            {desc: 'dc=5.08, B=13.28', dc: 5.08, d1_roller: 10.16, Q: 22.7, q: 1.00, P_allow: {50: 0.75, 200: 2.70, 400: 4.88, 600: 6.67, 800: 8.22, 1000: 9.63, 1200: 10.8, 1600: 12.7}}
+        ]
+    },
+    '19.05': {
+        i_allow: 35,
+        variants: [
+            {desc: 'dc=5.96, B=17.75', dc: 5.96, d1_roller: 11.91, Q: 31.8, q: 1.90, P_allow: {50: 1.41, 200: 4.80, 400: 8.38, 600: 11.4, 800: 13.5, 1000: 15.3, 1200: 16.9, 1600: 19.3}}
+        ]
+    },
+    '25.4': {
+        i_allow: 30,
+        variants: [
+            {desc: 'dc=7.95, B=22.61', dc: 7.95, d1_roller: 15.88, Q: 56.7, q: 2.60, P_allow: {50: 3.20, 200: 11.0, 400: 19.0, 600: 25.7, 800: 30.7, 1000: 34.7, 1200: 38.3, 1600: 43.8}}
+        ]
+    },
+    '31.75': {
+        i_allow: 25,
+        variants: [
+            {desc: 'dc=9.55, B=27.46', dc: 9.55, d1_roller: 19.05, Q: 88.5, q: 3.80, P_allow: {50: 5.83, 200: 19.3, 400: 32.0, 600: 42.0, 800: 49.3, 1000: 54.9, 1200: 60.0}}
+        ]
+    },
+    '38.1': {
+        i_allow: 20,
+        variants: [
+            {desc: 'dc=11.1, B=35.46', dc: 11.1, d1_roller: 22.23, Q: 127.0, q: 5.50, P_allow: {50: 10.5, 200: 34.8, 400: 57.7, 600: 75.7, 800: 88.9, 1000: 99.2, 1200: 108}}
+        ]
+    },
+    '44.45': {
+        i_allow: 15,
+        variants: [
+            {desc: 'dc=12.7, B=37.19', dc: 12.7, d1_roller: 25.4, Q: 172.4, q: 7.50, P_allow: {50: 14.7, 200: 43.7, 400: 70.6, 600: 88.3, 800: 101}}
+        ]
+    },
+    '50.8': {
+        i_allow: 15,
+        variants: [
+            {desc: 'dc=14.29, B=45.21', dc: 14.29, d1_roller: 28.58, Q: 226.8, q: 9.70, P_allow: {50: 22.9, 200: 68.1, 400: 110, 600: 138, 800: 157}}
+        ]
+    }
+};
+
+const db_ong = {};
+for (var p in db_conlan) {
+    if (parseFloat(p) <= 25.4) {
+        var entry = db_conlan[p];
+        var base_var = entry.variants[entry.variants.length - 1];
+        db_ong[p] = {
+            i_allow: entry.i_allow - 5,
+            variants: [{
+                desc: base_var.desc + ' (Xích ống)',
+                dc: base_var.dc,
+                d1_roller: base_var.d1_roller * 0.9,
+                Q: base_var.Q,
+                q: base_var.q * 0.9,
+                P_allow: base_var.P_allow
+            }]
+        };
+    }
+}
+
+const db_rang = {
+    '12.7': { i_allow: 80, variants: [{desc: 'Tiêu chuẩn', dc: 4.45, d1_roller: 0.0, Q: 20.0, q: 1.2, P_allow: {50: 0.60, 100: 1.0, 200: 1.80, 300: 2.4, 400: 3.0, 600: 3.8, 800: 4.5, 1000: 5.0, 1200: 5.5}}] },
+    '15.875': { i_allow: 70, variants: [{desc: 'Tiêu chuẩn', dc: 5.08, d1_roller: 0.0, Q: 28.0, q: 1.6, P_allow: {50: 1.50, 100: 2.5, 200: 4.50, 300: 6.0, 400: 7.5, 600: 9.5, 800: 11.0, 1000: 12.0, 1200: 13.5}}] },
+    '19.05': { i_allow: 60, variants: [{desc: 'Tiêu chuẩn', dc: 5.96, d1_roller: 0.0, Q: 40.0, q: 2.5, P_allow: {50: 2.50, 100: 4.2, 200: 7.50, 300: 10.0, 400: 12.5, 600: 15.5, 800: 18.0, 1000: 20.0, 1200: 22.0}}] },
+    '25.4': { i_allow: 50, variants: [{desc: 'Tiêu chuẩn', dc: 7.92, d1_roller: 0.0, Q: 70.0, q: 3.8, P_allow: {50: 5.00, 100: 8.5, 200: 15.0, 300: 20.0, 400: 25.0, 600: 32.0, 800: 38.0, 1000: 42.0, 1200: 46.0}}] },
+    '31.75': { i_allow: 40, variants: [{desc: 'Tiêu chuẩn', dc: 9.53, d1_roller: 0.0, Q: 100.0, q: 5.5, P_allow: {50: 8.50, 100: 14.0, 200: 25.0, 300: 34.0, 400: 42.0, 600: 55.0, 800: 65.0, 1000: 72.0, 1200: 80.0}}] }
+};
+
+function getActiveDB() {
+    var type = document.getElementById('chain_type').value;
+    if (type === 'ong') return db_ong;
+    if (type === 'rang') return db_rang;
+    return db_conlan;
+}
+
+function updatePitchOptions() {
+    var db = getActiveDB();
+    var p_select = document.getElementById('p_select');
+    var current_p = p_select.value;
+    p_select.innerHTML = '';
+    
+    for (var key in db) {
+        var opt = document.createElement("option");
+        opt.text = key; opt.value = key;
+        p_select.add(opt);
+    }
+    
+    if (db[current_p]) p_select.value = current_p;
+    updateVariants();
+}
+
+function updateVariants() {
+    var db = getActiveDB();
+    var p_val = document.getElementById('p_select').value;
+    var n01_val = document.getElementById('n01_select').value;
+    
+    var variant_select = document.getElementById('variant_select');
+    variant_select.innerHTML = '';
+    
+    if(!db[p_val]) return;
+    
+    var data = db[p_val];
+    var variants = data.variants;
+    var hasValidVariant = false;
+
+    for (var i = 0; i < variants.length; i++) {
+        if (variants[i].P_allow[n01_val] !== undefined) {
+            var opt = document.createElement("option");
+            opt.value = i;
+            opt.text = "[P] = " + variants[i].P_allow[n01_val] + " kW (" + variants[i].desc + ")";
+            variant_select.add(opt);
+            hasValidVariant = true;
+        }
+    }
+
+    if (!hasValidVariant) {
+        var opt = document.createElement("option");
+        opt.value = -1;
+        opt.text = "- (Vượt ngưỡng vòng quay)";
+        variant_select.add(opt);
+    }
+    
+    document.getElementById('i_allow_disp').value = data.i_allow;
+    updateVariantDetails();
+}
+
+function updateVariantDetails() {
+    var db = getActiveDB();
+    var p_val = document.getElementById('p_select').value;
+    var var_idx = document.getElementById('variant_select').value;
+    var type = document.getElementById('chain_type').value;
+
+    if (var_idx == -1 || !db[p_val]) {
+        document.getElementById('q_disp').value = "-";
+        document.getElementById('d1_roller_disp').value = "-";
+        document.getElementById('Q_disp').value = "-";
+        return;
+    }
+
+    var variant = db[p_val].variants[var_idx];
+    document.getElementById('q_disp').value = variant.q.toFixed(2);
+    document.getElementById('Q_disp').value = variant.Q.toFixed(1);
+    
+    if (type === 'rang') {
+        document.getElementById('d1_roller_disp').value = "N/A (Xích răng)";
+    } else {
+        document.getElementById('d1_roller_disp').value = variant.d1_roller.toFixed(2);
+    }
+}
+
+function updateKd() {
+    var type = document.getElementById('load_type').value;
+    var kd_input = document.getElementById('kd_input');
+    var kd_hint = document.getElementById('kd_hint');
+    if (type === 'em') {
+        kd_input.value = 1.0;
+        kd_input.readOnly = true;
+        kd_hint.innerText = "Tự động điền: 1.0";
+    } else if (type === 'vadap') {
+        if(kd_input.value == 1.0 || kd_input.value == 1.8) kd_input.value = 1.2;
+        kd_input.readOnly = false;
+        kd_hint.innerText = "Vui lòng nhập: 1.2 ÷ 1.5";
+    } else if (type === 'manh') {
+        kd_input.value = 1.8;
+        kd_input.readOnly = true;
+        kd_hint.innerText = "Tự động điền: 1.8";
+    }
+}
+
+// Vẽ mô phỏng xích JS
+function drawChainSchematicJS(d1, d2, a) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 900;
+    canvas.height = 500;
+    var ctx = canvas.getContext('2d');
+
+    var padding = 100;
+    var maxR = Math.max(d1, d2) / 2;
+    var scale = Math.min(canvas.width / (a + d1 + d2 + padding), canvas.height / (maxR * 2 + padding));
+    var offsetX = d1 * scale + 50;
+    var offsetY = canvas.height / 2;
+
+    function tx(x) { return x * scale + offsetX; }
+    function ty(y) { return -y * scale + offsetY; } 
+
+    function drawSprocket(x, y, r, color, teeth) {
+        ctx.beginPath();
+        for (let i = 0; i <= teeth; i++) {
+            let angle = (i * 2 * Math.PI) / teeth;
+            let radius = (i % 2 === 0) ? r * scale : (r - 10/scale) * scale;
+            if (i === 0) ctx.moveTo(tx(x) + Math.cos(angle) * radius, ty(y) + Math.sin(angle) * radius);
+            else ctx.lineTo(tx(x) + Math.cos(angle) * radius, ty(y) + Math.sin(angle) * radius);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.fillStyle = "rgba(41, 128, 185, 0.1)";
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(tx(x), ty(y), r * scale, 0, 2 * Math.PI);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.beginPath();
+        ctx.arc(tx(x), ty(y), r * 0.15 * scale, 0, 2 * Math.PI);
+        ctx.fillStyle = '#7f8c8d';
+        ctx.fill();
+    }
+
+    drawSprocket(0, 0, d1/2, '#2980b9', 25);
+    drawSprocket(a, 0, d2/2, '#c0392b', 45);
+
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([10, 5]);
+    ctx.beginPath();
+    ctx.moveTo(tx(0), ty(d1/2)); ctx.lineTo(tx(a), ty(d2/2));
+    ctx.moveTo(tx(0), ty(-d1/2)); ctx.lineTo(tx(a), ty(-d2/2));
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+    ctx.strokeStyle = '#bdc3c7';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(tx(0), ty(d1/2 + 30)); ctx.lineTo(tx(a), ty(d2/2 + 30));
+    ctx.stroke();
+    
+    ctx.fillStyle = '#34495e';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`<----- a = ${a.toFixed(0)} mm ----->`, tx(a/2), ty(d1/2 + 45));
+
+    ctx.fillStyle = '#2980b9';
+    ctx.fillText(`d1 ≈ ${d1.toFixed(0)}`, tx(0), ty(-d1/2 - 25));
+    ctx.fillStyle = '#c0392b';
+    ctx.fillText(`d2 ≈ ${d2.toFixed(0)}`, tx(a), ty(-d2/2 - 25));
+
+    return canvas.toDataURL('image/png');
+}
+
+function calculateChain(event) {
+    event.preventDefault();
+    try {
+        var P1 = parseFloat(document.getElementById('P1').value);
+        var n1 = parseFloat(document.getElementById('n1').value);
+        var u = parseFloat(document.getElementById('ud').value);
+        var chain_type = document.getElementById('chain_type').value;
+        
+        var p_val = document.getElementById('p_select').value;
+        var n01 = parseFloat(document.getElementById('n01_select').value);
+        var var_idx = parseInt(document.getElementById('variant_select').value);
+        var x_strands = parseInt(document.getElementById('x_strands').value);
+
+        var k0 = parseFloat(document.getElementById('k0').value);
+        var ka = parseFloat(document.getElementById('ka').value);
+        var kdc = parseFloat(document.getElementById('kdc').value);
+        var kbt = parseFloat(document.getElementById('kbt').value);
+        var kc = parseFloat(document.getElementById('kc').value);
+        var kd = parseFloat(document.getElementById('kd_input').value);
+        
+        var kf = parseFloat(document.getElementById('kf').value);
+        var kx = parseFloat(document.getElementById('kx').value);
+        var s_allow = parseFloat(document.getElementById('s_allow').value);
+        var delta_a_factor = parseFloat(document.getElementById('delta_a_factor').value);
+
+        // BƯỚC 2: Chọn số răng đĩa xích
+        var z1 = 25;
+        if (u <= 1.5) z1 = 31;
+        else if (u <= 2.5) z1 = 27;
+        else if (u <= 3.5) z1 = 25;
+        else if (u <= 4.5) z1 = 23;
+        else if (u <= 5.5) z1 = 21;
+        else z1 = 17;
+        
+        var z_max_allow = 120;
+        if (chain_type === 'rang') { z1 = Math.max(15, z1); z_max_allow = 140; }
+        else { z1 = Math.max(19, z1); z_max_allow = 120; }
+            
+        var z2 = Math.round(u * z1);
+        if (z2 % 2 === 0) z2 += 1;
+        
+        if (z2 > z_max_allow) throw new Error(`Số răng z2 vượt quá ${z_max_allow}. Hãy giảm tỉ số truyền hoặc giảm z1!`);
+
+        var u_thuc = z1 > 0 ? z2 / z1 : 0;
+        var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
+        var u_check = delta_u <= 4 ? "ĐẠT" : "KHÔNG ĐẠT (>4%)";
+
+        // CSDL & Thông số từ variant
+        var db = getActiveDB();
+        if (!db[p_val]) throw new Error("Lỗi cơ sở dữ liệu xích.");
+        if (var_idx === -1) throw new Error("Vòng quay n01 quá cao hoặc không có số liệu cho bước xích này.");
+
+        var variant = db[p_val].variants[var_idx];
+        var P_allow = variant.P_allow[n01] || 0;
+        
+        var q = variant.q;
+        var d1_roller = variant.d1_roller;
+        var Q_force = variant.Q * 1000;
+        var i_allow = db[p_val].i_allow;
+        var p = parseFloat(p_val);
+
+        var k_total = k0 * ka * kdc * kbt * kd * kc;
+        var kz_numerator = (chain_type === 'rang') ? 35 : 25;
+        var kz = kz_numerator / z1;
+        var kn = n1 > 0 ? n01 / n1 : 0;
+        var Pt = P1 * k_total * kz * kn;
+
+        var Kx_dict = {1: 1.0, 2: 1.7, 3: 2.5, 4: 3.0};
+        var Kx = Kx_dict[x_strands] || 1.0;
+        var Pt_max_allowable = P_allow * Kx;
+        
+        var check_ben, check_color;
+        if (P_allow === 0) {
+            check_ben = "KHÔNG ĐẠT (Lỗi đọc [P])";
+            check_color = "red";
+        } else if (Pt_max_allowable >= Pt) {
+            check_ben = `ĐẠT (${Pt_max_allowable.toFixed(2)} ≥ ${Pt.toFixed(2)})`;
+            check_color = "green";
+        } else {
+            check_ben = `KHÔNG ĐẠT (${Pt_max_allowable.toFixed(2)} < ${Pt.toFixed(2)}) - Đổi [P] hoặc Tăng dãy xích!`;
+            check_color = "red";
+        }
+
+        // Khoảng cách trục & Mắt xích
+        var a_sb_input = parseFloat(document.getElementById('a_sb').value);
+        var a_sb = (!isNaN(a_sb_input) && a_sb_input > 0) ? a_sb_input : 40 * p;
+        
+        var X_calc = (2 * a_sb / p) + ((z1 + z2) / 2) + Math.pow(z2 - z1, 2) / (39.48 * (a_sb / p));
+        var X = Math.round(X_calc);
+        if (X % 2 !== 0) X += 1; 
+
+        var temp_m = X - (z1 + z2) / 2;
+        var a_thuc_ly_thuyet = 0.25 * p * (temp_m + Math.sqrt(Math.max(0, Math.pow(temp_m, 2) - 2 * Math.pow((z2 - z1) / Math.PI, 2))));
+        var a_thuc = a_thuc_ly_thuyet - (delta_a_factor * a_thuc_ly_thuyet);
+
+        // Va đập (i)
+        var i_va_dap = X > 0 ? (z1 * n1) / (15 * X) : 0;
+        var check_i = i_va_dap <= i_allow ? `ĐẠT (${i_va_dap.toFixed(1)} ≤ ${i_allow})` : `KHÔNG ĐẠT (${i_va_dap.toFixed(1)} > ${i_allow})`;
+        var color_i = i_va_dap <= i_allow ? "green" : "red";
+
+        // Lực và hệ số an toàn s
+        var v = (z1 * p * n1) / 60000;
+        var Ft = v > 0 ? (1000 * P1) / v : 0;
+        var Fv = q * Math.pow(v, 2);
+        var F0 = 9.81 * kf * q * (a_thuc / 1000);
+        
+        var sum_force = kd * Ft + F0 + Fv;
+        var s_he_so = sum_force > 0 ? Q_force / sum_force : 0;
+        var check_s = s_he_so >= s_allow ? `ĐẠT (${s_he_so.toFixed(2)} ≥ ${s_allow})` : `KHÔNG ĐẠT (${s_he_so.toFixed(2)} < ${s_allow})`;
+        var color_s = s_he_so >= s_allow ? "green" : "red";
+        var Fr = kx * Ft;
+
+        // Kích thước đĩa xích
+        var d1_pitch = p / Math.sin(Math.PI / z1);
+        var d2_pitch = p / Math.sin(Math.PI / z2);
+        var da1 = p * (0.5 + 1/Math.tan(Math.PI / z1));
+        var da2 = p * (0.5 + 1/Math.tan(Math.PI / z2));
+        
+        var df1_text, df2_text, note_text;
+        if (chain_type === 'rang') {
+            df1_text = "N/A (Cấu trúc răng phẳng)";
+            df2_text = "N/A (Cấu trúc răng phẳng)";
+            note_text = "* Xích răng không có con lăn, biên dạng răng ăn khớp qua bản lề.";
+        } else {
+            var r_dao = 0.5025 * d1_roller + 0.05;
+            var df1 = d1_pitch - 2 * r_dao;
+            var df2 = d2_pitch - 2 * r_dao;
+            df1_text = `${df1.toFixed(2)} mm`;
+            df2_text = `${df2.toFixed(2)} mm`;
+            note_text = `* Đường kính chân răng tính với r = 0.5025.d1 + 0.05 (sử dụng d1 = ${d1_roller} mm)`;
+        }
+
+        var schematic_img = drawChainSchematicJS(d1_pitch, d2_pitch, a_thuc);
+        var img_html = schematic_img ? `
+        <div class="plot-container" style="text-align:center; margin-bottom: 25px;">
+            <details style="cursor: pointer; outline: none;">
+                <summary>🖼️ Bấm vào đây để Hiện / Ẩn Sơ đồ Truyền Động</summary>
+                <div style="margin-top: 15px;">
+                    <img src="${schematic_img}" alt="Sơ đồ Xích" style="max-width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
+            </details>
+        </div>
+        ` : "";
+
+        var type_name = chain_type === 'con_lan' ? "XÍCH CON LĂN" : (chain_type === 'ong' ? "XÍCH ỐNG" : "XÍCH RĂNG");
+
+        var result_html = `
+        <h2 style='text-align:center; color:#d35400; margin-top:0;'>BẢNG THÔNG SỐ THIẾT KẾ ${type_name}</h2>
+        ${img_html}
+        
+        <h4 style="color:#2980b9; margin-bottom: 5px;">A. Kết quả chọn và kiểm nghiệm bền</h4>
+        <table>
+            <tr><th>Thông số</th><th>Ký hiệu</th><th>Kết quả</th><th>Đánh giá / Công thức</th></tr>
+            <tr><td>Hệ số sử dụng tổng</td><td>k</td><td>${k_total.toFixed(2)}</td><td>k0.ka.kdc.kbt.kd.kc</td></tr>
+            <tr><td>Hệ số số răng</td><td>kz</td><td>${kz.toFixed(3)}</td><td>${kz_numerator}/z1</td></tr>
+            <tr><td>Số răng bánh dẫn</td><td>z1</td><td><b style="color:blue;">${z1} răng</b></td><td>Tra bảng 5.4 theo u</td></tr>
+            <tr><td>Số răng bánh bị dẫn</td><td>z2</td><td><b style="color:blue;">${z2} răng</b></td><td>u.z1 (Làm tròn số lẻ)</td></tr>
+            <tr><td>Sai số Tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=4 ? 'green' : 'red'}; font-weight:bold;">${u_check}</td></tr>
+            <tr><td>Công suất tính toán</td><td>Pt</td><td>${Pt.toFixed(2)} kW</td><td>P.k.kz.kn</td></tr>
+            <tr><td><b>Kiểm tra mòn ([P])</b></td><td><b>Pt ≤ [P].Kx</b></td><td><b style="color:${check_color};">${check_ben}</b></td><td>[P] đã chọn: ${P_allow} kW</td></tr>
+        </table>
+
+        <h4 style="color:#8e44ad; margin-bottom: 5px;">B. Động học, Khoảng cách trục & Mắt xích</h4>
+        <table>
+            <tr><th>Thông số</th><th>Ký hiệu</th><th>Kết quả</th><th>Đánh giá / Công thức</th></tr>
+            <tr><td>Vận tốc vòng xích</td><td>v</td><td>${v.toFixed(2)} m/s</td><td>-</td></tr>
+            <tr><td>Số mắt xích</td><td>X</td><td><b style="color:#8e44ad;">${X} mắt</b></td><td>Làm tròn thành số chẵn</td></tr>
+            <tr><td>Khoảng cách trục lý thuyết</td><td>a*</td><td>${a_thuc_ly_thuyet.toFixed(2)} mm</td><td>Tính ngược từ X</td></tr>
+            <tr><td><b>Khoảng cách lắp ráp</b></td><td><b>a</b></td><td><b style="color:#8e44ad; font-size:1.1em;">${a_thuc.toFixed(2)} mm</b></td><td>Đã trừ độ võng Δa = ${delta_a_factor}a*</td></tr>
+            <tr><td><b>Kiểm nghiệm va đập</b></td><td><b>i ≤ [i]</b></td><td><b style="color:${color_i};">${check_i}</b></td><td>Bảng 5.9</td></tr>
+        </table>
+
+        <h4 style="color:#27ae60; margin-bottom: 5px;">C. Phân tích Lực & Độ bền mỏi (An toàn đứt)</h4>
+        <table>
+            <tr><th>Thông số</th><th>Ký hiệu</th><th>Kết quả</th><th>Đánh giá / Công thức</th></tr>
+            <tr><td>Lực vòng truyền tải</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>1000.P1 / v</td></tr>
+            <tr><td>Lực ly tâm</td><td>Fv</td><td>${Fv.toFixed(1)} N</td><td>q.v²</td></tr>
+            <tr><td>Lực căng do xích chùng</td><td>F0</td><td>${F0.toFixed(1)} N</td><td>9.81.kf.q.a</td></tr>
+            <tr><td><b>Kiểm nghiệm đứt (s)</b></td><td><b>s ≥ [s]</b></td><td><b style="color:${color_s}; font-size:1.1em;">${check_s}</b></td><td>Q / (kd.Ft+F0+Fv)</td></tr>
+            <tr><td><b>Lực tác dụng lên trục</b></td><td><b>Fr</b></td><td><b class='highlight' style='font-size:1.1em;'>${Fr.toFixed(1)} N</b></td><td>kx.Ft (Dùng cho thiết kế Trục)</td></tr>
+        </table>
+
+        <h4 style="color:#c0392b; margin-bottom: 5px;">D. Kích thước chế tạo đĩa xích</h4>
+        <table>
+            <tr><th>Vòng đo</th><th>Bánh dẫn 1 (z1)</th><th>Bánh bị dẫn 2 (z2)</th></tr>
+            <tr><td>Đường kính vòng chia (d)</td><td>${d1_pitch.toFixed(2)} mm</td><td>${d2_pitch.toFixed(2)} mm</td></tr>
+            <tr><td>Đường kính vòng đỉnh (da)</td><td>${da1.toFixed(2)} mm</td><td>${da2.toFixed(2)} mm</td></tr>
+            <tr><td>Đường kính vòng chân (df)</td><td><b style="color:#c0392b;">${df1_text}</b></td><td><b style="color:#c0392b;">${df2_text}</b></td></tr>
+            <tr><td colspan="3" class="note" style="text-align:center;">${note_text}</td></tr>
+        </table>
+        `;
+
+        var resultBox = document.getElementById('result_box');
+        resultBox.innerHTML = result_html;
+        resultBox.style.display = 'block';
+
+    } catch (e) {
+        var resultBox = document.getElementById('result_box');
+        resultBox.innerHTML = `<p style='color:red;'><b>Lỗi tính toán:</b> ${e.message}</p>`;
+        resultBox.style.display = 'block';
+    }
+}
+
+window.onload = function() {
+    updatePitchOptions();
+    updateKd();
+};
+</script>
+</head>
+<body>
+<div class="container">
+<h2>HỆ THỐNG THIẾT KẾ BỘ TRUYỀN XÍCH TOÀN DIỆN</h2>
+<form onsubmit="calculateChain(event)">
+<h3>BƯỚC 0 & 1: Thông Số Động Học & Loại Xích</h3>
+<div class="grid-4">
+    <div><label>Loại xích:</label>
+        <select id="chain_type" onchange="updatePitchOptions()">
+            <option value="con_lan" selected>Xích con lăn</option>
+            <option value="ong">Xích ống</option>
+            <option value="rang">Xích răng</option>
+        </select>
+    </div>
+    <div><label>Công suất trục dẫn P1 (kW):</label><input type="number" step="any" id="P1" value="5.5" required></div>
+    <div><label>Vòng quay trục dẫn n1 (vg/ph):</label><input type="number" step="any" id="n1" value="960" required></div>
+    <div><label>Tỉ số truyền u:</label><input type="number" step="any" id="ud" value="2.5" required></div>
+</div>
+
+<div class="table-section">
+    <h3 style="margin-top: 0;">BƯỚC 3.4: Chọn Bước Xích & Tra Bảng (Tự chọn [P] theo dc, B)</h3>
+    <div class="grid-4">
+        <div>
+            <label>Chọn Bước xích p (mm):</label>
+            <select id="p_select" onchange="updateVariants()"></select>
+        </div>
+        <div>
+            <label>Chọn Vòng quay n01 (vg/ph):</label>
+            <select id="n01_select" onchange="updateVariants()">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+                <option value="600">600</option>
+                <option value="800" selected>800</option>
+                <option value="1000">1000</option>
+                <option value="1200">1200</option>
+                <option value="1600">1600</option>
+            </select>
+        </div>
+        <div style="grid-column: span 2;">
+            <label>CHỌN Công suất cho phép [P] và Biến thể:</label>
+            <select id="variant_select" onchange="updateVariantDetails()"></select>
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top:10px;">
+        <div><label>Số dãy xích / C.rộng (x):</label>
+            <select id="x_strands">
+                <option value="1" selected>1 dãy (Kx = 1.0)</option>
+                <option value="2">2 dãy (Kx = 1.7)</option>
+                <option value="3">3 dãy (Kx = 2.5)</option>
+                <option value="4">4 dãy (Kx = 3.0)</option>
+            </select>
+        </div>
+        <div><label>Khối lượng q (kg/m):</label><input type="text" id="q_disp" readonly></div>
+        <div><label>Lực phá hỏng Q (kN):</label><input type="text" id="Q_disp" readonly></div>
+        <div><label>Đkính con lăn/ống d1:</label><input type="text" id="d1_roller_disp" readonly></div>
+        <div><label>Va đập cho phép [i]:</label><input type="text" id="i_allow_disp" readonly></div>
+    </div>
+</div>
+
+<h3>BƯỚC 3.1 & BƯỚC 6: Hệ Số Điều Kiện Sử Dụng (k) & Độ Võng</h3>
+<div class="grid-3">
+    <div><label>Đường nối tâm (k0):</label>
+        <select id="k0">
+            <option value="1.0" selected>Góc nghiêng &le; 60 độ (1.0)</option>
+            <option value="1.25">Góc nghiêng > 60 độ (1.25)</option>
+        </select>
+    </div>
+    <div><label>Khoảng cách trục a (ka):</label>
+        <select id="ka">
+            <option value="1.0" selected>a = (30÷50)p (1.0)</option>
+            <option value="1.25">a < 25p (1.25)</option>
+            <option value="0.8">a = (60÷80)p (0.8)</option>
+        </select>
+    </div>
+    <div><label>Điều chỉnh trục (kdc):</label>
+        <select id="kdc">
+            <option value="1.0" selected>Điều chỉnh được (1.0)</option>
+            <option value="1.25">Cố định (1.25)</option>
+        </select>
+    </div>
+</div>
+<div class="grid-3">
+    <div><label>Bôi trơn (kbt):</label>
+        <select id="kbt">
+            <option value="0.8">Liên tục (0.8)</option>
+            <option value="1.0">Nhỏ giọt (1.0)</option>
+            <option value="1.3" selected>Định kỳ / mỡ (1.3)</option>
+        </select>
+    </div>
+    <div><label>Số ca làm việc (kc):</label>
+        <select id="kc">
+            <option value="1.0">1 ca (1.0)</option>
+            <option value="1.25" selected>2 ca (1.25)</option>
+            <option value="1.45">3 ca (1.45)</option>
+        </select>
+    </div>
+    <div><label>Tính chất tải trọng:</label>
+        <select id="load_type" onchange="updateKd()">
+            <option value="em">Tải trọng tĩnh, làm việc êm</option>
+            <option value="vadap" selected>Tải trọng va đập</option>
+            <option value="manh">Tải trọng va đập mạnh</option>
+        </select>
+    </div>
+</div>
+<div class="grid-4">
+    <div><label>Hệ số tải trọng động (kd):</label>
+        <input type="number" step="any" id="kd_input" value="1.2" min="1.0" max="1.8" required>
+        <span id="kd_hint" class="note">Vui lòng nhập: 1.2 ÷ 1.5</span>
+    </div>
+    <div><label>Hệ số võng (kf):</label>
+        <select id="kf">
+            <option value="6" selected>Nằm ngang (6)</option>
+            <option value="4">Nghiêng &lt; 40 độ (4)</option>
+            <option value="2">Đứng/Nghiêng > 40 độ (2)</option>
+        </select>
+    </div>
+    <div><label>Hệ số tải lên trục (kx):</label>
+        <select id="kx">
+            <option value="1.15" selected>Nghiêng &le; 40 độ (1.15)</option>
+            <option value="1.05">Nghiêng > 40 độ (1.05)</option>
+        </select>
+    </div>
+    <div><label>Hệ số an toàn [s] y/cầu:</label><input type="number" step="any" id="s_allow" value="8.0"></div>
+</div>
+<div class="grid-2">
+    <div><label>Độ giảm k/c trục (Δa):</label>
+        <select id="delta_a_factor">
+            <option value="0.002">0.002a* (Nghiêng ít)</option>
+            <option value="0.003" selected>0.003a* (Trung bình)</option>
+            <option value="0.004">0.004a* (Nghiêng nhiều)</option>
+        </select>
+    </div>
+    <div><label>Chọn a sơ bộ (mm):</label><input type="number" step="any" id="a_sb" placeholder="Để trống máy tự tính (40p)"></div>
+</div>
+
+<button type="submit">Tính Toán Thiết Kế Bộ Truyền Xích Toàn Diện</button>
+</form>
+
+<div id="result_box" class="result-box"></div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 20px;
+}
+
+.controls {
+    margin: 0 auto 16px auto;
+    background: #fff;
+    padding: 14px 16px;
+    width: 1180px;
+    border: 1px solid #cfcfcf;
+    box-sizing: border-box;
+    text-align: left;
+    border-radius: 6px;
+}
+
+.controls label {
+    margin: 0 14px 8px 0;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.controls input {
+    width: 90px;
+    padding: 4px 6px;
+    font-size: 14px;
+}
+
+.controls button {
+    padding: 7px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.note {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+}
+
+.result-box {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+svg {
+    background: white;
+    border: 1px solid #cfcfcf;
+    border-radius: 6px;
+}
+
+text {
+    font-size: 13px;
+    fill: black;
+}
+
+.truc {
+    stroke: black;
+    stroke-width: 4;
+}
+
+.hinh {
+    stroke: black;
+    stroke-width: 2.2;
+    fill: none;
+}
+
+.kyhieu {
+    stroke: black;
+    stroke-width: 1.5;
+}
+
+.arrow {
+    stroke: #c03fd1;
+    stroke-width: 2.4;
+    fill: none;
+    marker-end: url(#arrowMagenta);
+}
+
+.axis {
+    stroke: black;
+    stroke-width: 1.5;
+}
+
+.axis-left {
+    stroke: black;
+    stroke-width: 1.5;
+}
+
+.q, .m, .t {
+    stroke: black;
+    stroke-width: 3;
+    fill: none;
+}
+
+.q-fill {
+    fill: url(#hatchVertical);
+    stroke: black;
+    stroke-width: 0.8;
+}
+
+.m-fill {
+    fill: url(#hatchVertical);
+    stroke: black;
+    stroke-width: 0.8;
+}
+
+.qx-fill {
+    fill: url(#hatchDiagonalXOZ);
+    stroke: black;
+    stroke-width: 0.8;
+}
+
+.my-fill {
+    fill: url(#hatchDiagonalXOZ);
+    stroke: black;
+    stroke-width: 0.8;
+}
+
+.t-fill {
+    fill: url(#hatchVertical);
+    stroke: black;
+    stroke-width: 0.8;
+}
+
+.dong {
+    stroke: #58d7e8;
+    stroke-width: 1.2;
+    stroke-dasharray: 5 5;
+}
+
+.value-text {
+    font-size: 12px;
+    fill: black;
+}
+
+.label-blue {
+    fill: #2446d8;
+    font-size: 13px;
+}
+
+.coord {
+    stroke: #333;
+    stroke-width: 1.8;
+    fill: none;
+    marker-end: url(#arrowBlack);
+}
+
+.coord-text {
+    font-size: 12px;
+    fill: #333;
+}
+</style>
+</head>
+<body>
+
+<h3>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1</h3>
+
+<div class="controls">
+    <div>
+        <label>FAy: <input type="number" id="FAy" value="200"></label>
+        <label>Fr1: <input type="number" id="Fr1" value="50"></label>
+        <label>FCy: <input type="number" id="FCy" value="150"></label>
+    </div>
+
+    <div>
+        <label>FAx: <input type="number" id="FAx" value="200"></label>
+        <label>Ft1: <input type="number" id="Ft1" value="300"></label>
+        <label>FCx: <input type="number" id="FCx" value="50"></label>
+        <label>Fk: <input type="number" id="Fk" value="50"></label>
+    </div>
+
+    <div>
+        <label>AB: <input type="number" id="AB" value="247"></label>
+        <label>BC: <input type="number" id="BC" value="307.4"></label>
+        <label>CD: <input type="number" id="CD" value="120"></label>
+    </div>
+
+    <div>
+        <label>T1: <input type="number" id="T1" value="68542.5"></label>
+    </div>
+
+    <div>
+        <button onclick="updateDiagrams()">Cập nhật</button>
+    </div>
+
+    <div class="note">
+        Qy: hệ OXY, Y hướng lên.  
+        Mx: hệ OXY, Y hướng xuống.  
+        Qx: hệ OXZ, X hướng ra.  
+        My: hệ OXZ, X hướng vào.  
+        T1: hệ OYX, Y hướng lên.
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+</div>
+
+<svg width="1240" height="1180" viewBox="0 0 1240 1180">
+    <defs>
+        <marker id="arrowMagenta" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#c03fd1"></polygon>
+        </marker>
+
+        <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <polygon points="0 0, 9 3, 0 6" fill="#333"></polygon>
+        </marker>
+
+        <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
+            <rect width="8" height="8" fill="white"></rect>
+            <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+            <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+        </pattern>
+
+        <pattern id="hatchDiagonalXOZ" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
+            <rect width="8" height="8" fill="white"></rect>
+            <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+            <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+        </pattern>
+    </defs>
+
+    <g id="topLayer"></g>
+    <g id="qyLayer"></g>
+    <g id="mxLayer"></g>
+    <g id="qxLayer"></g>
+    <g id="myLayer"></g>
+    <g id="tLayer"></g>
+    <g id="coordLayer"></g>
+</svg>
+
+<script>
+function createSvgEl(tag, attrs = {}) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const key in attrs) el.setAttribute(key, attrs[key]);
+    return el;
+}
+
+function clearLayer(id) {
+    document.getElementById(id).innerHTML = "";
+}
+
+function addText(layer, x, y, str, cls = "", anchor = "start") {
+    const t = createSvgEl("text", { x, y, "text-anchor": anchor });
+    if (cls) t.setAttribute("class", cls);
+    t.textContent = str;
+    layer.appendChild(t);
+    return t;
+}
+
+function addLine(layer, x1, y1, x2, y2, cls) {
+    const l = createSvgEl("line", { x1, y1, x2, y2, class: cls });
+    layer.appendChild(l);
+    return l;
+}
+
+function addRect(layer, x, y, w, h, cls) {
+    const r = createSvgEl("rect", { x, y, width: w, height: h, class: cls });
+    layer.appendChild(r);
+    return r;
+}
+
+function addCircle(layer, cx, cy, r, cls, fill = "none") {
+    const c = createSvgEl("circle", { cx, cy, r, class: cls, fill });
+    layer.appendChild(c);
+    return c;
+}
+
+function addPath(layer, d, cls) {
+    const p = createSvgEl("path", { d, class: cls });
+    layer.appendChild(p);
+    return p;
+}
+
+function addPolygon(layer, points, cls) {
+    const p = createSvgEl("polygon", { points, class: cls });
+    layer.appendChild(p);
+    return p;
+}
+
+function formatNumber(n) {
+    return Number(n).toLocaleString("vi-VN", { maximumFractionDigits: 2 });
+}
+
+// OXY: Y lên
+function drawCoordOXY_Yup(layer, x, y) {
+    addLine(layer, x, y, x, y - 28, "coord");
+    addLine(layer, x, y, x + 34, y, "coord");
+    addText(layer, x - 6, y - 34, "Y", "coord-text");
+    addText(layer, x + 40, y + 4, "X", "coord-text");
+}
+
+// OXY: Y xuống
+function drawCoordOXY_Ydown(layer, x, y) {
+    addLine(layer, x, y, x, y + 28, "coord");
+    addLine(layer, x, y, x + 34, y, "coord");
+    addText(layer, x - 6, y + 42, "Y", "coord-text");
+    addText(layer, x + 40, y + 4, "X", "coord-text");
+}
+
+// OXZ: X ra
+function drawCoordOXZ_Xout(layer, x, y) {
+    addLine(layer, x, y, x + 34, y, "coord");      // Z
+    addLine(layer, x, y, x - 24, y + 22, "coord"); // X ra
+    addText(layer, x + 40, y + 4, "Z", "coord-text");
+    addText(layer, x - 36, y + 28, "X", "coord-text");
+}
+
+// OXZ: X vào
+function drawCoordOXZ_Xin(layer, x, y) {
+    addLine(layer, x, y, x + 34, y, "coord");      // Z
+    addLine(layer, x, y, x + 24, y + 22, "coord"); // X vào
+    addText(layer, x + 40, y + 4, "Z", "coord-text");
+    addText(layer, x + 28, y + 30, "X", "coord-text");
+}
+
+// OYX: Y lên
+function drawCoordOYX_Yup(layer, x, y) {
+    addLine(layer, x, y, x, y - 28, "coord");      // Y
+    addLine(layer, x, y, x + 34, y, "coord");      // X
+    addText(layer, x - 6, y - 34, "Y", "coord-text");
+    addText(layer, x + 40, y + 4, "X", "coord-text");
+}
+
+// Hệ tọa độ trên cùng giữ nguyên kiểu người dùng đã chốt trước
+function drawTopCoord(layer, x, y) {
+    addLine(layer, x, y, x, y + 28, "coord");
+    addLine(layer, x, y, x + 34, y, "coord");
+    addLine(layer, x, y, x - 24, y + 22, "coord");
+    addText(layer, x - 6, y + 42, "Y", "coord-text");
+    addText(layer, x + 38, y + 4, "Z", "coord-text");
+    addText(layer, x - 34, y + 28, "X", "coord-text");
+}
+
+function updateDiagrams() {
+    ["topLayer","qyLayer","mxLayer","qxLayer","myLayer","tLayer","coordLayer"].forEach(clearLayer);
+
+    const topLayer = document.getElementById("topLayer");
+    const qyLayer = document.getElementById("qyLayer");
+    const mxLayer = document.getElementById("mxLayer");
+    const qxLayer = document.getElementById("qxLayer");
+    const myLayer = document.getElementById("myLayer");
+    const tLayer = document.getElementById("tLayer");
+    const coordLayer = document.getElementById("coordLayer");
+
+    const FAy = parseFloat(document.getElementById("FAy").value) || 0;
+    const Fr1 = parseFloat(document.getElementById("Fr1").value) || 0;
+    const FCy = parseFloat(document.getElementById("FCy").value) || 0;
+
+    const FAx = parseFloat(document.getElementById("FAx").value) || 0;
+    const Ft1 = parseFloat(document.getElementById("Ft1").value) || 0;
+    const FCx = parseFloat(document.getElementById("FCx").value) || 0;
+    const Fk  = parseFloat(document.getElementById("Fk").value) || 0;
+
+    const AB = parseFloat(document.getElementById("AB").value) || 1;
+    const BC = parseFloat(document.getElementById("BC").value) || 1;
+    const CD = parseFloat(document.getElementById("CD").value) || 1;
+
+    const T1 = parseFloat(document.getElementById("T1").value) || 0;
+
+    const QY_AB = -FAy;
+    const QY_BC = -FAy + Fr1;
+    const QY_CD = -FAy + Fr1 + FCy;
+
+    const MX_A = 0;
+    const MX_B = QY_AB * AB;
+    const MX_C = 0;
+    const MX_D = 0;
+
+    const QX_A  = 0;
+    const QX_AB = FAx;
+    const QX_BC = FAx - Ft1;
+    const QX_CD = FAx - Ft1 + FCx;
+    const QX_D  = FAx - Ft1 + FCx + Fk;
+
+    const MY_A = 0;
+    const MY_B = QX_AB * AB;
+    const MY_C = QX_AB * AB + QX_BC * BC;
+    const MY_D = 0;
+
+    document.getElementById("resultBox").innerHTML = `
+        <b>Qy:</b> ${formatNumber(QY_AB)}, ${formatNumber(QY_BC)}, ${formatNumber(QY_CD)}<br>
+        <b>Mx:</b> ${formatNumber(MX_A)}, ${formatNumber(MX_B)}, ${formatNumber(MX_C)}, ${formatNumber(MX_D)}<br>
+        <b>Qx:</b> ${formatNumber(QX_A)}, ${formatNumber(QX_AB)}, ${formatNumber(QX_BC)}, ${formatNumber(QX_CD)}, ${formatNumber(QX_D)}<br>
+        <b>My:</b> ${formatNumber(MY_A)}, ${formatNumber(MY_B)}, ${formatNumber(MY_C)}, ${formatNumber(MY_D)}<br>
+        <b>T1(B→D):</b> ${formatNumber(T1)}
+    `;
+
+    const totalLength = AB + BC + CD;
+    const drawStart = 100;
+    const drawEnd = 930;
+    const drawWidth = drawEnd - drawStart;
+    const kx = drawWidth / totalLength;
+
+    const xA = drawStart;
+    const xB = xA + AB * kx;
+    const xC = xB + BC * kx;
+    const xD = xC + CD * kx;
+
+    const yShaft = 120;
+    const yQy0 = 360;
+    const yMx0 = 520;
+    const yQx0 = 700;
+    const yMy0 = 860;
+    const yT0  = 1040;
+
+    addLine(topLayer, xA - 34, yShaft, xB - 44, yShaft, "truc");
+    addLine(topLayer, xB + 44, yShaft, xD - 48, yShaft, "truc");
+    addLine(topLayer, xD + 22, yShaft, 1090, yShaft, "truc");
+
+    addText(topLayer, xA - 62, yShaft - 18, "A");
+    const bearingA_len = 44;
+    addLine(topLayer, xA - bearingA_len / 2, yShaft - 11, xA + bearingA_len / 2, yShaft - 11, "hinh");
+    addLine(topLayer, xA - bearingA_len / 2, yShaft + 13, xA + bearingA_len / 2, yShaft + 13, "hinh");
+
+    addText(topLayer, xA + 38, yShaft - 34, "n₁");
+    addCircle(topLayer, xA + 66, yShaft - 18, 14, "kyhieu");
+    addLine(topLayer, xA + 52, yShaft - 18, xA + 80, yShaft - 18, "kyhieu");
+    addLine(topLayer, xA + 66, yShaft - 32, xA + 66, yShaft - 4, "kyhieu");
+    addCircle(topLayer, xA + 66, yShaft + 34, 14, "kyhieu");
+    addCircle(topLayer, xA + 66, yShaft + 34, 3, "", "black");
+
+    addLine(topLayer, xA, yShaft, xA - 50, yShaft + 30, "arrow");
+    addText(topLayer, xA - 82, yShaft + 40, "FAx", "label-blue");
+
+    addLine(topLayer, xA, yShaft, xA, yShaft + 92, "arrow");
+    addText(topLayer, xA - 12, yShaft + 110, "FAy", "label-blue", "middle");
+
+    addRect(topLayer, xB - 44, yShaft - 82, 88, 164, "hinh");
+    addText(topLayer, xB, yShaft - 94, "B", "", "middle");
+
+    const yBbase = yShaft + 82;
+    addLine(topLayer, xB, yBbase, xB, yBbase - 86, "arrow");
+    addText(topLayer, xB + 8, yBbase - 90, "Fr1", "label-blue");
+
+    addLine(topLayer, xB, yBbase, xB + 52, yBbase - 40, "arrow");
+    addText(topLayer, xB + 56, yBbase - 35, "Ft1", "label-blue");
+
+    addLine(topLayer, xB, yBbase, xB + 78, yBbase, "arrow");
+    addText(topLayer, xB + 82, yBbase + 5, "Fa1", "label-blue");
+
+    addText(topLayer, xC - 6, yShaft - 18, "C");
+    const bearingC_len = 52;
+    addLine(topLayer, xC - bearingC_len / 2, yShaft - 11, xC + bearingC_len / 2, yShaft - 11, "hinh");
+    addLine(topLayer, xC - bearingC_len / 2, yShaft + 13, xC + bearingC_len / 2, yShaft + 13, "hinh");
+
+    addLine(topLayer, xC, yShaft, xC - 52, yShaft + 28, "arrow");
+    addText(topLayer, xC - 96, yShaft + 40, "FCx", "label-blue");
+
+    addLine(topLayer, xC, yShaft, xC, yShaft + 92, "arrow");
+    addText(topLayer, xC - 12, yShaft + 110, "FCy", "label-blue", "middle");
+
+    addRect(topLayer, xD - 46, yShaft - 34, 28, 68, "hinh");
+    addRect(topLayer, xD - 18, yShaft - 78, 40, 156, "hinh");
+    addText(topLayer, xD + 28, yShaft - 92, "D");
+
+    addLine(topLayer, xD, yShaft, xD - 58, yShaft + 30, "arrow");
+    addText(topLayer, xD - 92, yShaft + 40, "Fk", "label-blue");
+
+    addLine(topLayer, xD - 3, yShaft - 16, xD + 3, yShaft + 16, "kyhieu");
+    addLine(topLayer, xD + 3, yShaft - 16, xD - 3, yShaft + 16, "kyhieu");
+
+    [xA,xB,xC,xD].forEach(x => addLine(topLayer, x, yShaft, x, 1100, "dong"));
+
+    // Hệ tọa độ trên cùng
+    drawTopCoord(coordLayer, 1110, 88);
+
+    drawShearDiagramRect(qyLayer, {
+        label: "Qy",
+        xA, xB, xC, xD, y0: yQy0,
+        values: [QY_AB, QY_BC, QY_CD],
+        fillClass: "q-fill",
+        lineClass: "q",
+        positiveDown: false
+    });
+    drawCoordOXY_Yup(qyLayer, 1110, yQy0 + 8);
+
+    drawMomentDiagramStandard(mxLayer, {
+        label: "Mₓ",
+        xA, xB, xC, xD, y0: yMx0,
+        moments: [MX_A, MX_B, MX_C, MX_D],
+        fillClass: "m-fill",
+        lineClass: "m",
+        positiveDown: true
+    });
+    drawCoordOXY_Ydown(mxLayer, 1110, yMx0 + 8);
+
+    drawShearDiagramXOZ(qxLayer, {
+        label: "Qx",
+        xA, xB, xC, xD, y0: yQx0,
+        values: [QX_AB, QX_BC, QX_CD],
+        fillClass: "qx-fill",
+        lineClass: "q"
+    });
+    drawCoordOXZ_Xout(qxLayer, 1110, yQx0 + 8);
+
+    drawMomentDiagramXOZ(myLayer, {
+        label: "Mᵧ",
+        xA, xB, xC, xD, y0: yMy0,
+        moments: [MY_A, MY_B, MY_C, MY_D],
+        fillClass: "my-fill",
+        lineClass: "m"
+    });
+    drawCoordOXZ_Xin(myLayer, 1110, yMy0 + 8);
+
+    drawTorsionDiagram(tLayer, {
+        label: "T₁",
+        xA, xB, xC, xD, y0: yT0,
+        T1,
+        fillClass: "t-fill",
+        lineClass: "t"
+    });
+    drawCoordOYX_Yup(tLayer, 1110, yT0 + 8);
+}
+
+function drawShearDiagramRect(layer, config) {
+    const { label, xA, xB, xC, xD, y0, values, fillClass, lineClass, positiveDown } = config;
+    const [vAB, vBC, vCD] = values;
+
+    addText(layer, 34, y0 - 8, label);
+    addLine(layer, xA, y0, xD, y0, "axis");
+    addLine(layer, xA, y0 - 105, xA, y0 + 105, "axis-left");
+
+    const maxV = Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), 1);
+    const maxHeight = 62;
+    const scale = maxHeight / maxV;
+
+    const mapY = (v) => positiveDown ? y0 + v * scale : y0 - v * scale;
+
+    const yAB = mapY(vAB);
+    const yBC = mapY(vBC);
+    const yCD = mapY(vCD);
+
+    addPath(layer, `
+        M ${xA} ${y0}
+        L ${xA} ${yAB}
+        L ${xB} ${yAB}
+        L ${xB} ${yBC}
+        L ${xC} ${yBC}
+        L ${xC} ${yCD}
+        L ${xD} ${yCD}
+        L ${xD} ${y0}
+        Z
+    `, fillClass);
+
+    addPath(layer, `
+        M ${xA} ${yAB}
+        L ${xB} ${yAB}
+        L ${xB} ${yBC}
+        L ${xC} ${yBC}
+        L ${xC} ${yCD}
+        L ${xD} ${yCD}
+    `, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+
+    addText(layer, (xA + xB) / 2, (vAB >= 0 ? yAB - 12 : yAB + 26), formatNumber(Math.abs(vAB)), "value-text", "middle");
+    addText(layer, (xB + xC) / 2, (vBC >= 0 ? yBC - 12 : yBC + 26), formatNumber(Math.abs(vBC)), "value-text", "middle");
+    addText(layer, (xC + xD) / 2, (vCD >= 0 ? yCD - 12 : yCD + 26), formatNumber(Math.abs(vCD)), "value-text", "middle");
+}
+
+function drawMomentDiagramStandard(layer, config) {
+    const { label, xA, xB, xC, xD, y0, moments, fillClass, lineClass, positiveDown } = config;
+    const [mA, mB, mC, mD] = moments;
+
+    addText(layer, 34, y0 - 8, label);
+    addLine(layer, xA, y0, xD, y0, "axis");
+    addLine(layer, xA, y0 - 115, xA, y0 + 115, "axis-left");
+
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
+    const maxHeight = 70;
+    const scale = maxHeight / maxM;
+
+    const mapY = (m) => positiveDown ? y0 + m * scale : y0 - m * scale;
+
+    const yA = mapY(mA);
+    const yB = mapY(mB);
+    const yC = mapY(mC);
+    const yD = mapY(mD);
+
+    addPath(layer, `
+        M ${xA} ${y0}
+        L ${xA} ${yA}
+        L ${xB} ${yB}
+        L ${xC} ${yC}
+        L ${xD} ${yD}
+        L ${xD} ${y0}
+        Z
+    `, fillClass);
+
+    addPath(layer, `
+        M ${xA} ${yA}
+        L ${xB} ${yB}
+        L ${xC} ${yC}
+        L ${xD} ${yD}
+    `, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+
+    if (mB !== 0) addText(layer, xB, (mB >= 0 ? yB + 26 : yB - 12), formatNumber(Math.abs(mB)), "value-text", "middle");
+    if (mC !== 0) addText(layer, xC, (mC >= 0 ? yC + 26 : yC - 12), formatNumber(Math.abs(mC)), "value-text", "middle");
+}
+
+function drawShearDiagramXOZ(layer, config) {
+    const { label, xA, xB, xC, xD, y0, values, fillClass, lineClass } = config;
+    const [vAB, vBC, vCD] = values;
+
+    addText(layer, 34, y0 - 8, label);
+    addLine(layer, xA, y0, xD, y0, "axis");
+    addLine(layer, xA, y0 - 95, xA, y0 + 95, "axis-left");
+
+    const maxV = Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), 1);
+    const scale = 46 / maxV;
+
+    const dx = -28;
+    const dy = 32;
+
+    const offset = (v) => {
+        const k = v * scale / 46;
+        return { ox: dx * k, oy: dy * k };
+    };
+
+    const oAB = offset(vAB);
+    const oBC = offset(vBC);
+    const oCD = offset(vCD);
+
+    addPolygon(layer, `${xA},${y0} ${xA+oAB.ox},${y0+oAB.oy} ${xB+oAB.ox},${y0+oAB.oy} ${xB},${y0}`, fillClass);
+    addPath(layer, `M ${xA} ${y0} L ${xA+oAB.ox} ${y0+oAB.oy} L ${xB+oAB.ox} ${y0+oAB.oy} L ${xB} ${y0} Z`, lineClass);
+
+    addPolygon(layer, `${xB},${y0} ${xB+oBC.ox},${y0+oBC.oy} ${xC+oBC.ox},${y0+oBC.oy} ${xC},${y0}`, fillClass);
+    addPath(layer, `M ${xB} ${y0} L ${xB+oBC.ox} ${y0+oBC.oy} L ${xC+oBC.ox} ${y0+oBC.oy} L ${xC} ${y0} Z`, lineClass);
+
+    addPolygon(layer, `${xC},${y0} ${xC+oCD.ox},${y0+oCD.oy} ${xD+oCD.ox},${y0+oCD.oy} ${xD},${y0}`, fillClass);
+    addPath(layer, `M ${xC} ${y0} L ${xC+oCD.ox} ${y0+oCD.oy} L ${xD+oCD.ox} ${y0+oCD.oy} L ${xD} ${y0} Z`, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+
+    addText(layer, (xA + xB) / 2, y0 + Math.max(oAB.oy, 0) + 34, formatNumber(Math.abs(vAB)), "value-text", "middle");
+    addText(layer, (xB + xC) / 2, y0 + Math.max(oBC.oy, 0) - 12, formatNumber(Math.abs(vBC)), "value-text", "middle");
+    addText(layer, (xC + xD) / 2, y0 + Math.max(oCD.oy, 0) - 12, formatNumber(Math.abs(vCD)), "value-text", "middle");
+}
+
+function drawMomentDiagramXOZ(layer, config) {
+    const { label, xA, xB, xC, xD, y0, moments, fillClass, lineClass } = config;
+    const [mA, mB, mC, mD] = moments;
+
+    addText(layer, 34, y0 - 8, label);
+    addLine(layer, xA, y0, xD, y0, "axis");
+    addLine(layer, xA, y0 - 105, xA, y0 + 105, "axis-left");
+
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
+    const scale = 58 / maxM;
+
+    const dx = 28;
+    const dy = -32;
+
+    const offset = (m) => {
+        const k = m * scale / 58;
+        return { ox: dx * k, oy: dy * k };
+    };
+
+    const oA = offset(mA);
+    const oB = offset(mB);
+    const oC = offset(mC);
+    const oD = offset(mD);
+
+    addPolygon(layer, `
+        ${xA},${y0}
+        ${xA+oA.ox},${y0+oA.oy}
+        ${xB+oB.ox},${y0+oB.oy}
+        ${xC+oC.ox},${y0+oC.oy}
+        ${xD+oD.ox},${y0+oD.oy}
+        ${xD},${y0}
+    `, fillClass);
+
+    addPath(layer, `
+        M ${xA+oA.ox} ${y0+oA.oy}
+        L ${xB+oB.ox} ${y0+oB.oy}
+        L ${xC+oC.ox} ${y0+oC.oy}
+        L ${xD+oD.ox} ${y0+oD.oy}
+    `, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+
+    if (mB !== 0) addText(layer, xB + oB.ox + 18, y0 + oB.oy - 16, formatNumber(Math.abs(mB)), "value-text", "middle");
+    if (mC !== 0) addText(layer, xC + oC.ox + 18, y0 + oC.oy - 16, formatNumber(Math.abs(mC)), "value-text", "middle");
+}
+
+function drawTorsionDiagram(layer, config) {
+    const { label, xA, xB, xC, xD, y0, T1, fillClass, lineClass } = config;
+
+    addText(layer, 34, y0 - 8, label);
+    addLine(layer, xA, y0, xD, y0, "axis");
+    addLine(layer, xA, y0 - 105, xA, y0 + 105, "axis-left");
+
+    const maxT = Math.max(Math.abs(T1), 1);
+    const maxHeight = 62;
+    const scale = maxHeight / maxT;
+
+    const yT = y0 - T1 * scale;
+
+    addPath(layer, `
+        M ${xB} ${y0}
+        L ${xB} ${yT}
+        L ${xD} ${yT}
+        L ${xD} ${y0}
+        Z
+    `, fillClass);
+
+    addPath(layer, `
+        M ${xB} ${yT}
+        L ${xD} ${yT}
+    `, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+
+    if (T1 !== 0) {
+        addText(layer, (xB + xD) / 2, (T1 > 0 ? yT - 12 : yT + 26), formatNumber(Math.abs(T1)), "value-text", "middle");
+    }
+}
+
+updateDiagrams();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T2</title>
+<style>
+:root{
+    --border:#cfd6df;
+    --border-dark:#aeb8c4;
+    --text:#1f2937;
+    --muted:#5b6470;
+    --blue:#1f36cc;
+    --purple:#c92fd8;
+    --panel:#f7f9fc;
+    --shadow:0 10px 26px rgba(28,45,64,0.08);
+}
+body{
+    margin:0;
+    background:#eef2f7;
+    font-family:Arial, sans-serif;
+    color:var(--text);
+}
+.wrap{
+    width:1500px;
+    margin:0 auto;
+    padding:20px 0 32px 0;
+}
+.page-title{
+    background:linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:18px 22px;
+    margin-bottom:16px;
+}
+.page-title h1{
+    margin:0 0 6px 0;
+    font-size:24px;
+    color:#0f172a;
+}
+.page-title p{
+    margin:0;
+    font-size:14px;
+    color:var(--muted);
+}
+.controls{
+    width:1500px;
+    margin:0 auto 16px auto;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfcfe 100%);
+    border:1px solid var(--border);
+    box-sizing:border-box;
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:18px 18px 16px 18px;
+    text-align:left;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+    margin-bottom:14px;
+}
+.group{
+    background:var(--panel);
+    border:1px solid #dde5ef;
+    border-radius:10px;
+    padding:14px 14px 10px 14px;
+}
+.group-title{
+    margin:0 0 12px 0;
+    font-size:15px;
+    font-weight:700;
+    color:#0f172a;
+    border-left:4px solid var(--blue);
+    padding-left:8px;
+}
+.field-row{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px 12px;
+}
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+.field label{
+    font-size:13px;
+    color:#334155;
+    font-weight:700;
+}
+.field input{
+    width:100%;
+    box-sizing:border-box;
+    padding:9px 10px;
+    font-size:14px;
+    border:1px solid var(--border-dark);
+    border-radius:7px;
+    background:#fff;
+    color:#111827;
+    outline:none;
+    transition:0.15s ease;
+}
+.field input:focus{
+    border-color:#4f46e5;
+    box-shadow:0 0 0 3px rgba(79,70,229,0.12);
+}
+.action-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:10px 0 12px 0;
+}
+.btn{
+    padding:10px 22px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    border-radius:8px;
+    color:#fff;
+    background:linear-gradient(180deg,#3b82f6 0%, #2563eb 100%);
+    box-shadow:0 6px 16px rgba(37,99,235,0.24);
+}
+.note,
+.result-box{
+    background:var(--panel);
+    border:1px solid #dde5ef;
+    border-radius:10px;
+    padding:12px 14px;
+}
+.note{
+    margin-top:8px;
+    font-size:13px;
+    color:#374151;
+    line-height:1.7;
+}
+.result-box{
+    margin-top:12px;
+    font-size:14px;
+    line-height:1.8;
+    background:#fcfdff;
+}
+.result-title{
+    margin:0 0 6px 0;
+    font-size:15px;
+    font-weight:700;
+    color:#0f172a;
+}
+svg{
+    width:1500px;
+    height:1510px;
+    background:#ffffff;
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+}
+
+/* ===== hình trên ===== */
+.roman{
+    fill:#000;
+    font-size:62px;
+    font-family:"Times New Roman";
+    font-weight:700;
+}
+.label{
+    fill:#000;
+    font-size:22px;
+    font-family:Arial, sans-serif;
+}
+.blue{
+    fill:#1f36cc;
+    font-size:24px;
+    font-family:Arial, sans-serif;
+    font-weight:600;
+}
+.force-label{
+    fill:#1e32c8;
+    font-size:17px;
+    font-family:"Arial Narrow", Arial, sans-serif;
+    font-weight:700;
+    letter-spacing:0.3px;
+}
+.shaft{stroke:#000;stroke-width:5;}
+.shape{stroke:#000;stroke-width:3.2;fill:none;}
+.thin{stroke:#000;stroke-width:2.2;}
+.red-shape{stroke:#ff5a3c;stroke-width:2.2;fill:none;}
+.force{
+    stroke:#c92fd8;
+    stroke-width:2.6;
+    fill:none;
+    marker-end:url(#arrow);
+}
+
+/* ===== biểu đồ ===== */
+.axis{ stroke:#000; stroke-width:1.6; }
+.axis-left{ stroke:#000; stroke-width:1.6; }
+.q,.m,.t{
+    stroke:#000;
+    stroke-width:2.3;
+    fill:none;
+}
+.q-fill{
+    fill:url(#hatchVertical);
+    stroke:#000;
+    stroke-width:0.8;
+}
+.m-fill{
+    fill:url(#hatchVertical);
+    stroke:#000;
+    stroke-width:0.8;
+}
+.qx-fill{
+    fill:url(#hatchDiagonalXOZ);
+    stroke:#000;
+    stroke-width:0.8;
+}
+.my-fill{
+    fill:url(#hatchDiagonalXOZ);
+    stroke:#000;
+    stroke-width:0.8;
+}
+.t-fill{
+    fill:url(#hatchVerticalDense);
+    stroke:#000;
+    stroke-width:0.8;
+}
+.dong{
+    stroke:#76d9e8;
+    stroke-width:1.1;
+    stroke-dasharray:5 5;
+}
+.value-text{
+    font-size:16px;
+    fill:#000;
+    font-family:Arial, sans-serif;
+}
+.diagram-title{
+    font-size:23px;
+    fill:#000;
+    font-weight:700;
+    font-family:Arial, sans-serif;
+}
+.diagram-unit{
+    font-size:16px;
+    fill:#000;
+    font-family:Arial, sans-serif;
+}
+.coord{
+    stroke:#333;
+    stroke-width:1.6;
+    fill:none;
+    marker-end:url(#arrowBlack);
+}
+.coord-text{
+    font-size:15px;
+    fill:#333;
+    font-family:Arial, sans-serif;
+}
+.tick-label{
+    font-size:14px;
+    fill:#000;
+    font-family:Arial, sans-serif;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="page-title">
+    <h1>Biểu đồ lực và moment của trục</h1>
+    <p>Sơ đồ tính toán và biểu đồ Qy, Mx, Qx, My, T2 phục vụ trình bày đồ án.</p>
+</div>
+
+<div class="controls">
+
+    <div class="form-grid">
+        <div class="group">
+            <div class="group-title">Thông số mặt phẳng YOZ</div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="Fd">Fd</label>
+                    <input type="number" id="Fd" value="150">
+                </div>
+                <div class="field">
+                    <label for="Fr2">Fr2</label>
+                    <input type="number" id="Fr2" value="200">
+                </div>
+                <div class="field">
+                    <label for="Fa2">Fa2</label>
+                    <input type="number" id="Fa2" value="500">
+                </div>
+                <div class="field">
+                    <label for="dw2">dw2</label>
+                    <input type="number" id="dw2" value="40">
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Thông số mặt phẳng XOZ và mômen xoắn</div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="Ft2">Ft2</label>
+                    <input type="number" id="Ft2" value="300">
+                </div>
+                <div class="field">
+                    <label for="T2">T2</label>
+                    <input type="number" id="T2" value="68542.5">
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Kích thước các đoạn</div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="AB">AB</label>
+                    <input type="number" id="AB" value="100">
+                </div>
+                <div class="field">
+                    <label for="BC">BC</label>
+                    <input type="number" id="BC" value="200">
+                </div>
+                <div class="field">
+                    <label for="CD">CD</label>
+                    <input type="number" id="CD" value="200">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-row">
+        <button class="btn" onclick="updateDiagrams()">Cập nhật biểu đồ</button>
+    </div>
+
+    <div class="note">
+        <b>Thuật toán sử dụng:</b><br>
+        Mfa2 = Fa2 · (dw2 / 2)<br>
+        BD = BC + CD<br>
+        FDy = (Fr2·BC - Fd·AB - Mfa2) / BD<br>
+        FBy = Fd + Fr2 - FDy<br><br>
+
+        Qy_AB = -Fd<br>
+        Qy_BC = Qy_AB + FBy<br>
+        Qy_CD = Qy_BC - Fr2<br><br>
+
+        Mx(A)=0<br>
+        Mx(B)=Qy_AB·AB<br>
+        Mx(C-trái)=Qy_AB·AB + Qy_BC·BC<br>
+        Mx(C-phải)=Mx(C-trái) - Mfa2<br>
+        Mx(D)=Mx(C-phải) + Qy_CD·CD<br><br>
+
+        FDx = (Ft2·BC) / BD<br>
+        FBx = Ft2 - FDx<br><br>
+
+        Qx_AB = 0<br>
+        Qx_BC = -FBx<br>
+        Qx_CD = Qx_BC + Ft2<br><br>
+
+        My(A)=0<br>
+        My(B)=Qx_AB·AB<br>
+        My(C)=Qx_AB·AB + Qx_BC·BC<br>
+        My(D)=Qx_AB·AB + Qx_BC·BC + Qx_CD·CD
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <div class="result-title">Kết quả tính toán</div>
+    </div>
+</div>
+
+<svg viewBox="0 0 1500 1510" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5.2" refY="3" orient="auto" markerUnits="strokeWidth">
+        <polygon points="0,0 5.5,3 0,6" fill="#c92fd8"/>
+    </marker>
+    <marker id="arrowBlack" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+        <polygon points="0 0, 8 3, 0 6" fill="#333"></polygon>
+    </marker>
+    <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect width="8" height="8" fill="white"></rect>
+        <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.2"></line>
+        <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.2"></line>
+    </pattern>
+    <pattern id="hatchVerticalDense" width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" fill="white"></rect>
+        <line x1="1.5" y1="0" x2="1.5" y2="6" stroke="#d57adf" stroke-width="1.1"></line>
+        <line x1="4.5" y1="0" x2="4.5" y2="6" stroke="#d57adf" stroke-width="1.1"></line>
+    </pattern>
+    <pattern id="hatchDiagonalXOZ" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
+        <rect width="8" height="8" fill="white"></rect>
+        <line x1="2" y1="0" x2="2" y2="8" stroke="#8a4dff" stroke-width="1.2"></line>
+        <line x1="6" y1="0" x2="6" y2="8" stroke="#8a4dff" stroke-width="1.2"></line>
+    </pattern>
+</defs>
+
+<g id="topStaticLayer"></g>
+<g id="guideLayer"></g>
+<g id="qyLayer"></g>
+<g id="mxLayer"></g>
+<g id="qxLayer"></g>
+<g id="myLayer"></g>
+<g id="t2Layer"></g>
+</svg>
+
+</div>
+
+<script>
+function createSvgEl(tag, attrs = {}) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const key in attrs) el.setAttribute(key, attrs[key]);
+    return el;
+}
+function clearLayer(id) {
+    document.getElementById(id).innerHTML = "";
+}
+function addText(layer, x, y, str, cls = "", anchor = "start") {
+    const t = createSvgEl("text", { x, y, "text-anchor": anchor });
+    if (cls) t.setAttribute("class", cls);
+    t.textContent = str;
+    layer.appendChild(t);
+    return t;
+}
+function addLine(layer, x1, y1, x2, y2, cls) {
+    const l = createSvgEl("line", { x1, y1, x2, y2, class: cls });
+    layer.appendChild(l);
+    return l;
+}
+function addRect(layer, x, y, w, h, cls) {
+    const r = createSvgEl("rect", { x, y, width: w, height: h, class: cls });
+    layer.appendChild(r);
+    return r;
+}
+function addCircle(layer, cx, cy, r, cls, fill = "none") {
+    const c = createSvgEl("circle", { cx, cy, r, class: cls, fill });
+    layer.appendChild(c);
+    return c;
+}
+function addPath(layer, d, cls) {
+    const p = createSvgEl("path", { d, class: cls });
+    layer.appendChild(p);
+    return p;
+}
+function addPolygon(layer, points, cls) {
+    const p = createSvgEl("polygon", { points, class: cls });
+    layer.appendChild(p);
+    return p;
+}
+function formatNumber(n) {
+    return Number(n).toLocaleString("vi-VN", { maximumFractionDigits: 2 });
+}
+function niceCeil(v){
+    if (v <= 0) return 1;
+    const p = Math.pow(10, Math.floor(Math.log10(v)));
+    const m = v / p;
+    let n;
+    if (m <= 1) n = 1;
+    else if (m <= 2) n = 2;
+    else if (m <= 5) n = 5;
+    else n = 10;
+    return n * p;
+}
+function drawCoordOXY_Yup(layer, x, y) {
+    addLine(layer, x, y, x, y - 30, "coord");
+    addLine(layer, x, y, x + 38, y, "coord");
+    addText(layer, x - 6, y - 36, "Y", "coord-text");
+    addText(layer, x + 44, y + 4, "X", "coord-text");
+}
+function drawCoordOXY_Ydown(layer, x, y) {
+    addLine(layer, x, y, x, y + 30, "coord");
+    addLine(layer, x, y, x + 38, y, "coord");
+    addText(layer, x - 6, y + 44, "Y", "coord-text");
+    addText(layer, x + 44, y + 4, "X", "coord-text");
+}
+function drawCoordOXZ_Xout(layer, x, y) {
+    addLine(layer, x, y, x + 38, y, "coord");
+    addLine(layer, x, y, x - 28, y + 24, "coord");
+    addText(layer, x + 44, y + 4, "Z", "coord-text");
+    addText(layer, x - 40, y + 30, "X", "coord-text");
+}
+function drawCoordOXZ_Xin(layer, x, y) {
+    addLine(layer, x, y, x + 38, y, "coord");
+    addLine(layer, x, y, x + 28, y - 28, "coord");
+    addText(layer, x + 44, y + 4, "Z", "coord-text");
+    addText(layer, x + 30, y - 34, "X", "coord-text");
+}
+function drawYAxisWithTicks(layer, cfg) {
+    const { x, yTop, yBottom, ticks, title, unit } = cfg;
+
+    addLine(layer, x, yTop, x, yBottom, "axis-left");
+    addLine(layer, x, yTop + 10, x, yTop, "axis-left");
+    addLine(layer, x, yTop, x - 4, yTop + 8, "axis-left");
+    addLine(layer, x, yTop, x + 4, yTop + 8, "axis-left");
+
+    ticks.forEach(t => {
+        addLine(layer, x - 5, t.y, x + 5, t.y, "axis-left");
+        addText(layer, x - 12, t.y + 4, t.label, "tick-label", "end");
+    });
+
+    const mid = (yTop + yBottom) / 2;
+    addText(layer, 58, mid - 16, title, "diagram-title", "middle");
+    addText(layer, 58, mid + 18, unit, "diagram-unit", "middle");
+}
+
+function drawTopStatic() {
+    clearLayer("topStaticLayer");
+    const layer = document.getElementById("topStaticLayer");
+
+    addText(layer, 8, 266, "II", "roman");
+
+    addLine(layer, 96, 255, 238, 255, "shaft");
+    addLine(layer, 344, 255, 844, 255, "shaft");
+    addLine(layer, 956, 255, 1340, 255, "shaft");
+
+    addText(layer, 128, 140, "nII", "blue");
+    addCircle(layer, 148, 205, 13, "red-shape");
+    addCircle(layer, 148, 205, 4, "", "#ff5a3c");
+    addCircle(layer, 148, 286, 17, "red-shape");
+    addLine(layer, 131, 286, 165, 286, "red-shape");
+    addLine(layer, 148, 269, 148, 303, "red-shape");
+    addText(layer, 244, 158, "A", "label");
+
+    addRect(layer, 252, 187, 78, 172, "shape");
+    addRect(layer, 238, 220, 14, 70, "shape");
+    addRect(layer, 330, 220, 14, 70, "shape");
+
+    addLine(layer, 291, 255, 291, 360, "force");
+    addText(layer, 302, 248, "Fd", "force-label");
+
+    addText(layer, 540, 158, "B", "label");
+    addLine(layer, 520, 238, 570, 238, "thin");
+    addLine(layer, 520, 272, 570, 272, "thin");
+
+    addText(layer, 650, 140, "nII", "blue");
+    addCircle(layer, 670, 205, 13, "red-shape");
+    addCircle(layer, 670, 205, 4, "", "#ff5a3c");
+    addCircle(layer, 670, 286, 17, "red-shape");
+    addLine(layer, 653, 286, 687, 286, "red-shape");
+    addLine(layer, 670, 269, 670, 303, "red-shape");
+
+    addLine(layer, 545, 255, 545, 150, "force");
+    addText(layer, 557, 146, "FBy", "force-label");
+
+    addLine(layer, 545, 255, 625, 180, "force");
+    addText(layer, 635, 178, "FBx", "force-label");
+
+    addText(layer, 795, 363, "C", "label");
+    addRect(layer, 844, 147, 112, 216, "shape");
+    addLine(layer, 844, 235, 956, 276, "shape");
+    addLine(layer, 844, 255, 956, 296, "shape");
+
+    addLine(layer, 900, 147, 762, 147, "force");
+    addText(layer, 720, 150, "Fa2", "force-label");
+
+    addLine(layer, 900, 147, 812, 230, "force");
+    addText(layer, 770, 236, "Ft2", "force-label");
+
+    addLine(layer, 900, 147, 900, 230, "force");
+    addText(layer, 912, 218, "Fr2", "force-label");
+
+    addText(layer, 1275, 330, "D", "label");
+    addLine(layer, 1228, 238, 1282, 238, "thin");
+    addLine(layer, 1228, 272, 1282, 272, "thin");
+
+    addLine(layer, 1255, 255, 1255, 150, "force");
+    addText(layer, 1267, 146, "FDy", "force-label");
+
+    addLine(layer, 1255, 255, 1335, 180, "force");
+    addText(layer, 1342, 178, "FDx", "force-label");
+}
+
+function drawShearDiagramQy(layer, cfg) {
+    const { xA, xB, xC, xD, y0, qAB, qBC, qCD } = cfg;
+    const maxV = Math.max(Math.abs(qAB), Math.abs(qBC), Math.abs(qCD), 1);
+    const tick = niceCeil(maxV);
+    const axisX = 165;
+
+    drawYAxisWithTicks(layer, {
+        x: axisX,
+        yTop: y0 - 78,
+        yBottom: y0 + 78,
+        ticks: [
+            { y: y0 - 60, label: formatNumber(tick) },
+            { y: y0, label: "0" },
+            { y: y0 + 60, label: formatNumber(-tick) }
+        ],
+        title: "Qy",
+        unit: "(N)"
+    });
+
+    addLine(layer, axisX, y0, xD, y0, "axis");
+    const scale = 60 / tick;
+    const mapY = (q) => y0 - q * scale;
+
+    const yAB = mapY(qAB);
+    const yBC = mapY(qBC);
+    const yCD = mapY(qCD);
+
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yAB} L ${xB} ${yAB} L ${xB} ${yBC} L ${xC} ${yBC} L ${xC} ${yCD} L ${xD} ${yCD} L ${xD} ${y0} Z`, "q-fill");
+    addPath(layer, `M ${xA} ${yAB} L ${xB} ${yAB} L ${xB} ${yBC} L ${xC} ${yBC} L ${xC} ${yCD} L ${xD} ${yCD} L ${xD} ${y0}`, "q");
+
+    addText(layer, xA - 4, y0 - 52, "A");
+    addText(layer, xB, y0 - 52, "B", "", "middle");
+    addText(layer, xC, y0 - 52, "C", "", "middle");
+    addText(layer, xD + 4, y0 - 52, "D");
+
+    addText(layer, xA - 10, y0 - 6, "0", "value-text", "end");
+    addText(layer, (xA+xB)/2, qAB > 0 ? yAB-14 : yAB+28, formatNumber(qAB), "value-text", "middle");
+    addText(layer, (xB+xC)/2, qBC > 0 ? yBC-14 : yBC+28, formatNumber(qBC), "value-text", "middle");
+    addText(layer, (xC+xD)/2, qCD > 0 ? yCD-14 : yCD+28, formatNumber(qCD), "value-text", "middle");
+}
+
+function drawMomentDiagramMx(layer, cfg) {
+    const { xA, xB, xC, xD, y0, mA, mB, mCLeft, mCRight, mD } = cfg;
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mCLeft), Math.abs(mCRight), Math.abs(mD), 1);
+    const tick = niceCeil(maxM);
+    const axisX = 165;
+
+    drawYAxisWithTicks(layer, {
+        x: axisX,
+        yTop: y0 - 78,
+        yBottom: y0 + 78,
+        ticks: [
+            { y: y0 - 60, label: formatNumber(-tick) },
+            { y: y0, label: "0" },
+            { y: y0 + 60, label: formatNumber(tick) }
+        ],
+        title: "Mx",
+        unit: "(N.mm)"
+    });
+
+    addLine(layer, axisX, y0, xD, y0, "axis");
+    const scale = 60 / tick;
+    const mapY = (m) => y0 + m * scale;
+
+    const yA = mapY(mA);
+    const yB = mapY(mB);
+    const yCLeft = mapY(mCLeft);
+    const yCRight = mapY(mCRight);
+    const yD = mapY(mD);
+
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yA} L ${xB} ${yB} L ${xC} ${yCLeft} L ${xC} ${yCRight} L ${xD} ${yD} L ${xD} ${y0} Z`, "m-fill");
+    addPath(layer, `M ${xA} ${yA} L ${xB} ${yB} L ${xC} ${yCLeft} L ${xC} ${yCRight} L ${xD} ${yD}`, "m");
+
+    addText(layer, xA - 10, y0 - 6, "0", "value-text", "end");
+    if (mB !== 0) addText(layer, xB + 10, mB > 0 ? yB + 28 : yB - 14, formatNumber(mB), "value-text");
+    if (mCLeft !== 0) addText(layer, xC + 12, yCLeft > y0 ? yCLeft + 22 : yCLeft - 10, formatNumber(mCLeft), "value-text");
+    if (mCRight !== 0) addText(layer, xC + 12, yCRight > y0 ? yCRight + 22 : yCRight - 10, formatNumber(mCRight), "value-text");
+}
+
+function drawShearDiagramQxXOZ(layer, cfg) {
+    const { xA, xB, xC, xD, y0, qAB, qBC, qCD } = cfg;
+    const maxV = Math.max(Math.abs(qAB), Math.abs(qBC), Math.abs(qCD), 1);
+    const tick = niceCeil(maxV);
+    const axisX = 165;
+
+    drawYAxisWithTicks(layer, {
+        x: axisX,
+        yTop: y0 - 78,
+        yBottom: y0 + 78,
+        ticks: [
+            { y: y0 - 60, label: formatNumber(-tick) },
+            { y: y0, label: "0" },
+            { y: y0 + 60, label: formatNumber(tick) }
+        ],
+        title: "Qx",
+        unit: "(N)"
+    });
+
+    addLine(layer, axisX, y0, xD, y0, "axis");
+
+    const scale = 56 / tick;
+    const dx = -28;
+    const dy = 32;
+    const offset = (q) => {
+        const k = q * scale / 56;
+        return { ox: dx * k, oy: dy * k };
+    };
+
+    const oAB = offset(qAB);
+    const oBC = offset(qBC);
+    const oCD = offset(qCD);
+
+    addPolygon(layer, `${xA},${y0} ${xA+oAB.ox},${y0+oAB.oy} ${xB+oAB.ox},${y0+oAB.oy} ${xB},${y0}`, "qx-fill");
+    addPath(layer, `M ${xA} ${y0} L ${xA+oAB.ox} ${y0+oAB.oy} L ${xB+oAB.ox} ${y0+oAB.oy} L ${xB} ${y0} Z`, "q");
+
+    addPolygon(layer, `${xB},${y0} ${xB+oBC.ox},${y0+oBC.oy} ${xC+oBC.ox},${y0+oBC.oy} ${xC},${y0}`, "qx-fill");
+    addPath(layer, `M ${xB} ${y0} L ${xB+oBC.ox} ${y0+oBC.oy} L ${xC+oBC.ox} ${y0+oBC.oy} L ${xC} ${y0} Z`, "q");
+
+    addPolygon(layer, `${xC},${y0} ${xC+oCD.ox},${y0+oCD.oy} ${xD+oCD.ox},${y0+oCD.oy} ${xD},${y0}`, "qx-fill");
+    addPath(layer, `M ${xC} ${y0} L ${xC+oCD.ox} ${y0+oCD.oy} L ${xD+oCD.ox} ${y0+oCD.oy} L ${xD} ${y0} Z`, "q");
+
+    addText(layer, xA - 4, y0 - 52, "A");
+    addText(layer, xB, y0 + 28, "B", "", "middle");
+    addText(layer, xC, y0 + 28, "C", "", "middle");
+    addText(layer, xD + 4, y0 + 28, "D");
+
+    addText(layer, xA - 10, y0 - 6, "0", "value-text", "end");
+    addText(layer, (xA+xB)/2, y0 - 6, "0", "value-text", "middle");
+    addText(layer, (xB+xC)/2, y0 + oBC.oy + (qBC >= 0 ? 28 : -12), formatNumber(qBC), "value-text", "middle");
+    addText(layer, (xC+xD)/2, y0 + oCD.oy + (qCD >= 0 ? 28 : -12), formatNumber(qCD), "value-text", "middle");
+}
+
+function drawMomentDiagramMyXOZ(layer, cfg) {
+    const { xA, xB, xC, xD, y0, mA, mB, mC, mD } = cfg;
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
+    const tick = niceCeil(maxM);
+    const axisX = 165;
+
+    drawYAxisWithTicks(layer, {
+        x: axisX,
+        yTop: y0 - 78,
+        yBottom: y0 + 78,
+        ticks: [
+            { y: y0 - 60, label: formatNumber(tick) },
+            { y: y0, label: "0" },
+            { y: y0 + 60, label: formatNumber(-tick) }
+        ],
+        title: "My",
+        unit: "(N.mm)"
+    });
+
+    addLine(layer, axisX, y0, xD, y0, "axis");
+
+    const scale = 56 / tick;
+    const dx = 28;
+    const dy = -32;
+    const offset = (m) => {
+        const k = m * scale / 56;
+        return { ox: dx * k, oy: dy * k };
+    };
+
+    const oA = offset(mA);
+    const oB = offset(mB);
+    const oC = offset(mC);
+    const oD = offset(mD);
+
+    addPolygon(layer, `${xA},${y0} ${xA+oA.ox},${y0+oA.oy} ${xB+oB.ox},${y0+oB.oy} ${xC+oC.ox},${y0+oC.oy} ${xD+oD.ox},${y0+oD.oy} ${xD},${y0}`, "my-fill");
+    addPath(layer, `M ${xA+oA.ox} ${y0+oA.oy} L ${xB+oB.ox} ${y0+oB.oy} L ${xC+oC.ox} ${y0+oC.oy} L ${xD+oD.ox} ${y0+oD.oy}`, "m");
+
+    addText(layer, xA - 4, y0 - 52, "A");
+    addText(layer, xB, y0 + 28, "B", "", "middle");
+    addText(layer, xC, y0 + 28, "C", "", "middle");
+    addText(layer, xD + 4, y0 + 28, "D");
+
+    addText(layer, xA - 10, y0 - 6, "0", "value-text", "end");
+    addText(layer, (xA+xB)/2, y0 - 6, "0", "value-text", "middle");
+    if (mC !== 0) addText(layer, xC + oC.ox + 18, y0 + oC.oy - 16, formatNumber(mC), "value-text", "middle");
+    if (mD !== 0) addText(layer, xD + oD.ox + 14, y0 + oD.oy - 10, formatNumber(mD), "value-text", "start");
+}
+
+function drawTorqueDiagramT2(layer, cfg) {
+    const { xA, xB, xC, xD, y0, t2 } = cfg;
+    const maxT = Math.max(Math.abs(t2), 1);
+    const tick = niceCeil(maxT);
+    const axisX = 165;
+
+    drawYAxisWithTicks(layer, {
+        x: axisX,
+        yTop: y0 - 78,
+        yBottom: y0 + 78,
+        ticks: [
+            { y: y0 - 60, label: formatNumber(tick) },
+            { y: y0, label: "0" },
+            { y: y0 + 60, label: formatNumber(-tick) }
+        ],
+        title: "T₂",
+        unit: "(N.mm)"
+    });
+
+    addLine(layer, axisX, y0, xD, y0, "axis");
+
+    const scale = 56 / tick;
+    const mapY = (t) => y0 - t * scale; // trên dương, dưới âm
+
+    const yT = mapY(t2);
+
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yT} L ${xC} ${yT} L ${xC} ${y0} Z`, "t-fill");
+    addPath(layer, `M ${xA} ${yT} L ${xC} ${yT} L ${xC} ${y0}`, "t");
+
+    addText(layer, xA - 4, y0 - 52, "A");
+    addText(layer, xB, y0 + 28, "B", "", "middle");
+    addText(layer, xC, y0 + 28, "C", "", "middle");
+    addText(layer, xD + 4, y0 + 28, "D");
+
+    addText(layer, xA - 10, y0 - 6, "0", "value-text", "end");
+    if (t2 !== 0) {
+        addText(layer, (xA + xC) / 2, t2 > 0 ? yT - 14 : yT + 28, formatNumber(t2), "value-text", "middle");
+    }
+}
+
+function updateDiagrams() {
+    drawTopStatic();
+    clearLayer("guideLayer");
+    clearLayer("qyLayer");
+    clearLayer("mxLayer");
+    clearLayer("qxLayer");
+    clearLayer("myLayer");
+    clearLayer("t2Layer");
+
+    const guideLayer = document.getElementById("guideLayer");
+    const qyLayer = document.getElementById("qyLayer");
+    const mxLayer = document.getElementById("mxLayer");
+    const qxLayer = document.getElementById("qxLayer");
+    const myLayer = document.getElementById("myLayer");
+    const t2Layer = document.getElementById("t2Layer");
+
+    const Fd  = parseFloat(document.getElementById("Fd").value)  || 0;
+    const Fr2 = parseFloat(document.getElementById("Fr2").value) || 0;
+    const Fa2 = parseFloat(document.getElementById("Fa2").value) || 0;
+    const dw2 = parseFloat(document.getElementById("dw2").value) || 0;
+    const Ft2 = parseFloat(document.getElementById("Ft2").value) || 0;
+    const T2  = parseFloat(document.getElementById("T2").value)  || 0;
+
+    const AB = parseFloat(document.getElementById("AB").value) || 1;
+    const BC = parseFloat(document.getElementById("BC").value) || 1;
+    const CD = parseFloat(document.getElementById("CD").value) || 1;
+    const BD = BC + CD;
+
+    const Mfa2 = Fa2 * (dw2 / 2);
+    const FDy = (Fr2 * BC - Fd * AB - Mfa2) / BD;
+    const FBy = Fd + Fr2 - FDy;
+    const FDx = (Ft2 * BC) / BD;
+    const FBx = Ft2 - FDx;
+
+    const QY_AB = -Fd;
+    const QY_BC = QY_AB + FBy;
+    const QY_CD = QY_BC - Fr2;
+
+    const MX_A = 0;
+    const MX_B = QY_AB * AB;
+    const MX_C_LEFT = QY_AB * AB + QY_BC * BC;
+    const MX_C_RIGHT = MX_C_LEFT - Mfa2;
+    const MX_D = MX_C_RIGHT + QY_CD * CD;
+
+    const QX_AB = 0;
+    const QX_BC = -FBx;
+    const QX_CD = QX_BC + Ft2;
+
+    const MY_A = 0;
+    const MY_B = QX_AB * AB;
+    const MY_C = QX_AB * AB + QX_BC * BC;
+    const MY_D = QX_AB * AB + QX_BC * BC + QX_CD * CD;
+
+    document.getElementById("resultBox").innerHTML = `
+        <div class="result-title">Kết quả tính toán</div>
+        <b>Phản lực tự tính:</b><br>
+        FBy = ${formatNumber(FBy)} ; FDy = ${formatNumber(FDy)}<br>
+        FBx = ${formatNumber(FBx)} ; FDx = ${formatNumber(FDx)}<br>
+        Mfa2 = ${formatNumber(Mfa2)}<br><br>
+
+        <b>Qy:</b>
+        AB=${formatNumber(QY_AB)}, 
+        BC=${formatNumber(QY_BC)}, 
+        CD=${formatNumber(QY_CD)}<br>
+
+        <b>Mx:</b>
+        A=${formatNumber(MX_A)}, 
+        B=${formatNumber(MX_B)}, 
+        C trái=${formatNumber(MX_C_LEFT)}, 
+        C phải=${formatNumber(MX_C_RIGHT)}, 
+        D=${formatNumber(MX_D)}<br>
+
+        <b>Qx:</b>
+        AB=${formatNumber(QX_AB)}, 
+        BC=${formatNumber(QX_BC)}, 
+        CD=${formatNumber(QX_CD)}<br>
+
+        <b>My:</b>
+        A=${formatNumber(MY_A)}, 
+        B=${formatNumber(MY_B)}, 
+        C=${formatNumber(MY_C)}, 
+        D=${formatNumber(MY_D)}<br>
+
+        <b>T2:</b> ${formatNumber(T2)}
+    `;
+
+    const xA = 291;
+    const xB = 545;
+    const xC = 900;
+    const xD = 1255;
+
+    const yTopGuideStart = 365;
+    const yQy0 = 560;
+    const yMx0 = 760;
+    const yQx0 = 970;
+    const yMy0 = 1170;
+    const yT20 = 1370;
+
+    [xA,xB,xC,xD].forEach(x => addLine(guideLayer, x, yTopGuideStart, x, 1450, "dong"));
+
+    drawShearDiagramQy(qyLayer, { xA, xB, xC, xD, y0: yQy0, qAB: QY_AB, qBC: QY_BC, qCD: QY_CD });
+    drawCoordOXY_Yup(qyLayer, 1370, yQy0 + 8);
+
+    drawMomentDiagramMx(mxLayer, {
+        xA, xB, xC, xD, y0: yMx0,
+        mA: MX_A, mB: MX_B, mCLeft: MX_C_LEFT, mCRight: MX_C_RIGHT, mD: MX_D
+    });
+    drawCoordOXY_Ydown(mxLayer, 1370, yMx0 + 8);
+
+    drawShearDiagramQxXOZ(qxLayer, { xA, xB, xC, xD, y0: yQx0, qAB: QX_AB, qBC: QX_BC, qCD: QX_CD });
+    drawCoordOXZ_Xout(qxLayer, 1370, yQx0 + 8);
+
+    drawMomentDiagramMyXOZ(myLayer, { xA, xB, xC, xD, y0: yMy0, mA: MY_A, mB: MY_B, mC: MY_C, mD: MY_D });
+    drawCoordOXZ_Xin(myLayer, 1370, yMy0 + 8);
+
+    drawTorqueDiagramT2(t2Layer, { xA, xB, xC, xD, y0: yT20, t2: T2 });
+    drawCoordOXY_Yup(t2Layer, 1370, yT20 + 8);
+}
+
+updateDiagrams();
+</script>
+
+</body>
+</html>

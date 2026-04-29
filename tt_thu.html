@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Toán Phản Lực Trục Cơ Khí</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f4f7f6; color: #333; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1200px; margin: auto; }
+        .panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+        .canvas-container { flex: 2; min-width: 600px; display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
+        button:hover { background-color: #2980b9; }
+        .force-item { background: #f9f9f9; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 10px; display: flex; gap: 10px; align-items: center;}
+        .force-item input { width: 40%; }
+        .btn-remove { background-color: #e74c3c; width: auto; padding: 8px 10px; }
+        .btn-remove:hover { background-color: #c0392b; }
+        canvas { border: 1px solid #ddd; background-color: #fafafa; width: 100%; max-width: 800px; height: 400px; }
+        .results { margin-top: 20px; width: 100%; padding: 15px; background: #e8f8f5; border-left: 4px solid #1abc9c; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="panel">
+        <h2>Thông số trục & Ổ đỡ</h2>
+        <div class="form-group">
+            <label>Chiều dài trục L (mm)</label>
+            <input type="number" id="length" value="1000" oninput="update()">
+        </div>
+        <div class="form-group">
+            <label>Vị trí ổ đỡ 0 - x0 (mm)</label>
+            <input type="number" id="b0" value="100" oninput="update()">
+        </div>
+        <div class="form-group">
+            <label>Vị trí ổ đỡ 1 - x1 (mm)</label>
+            <input type="number" id="b1" value="900" oninput="update()">
+        </div>
+
+        <h2>Tải trọng tác dụng (Lực F)</h2>
+        <p style="font-size: 0.8rem; color: #666;">Nhập số âm cho lực hướng xuống, số dương cho lực hướng lên.</p>
+        <div id="forces-container"></div>
+        <button onclick="addForce()">+ Thêm lực</button>
+    </div>
+
+    <div class="canvas-container">
+        <h2>Sơ đồ giải phóng liên kết</h2>
+        <canvas id="myCanvas" width="800" height="400"></canvas>
+        <div class="results" id="results">
+            </div>
+    </div>
+</div>
+
+<script>
+    let forces = [
+        { id: 1, pos: 500, mag: -500 }
+    ];
+    let forceIdCounter = 2;
+
+    function renderForcesForm() {
+        const container = document.getElementById('forces-container');
+        container.innerHTML = '';
+        forces.forEach(f => {
+            container.innerHTML += `
+                <div class="force-item">
+                    <div>
+                        <label>Vị trí (mm)</label>
+                        <input type="number" value="${f.pos}" oninput="updateForce(${f.id}, 'pos', this.value)">
+                    </div>
+                    <div>
+                        <label>Độ lớn (N)</label>
+                        <input type="number" value="${f.mag}" oninput="updateForce(${f.id}, 'mag', this.value)">
+                    </div>
+                    <button class="btn-remove" onclick="removeForce(${f.id})">Xóa</button>
+                </div>
+            `;
+        });
+    }
+
+    function addForce() {
+        forces.push({ id: forceIdCounter++, pos: 500, mag: -100 });
+        renderForcesForm();
+        update();
+    }
+
+    function removeForce(id) {
+        forces = forces.filter(f => f.id !== id);
+        renderForcesForm();
+        update();
+    }
+
+    function updateForce(id, field, value) {
+        const force = forces.find(f => f.id === id);
+        if (force) force[field] = parseFloat(value) || 0;
+        update();
+    }
+
+    function drawArrow(ctx, fromx, fromy, tox, toy, color, label) {
+        const headlen = 10;
+        const dx = tox - fromx;
+        const dy = toy - fromy;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.moveTo(fromx, fromy);
+        ctx.lineTo(tox, toy);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.moveTo(tox, toy);
+        ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.fill();
+
+        ctx.fillStyle = color;
+        ctx.font = "14px Arial";
+        ctx.fillText(label, tox + 10, toy + (dy > 0 ? 0 : 10));
+    }
+
+    function drawSupport(ctx, x, y, label) {
+        ctx.beginPath();
+        ctx.strokeStyle = "#333";
+        ctx.fillStyle = "#ecf0f1";
+        ctx.lineWidth = 2;
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 15, y + 20);
+        ctx.lineTo(x + 15, y + 20);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Vẽ các đường gạch chân (ký hiệu ngàm/gối)
+        ctx.beginPath();
+        ctx.moveTo(x - 20, y + 20);
+        ctx.lineTo(x + 20, y + 20);
+        ctx.moveTo(x - 15, y + 25);
+        ctx.lineTo(x + 15, y + 25);
+        ctx.stroke();
+
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(label, x - 5, y + 40);
+    }
+
+    function update() {
+        const L = parseFloat(document.getElementById('length').value) || 1000;
+        const b0 = parseFloat(document.getElementById('b0').value) || 0;
+        const b1 = parseFloat(document.getElementById('b1').value) || L;
+
+        // --- TÍNH TOÁN CƠ HỌC ---
+        // Tổng Momen tại b0 = 0 => R1 * (b1 - b0) + Tổng(F * (x - b0)) = 0
+        let sumM_b0 = 0;
+        let sumF = 0;
+
+        forces.forEach(f => {
+            sumF += f.mag;
+            sumM_b0 += f.mag * (f.pos - b0);
+        });
+
+        // Phản lực tại Ổ 1 (R1)
+        let R1 = -sumM_b0 / (b1 - b0);
+        // Phản lực tại Ổ 0 (R0) bằng tổng lực trừ R1
+        let R0 = -sumF - R1;
+
+        // Cập nhật kết quả Text
+        document.getElementById('results').innerHTML = `
+            <strong>Kết quả tính toán:</strong><br>
+            Phản lực tại ổ đỡ 0 (Fy0): <b>${R0.toFixed(2)} N</b><br>
+            Phản lực tại ổ đỡ 1 (Fy1): <b>${R1.toFixed(2)} N</b>
+        `;
+
+        // --- VẼ ĐỒ HỌA ---
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 50;
+        const drawWidth = canvas.width - padding * 2;
+        const centerY = canvas.height / 2;
+        
+        // Tỷ lệ chuyển đổi từ mm thực tế sang pixel trên canvas
+        const scale = drawWidth / L;
+        const getX = (pos) => padding + pos * scale;
+
+        // Vẽ trục (đường ngang đậm)
+        ctx.beginPath();
+        ctx.strokeStyle = "#2c3e50";
+        ctx.lineWidth = 6;
+        ctx.moveTo(getX(0), centerY);
+        ctx.lineTo(getX(L), centerY);
+        ctx.stroke();
+
+        // Vẽ ổ đỡ
+        drawSupport(ctx, getX(b0), centerY, "0");
+        drawSupport(ctx, getX(b1), centerY, "1");
+
+        // Vẽ lực tác dụng (Màu đỏ)
+        forces.forEach(f => {
+            const startY = f.mag < 0 ? centerY - 80 : centerY + 80;
+            drawArrow(ctx, getX(f.pos), startY, getX(f.pos), centerY, "#e74c3c", Math.abs(f.mag) + " N");
+        });
+
+        // Vẽ phản lực (Màu xanh blue)
+        if (Math.abs(R0) > 0.01) {
+            const startY = centerY;
+            const endY = R0 > 0 ? centerY - 60 : centerY + 60;
+            drawArrow(ctx, getX(b0), startY, getX(b0), endY, "#2980b9", "Fy0 = " + R0.toFixed(1));
+        }
+        if (Math.abs(R1) > 0.01) {
+            const startY = centerY;
+            const endY = R1 > 0 ? centerY - 60 : centerY + 60;
+            drawArrow(ctx, getX(b1), startY, getX(b1), endY, "#2980b9", "Fy1 = " + R1.toFixed(1));
+        }
+    }
+
+    // Khởi tạo lần đầu
+    renderForcesForm();
+    update();
+</script>
+
+</body>
+</html>

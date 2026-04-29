@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pycache
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+venv/
+.venv/
+
+# Node.js (nếu dùng sau này)
+node_modules/
+npm-debug.log*
+
+# Editor / IDE
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln.docstates
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# OS files
+desktop.ini
