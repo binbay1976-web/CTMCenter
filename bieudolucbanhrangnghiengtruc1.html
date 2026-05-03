@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8" />
@@ -881,7 +881,7 @@ function drawMomentDiagramXOZ(layer, config) {
     if (mC !== 0) addText(layer, xC + oC.ox + 18, y0 + oC.oy - 16, formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
 }
 
-function drawTorqueDiagramT2(layer, config) {
+function drawTorsionDiagram(layer, config) {
     const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, T1, fillClass, lineClass } = config;
 
     const maxT = Math.max(Math.abs(T1), 1);
