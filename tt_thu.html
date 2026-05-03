@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -22,6 +22,7 @@
         canvas { border: 1px solid #ddd; background-color: #fafafa; width: 100%; max-width: 800px; height: 400px; }
         .results { margin-top: 20px; width: 100%; padding: 15px; background: #e8f8f5; border-left: 4px solid #1abc9c; border-radius: 4px; }
     </style>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 
@@ -224,6 +225,11 @@
     renderForcesForm();
     update();
 </script>
-
+<script>
+    // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng
+    if (localStorage.getItem('ctmc_theme') === 'light') { 
+        document.body.classList.add('light-theme'); 
+    }
+</script>
 </body>
 </html>

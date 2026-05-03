@@ -1,0 +1,832 @@
+/* ============================================================
+   CTMCenter — Shared Dark Theme v2
+   Đồng bộ màu sắc cho TẤT CẢ modules
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ── Design Tokens ── */
+:root {
+  --dm-bg:          #0d1117;
+  --dm-surface:     #161b22;
+  --dm-surface2:    #21262d;
+  --dm-surface3:    #30363d;
+  --dm-border:      #30363d;
+  --dm-border-l:    #484f58;
+  --dm-text:        #e6edf3;
+  --dm-text-2:      #8b949e;
+  --dm-text-3:      #6e7681;
+  --dm-blue:        #58a6ff;
+  --dm-blue-bg:     rgba(88,166,255,0.12);
+  --dm-green:       #3fb950;
+  --dm-green-bg:    rgba(63,185,80,0.12);
+  --dm-orange:      #f0883e;
+  --dm-orange-bg:   rgba(240,136,62,0.12);
+  --dm-red:         #ff7b72;
+  --dm-red-bg:      rgba(255,123,114,0.12);
+  --dm-yellow:      #e3b341;
+  --dm-yellow-bg:   rgba(227,179,65,0.12);
+  --dm-purple:      #bc8cff;
+  --dm-purple-bg:   rgba(188,140,255,0.12);
+  --dm-teal:        #39d353;
+  --dm-radius:      8px;
+  --dm-shadow:      0 8px 32px rgba(0,0,0,0.5);
+  --dm-transition:  0.2s ease;
+  --dm-accent:      #58a6ff;
+  --dm-accent-bg:   rgba(88,166,255,0.15);
+}
+
+/* ══════════════════════════════════════
+   1. GLOBAL RESET
+   ══════════════════════════════════════ */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  background: var(--dm-bg) !important;
+  color: var(--dm-text) !important;
+  margin: 0 !important;
+  padding: 20px !important;
+}
+
+/* ══════════════════════════════════════
+   2. CONTAINERS & PANELS
+   ══════════════════════════════════════ */
+.container,
+.wrapper,
+.controls,
+.panel,
+.control-card,
+[class*="container"] {
+  background: var(--dm-surface) !important;
+  color: var(--dm-text) !important;
+  border: 1px solid var(--dm-border) !important;
+  box-shadow: var(--dm-shadow) !important;
+  border-radius: 12px !important;
+}
+
+.panel,
+.material-panel,
+[class*="panel"],
+.report-card,
+.filter-bar,
+.force-item,
+.form-box,
+.result-box,
+.results,
+.kq,
+.equal-force,
+.table-card,
+.note,
+.note-box,
+.title-box,
+.svg-wrap {
+  background: var(--dm-surface2) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+
+.canvas-container,
+.canvas-wrapper,
+[class*="canvas"] {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid var(--dm-border) !important;
+  padding: 10px;
+  border-radius: var(--dm-radius);
+}
+
+canvas {
+  background-color: #ffffff !important;
+}
+
+/* ══════════════════════════════════════
+   3. TYPOGRAPHY — All headings unified
+   ══════════════════════════════════════ */
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: none !important;
+}
+
+h1 {
+  background: linear-gradient(135deg, var(--dm-blue), var(--dm-purple)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  border-bottom-color: var(--dm-border) !important;
+  border-color: var(--dm-border) !important;
+}
+
+h2 {
+  color: var(--dm-blue) !important;
+  border-color: var(--dm-border) !important;
+  border-bottom-color: var(--dm-border) !important;
+}
+
+h3 {
+  background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  padding: 12px 15px !important;
+  border-radius: 6px !important;
+  border-left: none !important;
+  border-color: transparent !important;
+}
+
+h4 {
+  color: var(--dm-blue) !important;
+}
+
+p {
+  color: var(--dm-text-2) !important;
+}
+
+/* ══════════════════════════════════════
+   4. FORM CONTROLS
+   ══════════════════════════════════════ */
+label {
+  color: var(--dm-text-2) !important;
+  font-weight: 500 !important;
+}
+
+input[type="number"],
+input[type="text"],
+input[type="email"],
+input,
+select,
+textarea {
+  background-color: var(--dm-surface2) !important;
+  border: 1px solid var(--dm-border) !important;
+  color: var(--dm-text) !important;
+  border-radius: var(--dm-radius) !important;
+  transition: border-color var(--dm-transition), box-shadow var(--dm-transition) !important;
+  font-family: inherit !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: var(--dm-blue) !important;
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.15) !important;
+}
+
+input:disabled, select:disabled,
+input[readonly], input.readonly {
+  opacity: 0.6 !important;
+  background-color: var(--dm-surface3) !important;
+  color: var(--dm-text-3) !important;
+  border-color: var(--dm-border) !important;
+}
+
+select {
+  color-scheme: dark !important;
+}
+
+/* ══════════════════════════════════════
+   5. BUTTONS — Unified blue gradient
+   ══════════════════════════════════════ */
+button,
+.btn-primary,
+.btn-select {
+  background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--dm-radius) !important;
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all var(--dm-transition) !important;
+  letter-spacing: 0.3px !important;
+}
+
+button:hover,
+.btn-primary:hover,
+.btn-select:hover {
+  background: linear-gradient(135deg, #388bfd, #58a6ff) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(88,166,255,0.3) !important;
+}
+
+button:active {
+  transform: translateY(0) !important;
+}
+
+.btn-retry {
+  background: var(--dm-surface3) !important;
+  border: 1px solid var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+
+.btn-remove,
+.btn-warning {
+  background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
+  color: #fff !important;
+}
+
+.btn-remove:hover,
+.btn-warning:hover {
+  background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+}
+
+/* ══════════════════════════════════════
+   6. TABLES — Unified dark style
+   ══════════════════════════════════════ */
+table {
+  border-collapse: collapse !important;
+  background: var(--dm-surface) !important;
+  box-shadow: none !important;
+}
+
+th {
+  background: var(--dm-surface3) !important;
+  color: var(--dm-blue) !important;
+  border: 1px solid var(--dm-border) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+}
+
+td {
+  border: 1px solid var(--dm-border) !important;
+  color: var(--dm-text) !important;
+  background: transparent !important;
+}
+
+tr:nth-child(even) td {
+  background-color: rgba(255,255,255,0.02) !important;
+}
+
+tr:hover td {
+  background-color: var(--dm-blue-bg) !important;
+}
+
+thead th {
+  background: var(--dm-surface3) !important;
+  color: var(--dm-blue) !important;
+  border: 1px solid var(--dm-border) !important;
+}
+
+/* Step title rows in tables */
+.step-title,
+[class*="step-title"],
+td.step-title {
+  background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+  color: #fff !important;
+}
+
+/* ══════════════════════════════════════
+   7. RESULT BOXES
+   ══════════════════════════════════════ */
+.result-box,
+#resultBox,
+#result_area,
+#result_box,
+[class*="result"] {
+  background-color: var(--dm-surface) !important;
+  border: 1px solid var(--dm-border) !important;
+  border-left: 4px solid var(--dm-green) !important;
+  color: var(--dm-text) !important;
+  border-radius: 10px !important;
+}
+
+.results {
+  background: var(--dm-surface2) !important;
+  border-left: 4px solid var(--dm-green) !important;
+  color: var(--dm-text) !important;
+}
+
+/* ══════════════════════════════════════
+   8. TABS (tt_olan.html style)
+   ══════════════════════════════════════ */
+.tab {
+  background-color: var(--dm-surface2) !important;
+  border-bottom: 1px solid var(--dm-border) !important;
+}
+
+.tab button,
+.tablinks {
+  background: transparent !important;
+  color: var(--dm-text-2) !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.tab button:hover,
+.tablinks:hover {
+  background-color: var(--dm-surface3) !important;
+  color: var(--dm-text) !important;
+}
+
+.tab button.active,
+.tablinks.active {
+  background-color: var(--dm-surface) !important;
+  color: var(--dm-blue) !important;
+  border-top: 3px solid var(--dm-blue) !important;
+  border-bottom: none !important;
+}
+
+.tab button:disabled,
+.tablinks:disabled {
+  color: var(--dm-text-3) !important;
+  opacity: 0.5 !important;
+}
+
+.tabcontent {
+  background: var(--dm-surface) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Header bar (tt_olan) */
+.header {
+  background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+  color: #fff !important;
+}
+
+/* ══════════════════════════════════════
+   9. STATUS CARDS (tt_olan.html)
+   ══════════════════════════════════════ */
+.status-pass {
+  background-color: var(--dm-green-bg) !important;
+  color: var(--dm-green) !important;
+  border: 1px solid rgba(63,185,80,0.3) !important;
+}
+
+.status-fail {
+  background-color: var(--dm-red-bg) !important;
+  color: var(--dm-red) !important;
+  border: 1px solid rgba(255,123,114,0.3) !important;
+}
+
+/* ══════════════════════════════════════
+   10. DETAILS / SUMMARY
+   ══════════════════════════════════════ */
+details > summary {
+  background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+  color: white !important;
+  border-radius: 6px !important;
+}
+
+details > summary:hover {
+  background: linear-gradient(135deg, #388bfd, #58a6ff) !important;
+}
+
+/* ══════════════════════════════════════
+   11. STATUS COLORS
+   ══════════════════════════════════════ */
+.highlight, .error { color: var(--dm-red) !important; }
+.success, .ok     { color: var(--dm-green) !important; }
+.warning          { color: var(--dm-yellow) !important; }
+.info             { color: var(--dm-blue) !important; }
+.note, [class*="note"] { color: var(--dm-orange) !important; }
+.hint             { color: var(--dm-green) !important; }
+.hint-highlight   { color: var(--dm-orange) !important; }
+
+/* ══════════════════════════════════════
+   12. INLINE STYLE OVERRIDES — Backgrounds
+   ══════════════════════════════════════ */
+
+/* Blue info panels */
+.table-section,
+[style*="background:#e0f2fe"],
+[style*="background-color:#e0f2fe"],
+[style*="background: #e0f2fe"],
+[style*="background-color:#e0e7ff"],
+[style*="background:#e0e7ff"],
+[style*="background-color:#eff6ff"],
+[style*="background:#eff6ff"],
+[style*="background:#ebf5fb"],
+[style*="background: #ebf5fb"],
+[style*="background:#e8f8f5"],
+[style*="background: #e8f8f5"],
+[style*="background: #f4fbfd"],
+[style*="background-color: #f4fbfd"] {
+  background: var(--dm-blue-bg) !important;
+  border-color: rgba(88,166,255,0.3) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Yellow/warning panels */
+.ai-box,
+.load-cycle,
+.dynamic-panel,
+[style*="background:#fffbeb"],
+[style*="background: #fffbeb"],
+[style*="background-color:#fffbeb"],
+[style*="background-color: #fffbeb"],
+[style*="background:#fff9c4"],
+[style*="background: #fff9c4"],
+[style*="background-color:#fff9c4"],
+[style*="background-color: #fff9c4"],
+[style*="background:#fef3c7"],
+[style*="background: #fef3c7"],
+[style*="background-color:#fef3c7"],
+[style*="background-color: #fef3c7"],
+[style*="background:#fff3cd"],
+[style*="background: #fff3cd"],
+[style*="background-color:#fff3cd"],
+[style*="background-color: #fff3cd"],
+[style*="background:#fff5f5"],
+[style*="background: #fff5f5"],
+[style*="background-color:#fff5f5"],
+[style*="background-color: #fff5f5"] {
+  background: var(--dm-yellow-bg) !important;
+  border-color: rgba(227,179,65,0.3) !important;
+  color: var(--dm-text) !important;
+}
+
+/* White/light gray panels */
+[style*="background:#f8fafc"],
+[style*="background: #f8fafc"],
+[style*="background-color:#f8fafc"],
+[style*="background-color: #f8fafc"],
+[style*="background:#f8f9fa"],
+[style*="background-color:#f8f9fa"],
+[style*="background:#ffffff"],
+[style*="background-color:#ffffff"],
+[style*="background: white"],
+[style*="background:white"],
+[style*="background:#fff"],
+[style*="background-color:#fff"],
+[style*="background: #fff"],
+[style*="background:#fdfefe"],
+[style*="background-color:#fdfefe"],
+[style*="background:#f9f9f9"],
+[style*="background-color:#f9f9f9"],
+[style*="background:#f1f5f9"],
+[style*="background-color:#f1f5f9"],
+[style*="background:#f0fdf4"],
+[style*="background-color:#f0fdf4"],
+[style*="background:#fafafa"],
+[style*="background-color:#fafafa"],
+[style*="background: #fafafa"],
+[style*="background:#e9ecef"],
+[style*="background-color:#e9ecef"],
+[style*="background:#e8f8f5"],
+[style*="background-color:#e8f8f5"] {
+  background: var(--dm-surface2) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Red error panels */
+.error-box,
+[style*="background-color:#fee2e2"],
+[style*="background-color: #fee2e2"],
+[style*="background:#fee2e2"],
+[style*="background: #fee2e2"] {
+  background: var(--dm-red-bg) !important;
+  color: var(--dm-red) !important;
+  border-color: rgba(255,123,114,0.3) !important;
+}
+
+/* ══════════════════════════════════════
+   13. INLINE STYLE OVERRIDES — Text colors
+   ══════════════════════════════════════ */
+
+/* Dark text → light */
+[style*="color:#2c3e50"],
+[style*="color: #2c3e50"],
+[style*="color:#1e293b"],
+[style*="color: #1e293b"],
+[style*="color:#0f172a"],
+[style*="color:#333"],
+[style*="color: #333"],
+[style*="color:#000"],
+[style*="color:black"] {
+  color: var(--dm-text) !important;
+}
+
+[style*="color:#34495e"],
+[style*="color:#475569"],
+[style*="color:#64748b"],
+[style*="color:#334155"],
+[style*="color:#7f8c8d"],
+[style*="color: gray"] {
+  color: var(--dm-text-2) !important;
+}
+
+/* Blue text */
+[style*="color:#2980b9"],
+[style*="color:#1d4ed8"],
+[style*="color:#1e3a8a"],
+[style*="color:#0369a1"],
+[style*="color:#2563eb"],
+[style*="color:#3498db"],
+[style*="color:#4338ca"],
+[style*="color:blue"] {
+  color: var(--dm-blue) !important;
+}
+
+/* Green text */
+[style*="color:#27ae60"],
+[style*="color:#16a34a"],
+[style*="color:#047857"],
+[style*="color:#10b981"],
+[style*="color:#16a085"],
+[style*="color:#0f766e"],
+[style*="color:#219150"],
+[style*="color:green"] {
+  color: var(--dm-green) !important;
+}
+
+/* Red text */
+[style*="color:#dc2626"],
+[style*="color:#b91c1c"],
+[style*="color:#ef4444"],
+[style*="color:#c0392b"],
+[style*="color:#991b1b"],
+[style*="color:red"] {
+  color: var(--dm-red) !important;
+}
+
+/* Orange text */
+[style*="color:#d97706"],
+[style*="color:#b45309"],
+[style*="color:#e67e22"],
+[style*="color:#d35400"],
+[style*="color:#ea580c"],
+[style*="color:#e74c3c"],
+[style*="color:#ba4a00"] {
+  color: var(--dm-orange) !important;
+}
+
+/* Purple text */
+[style*="color:#8e44ad"],
+[style*="color:#732d91"] {
+  color: var(--dm-purple) !important;
+}
+
+/* ══════════════════════════════════════
+   14. INLINE BACKGROUND OVERRIDES — Colored headers
+   ══════════════════════════════════════ */
+
+/* Blue header backgrounds */
+[style*="background-color: #3b82f6"],
+[style*="background-color:#3b82f6"],
+[style*="background:#3b82f6"],
+[style*="background-color:#2563eb"],
+[style*="background:#2563eb"],
+[style*="background-color:#1e3a8a"],
+[style*="background:#1e3a8a"],
+[style*="background-color: #2980b9"],
+[style*="background:#2980b9"],
+[style*="background-color:#2471a3"],
+[style*="background:#2471a3"] {
+  background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+  color: #fff !important;
+}
+
+/* Green header backgrounds */
+[style*="background-color:#2ecc71"],
+[style*="background:#2ecc71"],
+[style*="background-color:#10b981"],
+[style*="background:#10b981 !important"],
+[style*="background-color:#16a085"],
+[style*="background:#16a085"] {
+  background: linear-gradient(135deg, #238636, #3fb950) !important;
+  color: #fff !important;
+}
+
+/* Red header backgrounds */
+[style*="background-color:#ef4444"],
+[style*="background:#ef4444"],
+[style*="background-color:#b91c1c"],
+[style*="background:#b91c1c"],
+[style*="background-color:#dc2626"],
+[style*="background:#dc2626"] {
+  background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+  color: #fff !important;
+}
+
+/* Orange header backgrounds */
+[style*="background-color:#e67e22"],
+[style*="background:#e67e22"],
+[style*="background-color:#d35400"],
+[style*="background:#d35400"] {
+  background: linear-gradient(135deg, #d35400, #f0883e) !important;
+  color: #fff !important;
+}
+
+/* Purple header backgrounds */
+[style*="background:#8e44ad"],
+[style*="background-color:#8e44ad"],
+[style*="background:#4338ca !important"],
+[style*="background:#4338ca"] {
+  background: linear-gradient(135deg, #7c3aed, #a78bfa) !important;
+  color: #fff !important;
+}
+
+/* Gray header backgrounds */
+[style*="background:#475569 !important"],
+[style*="background:#475569"] {
+  background: var(--dm-surface3) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Teal header backgrounds */
+[style*="background:#0f766e !important"],
+[style*="background:#0f766e"] {
+  background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+  color: #fff !important;
+}
+
+/* Orange header backgrounds (ea580c) */
+[style*="background:#ea580c !important"],
+[style*="background:#ea580c"] {
+  background: linear-gradient(135deg, #ea580c, #f97316) !important;
+  color: #fff !important;
+}
+
+/* ══════════════════════════════════════
+   15. BORDER OVERRIDES
+   ══════════════════════════════════════ */
+[style*="border-left:4px solid #ef4444"],
+[style*="border-left: 4px solid #ef4444"] {
+  background: var(--dm-red-bg) !important;
+  border-left-color: var(--dm-red) !important;
+}
+
+[style*="border-left: 6px solid #2ecc71"],
+[style*="border-left:6px solid #2ecc71"] {
+  border-left-color: var(--dm-green) !important;
+}
+
+[style*="border-left: 4px solid #1abc9c"],
+[style*="border-left:4px solid #1abc9c"] {
+  border-left-color: var(--dm-green) !important;
+}
+
+[style*="border: 1px solid #ddd"],
+[style*="border:1px solid #ddd"],
+[style*="border: 1px solid #cbd5e1"],
+[style*="border: 1px dashed #3498db"],
+[style*="border: 2px solid #2ecc71"],
+[style*="border:2px solid #2ecc71"],
+[style*="border: 2px solid #e67e22"],
+[style*="border: 1px solid #e2e8f0"],
+[style*="border: 1px solid #38bdf8"],
+[style*="border: 1px solid #f59e0b"],
+[style*="border: 1px dashed #d97706"],
+[style*="border: 1px dashed #16a34a"],
+[style*="border: 1px solid #e0e0e0"],
+[style*="border: 1px solid #ffcccc"],
+[style*="border: 2px dashed #3498db"],
+[style*="border: 2px solid #cbd5e1"],
+[style*="border: 1px solid #bbf7d0"],
+[style*="border: 1px solid #fecaca"] {
+  border-color: var(--dm-border) !important;
+}
+
+hr {
+  border-color: var(--dm-border) !important;
+}
+
+/* ══════════════════════════════════════
+   16. SPECIAL SECTIONS
+   ══════════════════════════════════════ */
+
+/* Belt sections */
+.belt-section,
+.panel,
+.results,
+.result-box,
+.control-card {
+  background: var(--dm-surface2) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Table section (xich) */
+.table-section {
+  background: var(--dm-surface2) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+
+/* Load cycle panel */
+.load-cycle, [class*="load-cycle"] {
+  background: var(--dm-yellow-bg) !important;
+  border-color: rgba(227,179,65,0.4) !important;
+}
+
+/* Dynamic panels */
+.dynamic-panel {
+  background: var(--dm-yellow-bg) !important;
+  border-color: rgba(227,179,65,0.3) !important;
+}
+
+.auto-panel {
+  background: var(--dm-green-bg) !important;
+  border-color: rgba(63,185,80,0.3) !important;
+}
+
+.ai-box {
+  background: var(--dm-yellow-bg) !important;
+  border-color: var(--dm-yellow) !important;
+  color: var(--dm-text) !important;
+}
+
+.error-box {
+  background: var(--dm-red-bg) !important;
+  border-color: var(--dm-red) !important;
+  color: var(--dm-red) !important;
+}
+
+/* Table container (tt_olan) */
+.table-container {
+  border-color: var(--dm-border) !important;
+  background: var(--dm-surface) !important;
+}
+
+/* Form grid */
+.form-grid {
+  color: var(--dm-text) !important;
+}
+
+.form-group {
+  color: var(--dm-text) !important;
+}
+
+/* Inline background overrides for form-group styled panels */
+.form-group[style*="background"] {
+  background: var(--dm-surface2) !important;
+  border: 1px solid var(--dm-border) !important;
+}
+
+/* ══════════════════════════════════════
+   17. IMAGES & MEDIA
+   ══════════════════════════════════════ */
+img, svg {
+  background-color: #ffffff !important;
+  border: 1px solid var(--dm-border) !important;
+  border-radius: var(--dm-radius) !important;
+  padding: 4px !important;
+}
+
+.plot-container {
+  background: #ffffff !important;
+  border-radius: var(--dm-radius) !important;
+}
+
+/* ══════════════════════════════════════
+   18. LINK COLORS
+   ══════════════════════════════════════ */
+a { color: var(--dm-blue) !important; }
+a:hover { color: #79c0ff !important; }
+
+/* ══════════════════════════════════════
+   19. SCROLLBAR
+   ══════════════════════════════════════ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--dm-bg); }
+::-webkit-scrollbar-thumb { background: var(--dm-surface3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dm-border-l); }
+
+/* ══════════════════════════════════════
+   20. INPUT SPIN BUTTONS
+   ══════════════════════════════════════ */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* ══════════════════════════════════════
+   21. RESPONSIVE
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  body { padding: 12px !important; }
+  .container { border-radius: 8px !important; }
+}
+
+/* ══════════════════════════════════════
+   22. VARIANT SELECT (tt_xich)
+   ══════════════════════════════════════ */
+select#variant_select {
+  background-color: var(--dm-surface3) !important;
+  border: 2px solid var(--dm-orange) !important;
+  color: var(--dm-orange) !important;
+}
+/* ============================================================
+   23. LIGHT THEME OVERRIDES (GIAO DIỆN SÁNG)
+   ============================================================ */
+body.light-theme {
+  --dm-bg:          #f0f4f8;       /* Nền ngoài cùng xám nhạt */
+  --dm-surface:     #ffffff;       /* Nền các khối trắng tinh */
+  --dm-surface2:    #f8fafc;       /* Nền phụ hơi xám */
+  --dm-surface3:    #e2e8f0;       /* Viền và khối nổi bật */
+  --dm-border:      #cbd5e1;       /* Viền sáng */
+  --dm-border-l:    #94a3b8;
+  --dm-text:        #0f172a;       /* Chữ chính đen đậm */
+  --dm-text-2:      #475569;       /* Chữ phụ xám đen */
+  --dm-text-3:      #64748b;
+  
+  --dm-blue-bg:     rgba(37,99,235,0.12);
+  --dm-green-bg:    rgba(22,163,74,0.12);
+  --dm-orange-bg:   rgba(217,119,6,0.12);
+  --dm-red-bg:      rgba(220,38,38,0.12);
+  --dm-yellow-bg:   rgba(202,138,4,0.12);
+  --dm-purple-bg:   rgba(147,51,234,0.12);
+  --dm-shadow:      0 8px 30px rgba(0,0,0,0.08); /* Đổ bóng nhạt hơn */
+}
+
+/* Đổi màu xen kẽ cho bảng ở chế độ sáng */
+body.light-theme tr:nth-child(even) td {
+  background-color: rgba(0,0,0,0.03) !important;
+}

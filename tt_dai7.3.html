@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -20,11 +20,21 @@
     button { width: 100%; background-color: #2980b9; color: white; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; text-transform: uppercase; }
     button:hover { background-color: #2471a3; }
     .result-box { margin-top: 30px; padding: 25px; background-color: #f9f9f9; border: 2px solid #2ecc71; border-radius: 8px; overflow-x: auto; display: none; }
+    
+    /* ĐÃ CHỈNH SỬA PHẦN CSS CỦA BẢNG TẠI ĐÂY */
     table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
-    th, td { padding: 10px; border: 1px solid #dee2e6; text-align: center; }
-    th { background-color: #2ecc71; color: white; }
-    tr:nth-child(even) { background-color: #f2f2f2; }
-    .highlight { color: #c0392b; font-weight: bold; }
+    th, td { padding: 10px; border: 1px solid var(--dm-border); text-align: center; }
+    th { font-weight: 600; }
+    
+    /* Tắt hoàn toàn tính năng xen kẽ màu theo yêu cầu, tạo màu đồng nhất */
+    tr:nth-child(even) td, tr:nth-child(odd) td, tr:nth-child(even), tr:nth-child(odd) { 
+        background-color: transparent !important; 
+    }
+    
+    /* ĐÃ SỬA: Chuyển thành chữ thường (nhạt) thay vì in đậm */
+    .highlight { color: #ff4d4d !important; font-weight: normal; } 
+    .success { color: #10b981 !important; font-weight: normal; } 
+    /* KẾT THÚC PHẦN CHỈNH SỬA CSS BẢNG */
     
     details > summary {
         list-style: none; cursor: pointer; background: #8e44ad; color: white; 
@@ -299,10 +309,6 @@ function calcFlatBeltHints() {
     }
 }
 
-// -------------------------------------------------------------
-// CHUYỂN ĐỔI LOGIC BACKEND (PYTHON) SANG FRONTEND (JAVASCRIPT)
-// -------------------------------------------------------------
-
 function getVal(name, defaultVal) {
     var el = document.querySelector(`[name="${name}"]`);
     if(!el || el.value.trim() === "") return defaultVal;
@@ -384,7 +390,7 @@ function drawFlatBeltSchematicJS(d1, d2, a, alpha1, alpha2) {
     ctx.fill();
 
     ctx.fillStyle = '#219150';
-    ctx.font = 'bold 14px Arial';
+    ctx.font = 'normal 14px Arial';
     ctx.fillText(`α1 = ${alpha1.toFixed(0)}°`, tx(d1/3), ty(d1/4));
 
     ctx.fillStyle = '#2980b9';
@@ -396,14 +402,13 @@ function drawFlatBeltSchematicJS(d1, d2, a, alpha1, alpha2) {
 }
 
 function calculateForm(event) {
-    event.preventDefault(); // Ngăn load lại trang
+    event.preventDefault();
     
     var belt_type = document.getElementById('belt_type').value;
     var result_html = "";
     
     try {
         if (belt_type === 'vbelt') {
-            // ================= ĐAI HÌNH THANG =================
             var P1 = getVal('P1', 7.5);
             var n1 = getVal('n1', 1240);
             var u = getVal('ud', 2.22);
@@ -423,7 +428,7 @@ function calculateForm(event) {
             var hs_tuong_doi = getVal('v_hs_tuong_doi', 0.02);
 
             var v_dai = (Math.PI * d1 * n1) / 60000;
-            var v_check = v_dai < 25 ? "Đạt" : "CẢNH BÁO (>25 m/s)";
+            var v_check = v_dai < 25 ? "ĐẠT" : "KHÔNG ĐẠT (>25 m/s)";
             var epsilon = hs_tuong_doi;
             var d2_lt = u * d1 * (1 - epsilon);
             var d2 = Math.round(d2_lt / 5) * 5;
@@ -449,28 +454,27 @@ function calculateForm(event) {
             var da2 = d2 + 2 * h0_val;
 
             result_html = `
-            <h2 style="text-align:center; color:#27ae60; margin-top:0;">BẢNG KẾT QUẢ THIẾT KẾ ĐAI HÌNH THANG (${prof})</h2>
+            <h2 style="text-align:center; color:#2ecc71; margin-top:0;">BẢNG KẾT QUẢ THIẾT KẾ ĐAI HÌNH THANG (${prof})</h2>
             <table>
             <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
-            <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td style="color:green;">${v_check}</td></tr>
-            <tr><td>Đường kính vòng chia bánh nhỏ</td><td>d1</td><td><b style="color:blue;">${d1.toFixed(0)} mm</b></td><td>Thông số chọn</td></tr>
-            <tr><td>Đường kính vòng chia bánh lớn</td><td>d2</td><td><b style="color:blue;">${d2.toFixed(0)} mm</b></td><td>Đã làm tròn chuẩn</td></tr>
-            <tr><td>Chiều dài đai</td><td>L</td><td><b style="color:blue;">${L_tc.toFixed(0)} mm</b></td><td>Thông số chọn</td></tr>
-            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><b class="highlight">${a_thuc.toFixed(2)} mm</b></td><td>Tính lùi từ L</td></tr>
+            <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td class="${v_dai < 25 ? 'success' : 'highlight'}">${v_check}</td></tr>
+            <tr><td>Đường kính vòng chia bánh nhỏ</td><td>d1</td><td><span>${d1.toFixed(0)} mm</span></td><td>Thông số chọn</td></tr>
+            <tr><td>Đường kính vòng chia bánh lớn</td><td>d2</td><td><span>${d2.toFixed(0)} mm</span></td><td>Đã làm tròn chuẩn</td></tr>
+            <tr><td>Chiều dài đai</td><td>L</td><td><span>${L_tc.toFixed(0)} mm</span></td><td>Thông số chọn</td></tr>
+            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><span>${a_thuc.toFixed(2)} mm</span></td><td>Tính lùi từ L</td></tr>
             <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td>Thỏa mãn > 120°</td></tr>
             <tr><td>Số lượng đai lý thuyết</td><td>Z_lt</td><td>${Z_calc.toFixed(3)} đai</td><td>-</td></tr>
-            <tr><td><b>Số lượng đai thực tế</b></td><td><b>Z</b></td><td><b class="highlight" style="font-size:1.2em;">${Z_chon} đai</b></td><td>Theo quy tắc làm tròn</td></tr>
-            <tr> <td>Chiều rộng bánh đai</td><td><b>B</b></td><td><b>${B.toFixed(2)} mm</b></td><td>B = (Z-1)t + 2e</td></tr>
-            <tr> <td>Đường kính ngoài bánh nhỏ</td><td><b>da1</b></td><td><b>${da1.toFixed(2)} mm</b></td><td>da1 = d1 + 2h0</td></tr>
-            <tr> <td>Đường kính ngoài bánh lớn</td><td><b>da2</b></td><td><b>${da2.toFixed(2)} mm</b></td><td>da2 = d2 + 2h0</td></tr>
+            <tr><td><span>Số lượng đai thực tế</span></td><td><span>Z</span></td><td><span style="font-size:1.2em;">${Z_chon} đai</span></td><td>Theo quy tắc làm tròn</td></tr>
+            <tr> <td>Chiều rộng bánh đai</td><td><span>B</span></td><td><span>${B.toFixed(2)} mm</span></td><td>B = (Z-1)t + 2e</td></tr>
+            <tr> <td>Đường kính ngoài bánh nhỏ</td><td><span>da1</span></td><td><span>${da1.toFixed(2)} mm</span></td><td>da1 = d1 + 2h0</td></tr>
+            <tr> <td>Đường kính ngoài bánh lớn</td><td><span>da2</span></td><td><span>${da2.toFixed(2)} mm</span></td><td>da2 = d2 + 2h0</td></tr>
             <tr><td>Lực vòng truyền tải</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>-</td></tr>
-            <tr><td>Lực căng ban đầu 1 đai</td><td>F0</td><td><b class="highlight">${F0.toFixed(1)} N</b></td><td>Có tính lực ly tâm</td></tr>
-            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class="highlight">${Fr.toFixed(1)} N</b></td><td>Dùng để thiết kế Trục</td></tr>
+            <tr><td>Lực căng ban đầu 1 đai</td><td>F0</td><td><span>${F0.toFixed(1)} N</span></td><td>Có tính lực ly tâm</td></tr>
+            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><span>${Fr.toFixed(1)} N</span></td><td>Dùng để thiết kế Trục</td></tr>
             </table>
             `;
 
         } else if (belt_type === 'flat') {
-            // ================= ĐAI DẸT =================
             var P1 = getVal('P1', 7.5);
             var n1 = getVal('n1', 1240);
             var u = getVal('ud_f', 3.5);
@@ -499,25 +503,25 @@ function calculateForm(event) {
             }
 
             var v_dai = (Math.PI * d1 * n1) / 60000;
-            var v_check = v_dai <= 25 ? "Đạt" : "Cảnh báo (>25 m/s)";
+            var v_check = v_dai <= 25 ? "ĐẠT" : "KHÔNG ĐẠT (>25 m/s)";
 
             var d2_lt = u * d1 * (1 - epsilon);
             var d2 = d2_lt > 100 ? standard_d.reduce((prev, curr) => Math.abs(curr - d2_lt) < Math.abs(prev - d2_lt) ? curr : prev) : Math.round(d2_lt);
 
             var u_thuc = (d1 > 0 && epsilon !== 1) ? d2 / (d1 * (1 - epsilon)) : u;
             var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
-            var u_check = delta_u <= 4 ? "Đạt" : "Cảnh báo (> 4%)";
+            var u_check = delta_u <= 4 ? "ĐẠT" : "KHÔNG ĐẠT (> 4%)";
 
             var a_lt = K_a * (d1 + d2);
             var a = Math.round(a_lt / 10) * 10; 
 
             var L_calc = a > 0 ? 2 * a + Math.PI * (d1 + d2) / 2 + Math.pow(d2 - d1, 2) / (4 * a) : 0;
             var i_vong = L_calc > 0 ? v_dai / (L_calc / 1000) : 0;
-            var i_check = (3 <= i_vong && i_vong <= 5) ? "Đạt" : (i_vong < 3 ? "< 3" : "> 5");
+            var i_check = (3 <= i_vong && i_vong <= 5) ? "ĐẠT" : (i_vong < 3 ? "KHÔNG ĐẠT (< 3)" : "KHÔNG ĐẠT (> 5)");
 
             var alpha1 = a > 0 ? 180 - ((d2 - d1) / a) * 57 : 180;
             var alpha2 = a > 0 ? 180 + ((d2 - d1) / a) * 57 : 180;
-            var alpha_check = alpha1 >= 150 ? "Đạt" : "Cảnh báo (< 150°)";
+            var alpha_check = alpha1 >= 150 ? "ĐẠT" : "KHÔNG ĐẠT (< 150°)";
 
             var Ft = v_dai > 0 ? (1000 * P1) / v_dai : 0;
             var sigma_F_cp = sigma_F0 * Ca * Cv * Cb;
@@ -549,7 +553,7 @@ function calculateForm(event) {
                 <details style="cursor: pointer; outline: none;">
                     <summary>🖼️ Bấm vào đây để Hiện / Ẩn Sơ đồ truyền động đai</summary>
                     <div style="margin-top: 15px;">
-                        <img src="${schematic_img}" alt="Sơ đồ đai dẹt" style="max-width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <img src="${schematic_img}" alt="Sơ đồ đai dẹt" style="max-width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background-color: #fff;">
                     </div>
                 </details>
             </div>
@@ -558,30 +562,29 @@ function calculateForm(event) {
             var mat_dict = {'vaicaosu': 'Vải Cao Su', 'vaibong': 'Vải Bông', 'da': 'Da', 'soilen': 'Sợi Len', 'soitonghop': 'Sợi Tổng Hợp'};
 
             result_html = `
-            <h2 style='text-align:center; color:#8e44ad; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI DẸT (${mat_dict[mat] || ''})</h2>
+            <h2 style='text-align:center; color:#a29bfe; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI DẸT (${mat_dict[mat] || ''})</h2>
             ${img_html}
             <table>
                 <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
                 <tr><td>Momen xoắn trục chủ động</td><td>T1</td><td>${T1.toFixed(0)} N.mm</td><td>Gợi ý d1 nên từ ${(5.2 * Math.pow(T1, 1/3)).toFixed(0)} ÷ ${(6.4 * Math.pow(T1, 1/3)).toFixed(0)} mm</td></tr>
-                <tr><td>Đường kính bánh dẫn</td><td>d1</td><td><b style="color:blue;">${d1.toFixed(0)} mm</b></td><td>Tính theo CT (4.1) & chuẩn hóa</td></tr>
-                <tr><td>Đường kính bánh bị dẫn</td><td>d2</td><td><b style="color:blue;">${d2.toFixed(0)} mm</b></td><td>Làm tròn chuẩn từ ${d2_lt.toFixed(1)} mm</td></tr>
-                <tr><td>Sai lệch tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=4 ? 'green' : 'red'};">${u_check} (≤ 4%)</td></tr>
-                <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td style="color:${v_dai<=25 ? 'green' : 'red'};">${v_check}</td></tr>
-                <tr><td>Khoảng cách trục tính toán</td><td>a</td><td><b>${a.toFixed(0)} mm</b></td><td>Tính theo CT (4.3) </td></tr>
-                <tr><td>Chiều dài đai tính toán</td><td>l</td><td><b>${L_calc.toFixed(0)} mm</b></td><td>Cần cộng thêm 100-400mm nối đai</td></tr>
-                <tr><td>Số vòng chạy 1 giây</td><td>i</td><td>${i_vong.toFixed(2)} 1/s</td><td>${i_check} (Nên 3 ÷ 5 1/s)</td></tr>
-                <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)}°</td><td style="color:${alpha1>=150 ? 'green' : 'red'};">${alpha_check} (≥ 150°)</td></tr>
+                <tr><td>Đường kính bánh dẫn</td><td>d1</td><td><span>${d1.toFixed(0)} mm</span></td><td>Tính theo CT (4.1) & chuẩn hóa</td></tr>
+                <tr><td>Đường kính bánh bị dẫn</td><td>d2</td><td><span>${d2.toFixed(0)} mm</span></td><td>Làm tròn chuẩn từ ${d2_lt.toFixed(1)} mm</td></tr>
+                <tr><td>Sai lệch tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td class="${delta_u<=4 ? 'success' : 'highlight'}">${u_check}</td></tr>
+                <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td class="${v_dai<=25 ? 'success' : 'highlight'}">${v_check}</td></tr>
+                <tr><td>Khoảng cách trục tính toán</td><td>a</td><td><span>${a.toFixed(0)} mm</span></td><td>Tính theo CT (4.3) </td></tr>
+                <tr><td>Chiều dài đai tính toán</td><td>l</td><td><span>${L_calc.toFixed(0)} mm</span></td><td>Cần cộng thêm 100-400mm nối đai</td></tr>
+                <tr><td>Số vòng chạy 1 giây</td><td>i</td><td>${i_vong.toFixed(2)} 1/s</td><td class="${(3 <= i_vong && i_vong <= 5) ? 'success' : 'highlight'}">${i_check}</td></tr>
+                <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)}°</td><td class="${alpha1>=150 ? 'success' : 'highlight'}">${alpha_check}</td></tr>
                 <tr><td>Lực vòng có ích</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>Ft = 1000.P1 / v</td></tr>
                 <tr><td>Ứng suất cho phép</td><td>[σF]</td><td>${sigma_F_cp.toFixed(2)} MPa</td><td>[σF] = [σF0].Cα.Cv.Cb</td></tr>
                 <tr><td>Chiều rộng đai (Lý thuyết)</td><td>b_lt</td><td>${b_lt.toFixed(2)} mm</td><td>b = Ft.Kđ / ([σF].δ)</td></tr>
-                <tr><td><b>Chiều rộng đai (Thực tế)</b></td><td><b>b</b></td><td><b class='highlight' style='font-size:1.2em;'>${b.toFixed(0)} mm</b></td><td>${b_note}</td></tr>
+                <tr><td><span>Chiều rộng đai (Thực tế)</span></td><td><span>b</span></td><td><span style='font-size:1.2em;'>${b.toFixed(0)} mm</span></td><td>${b_note}</td></tr>
                 <tr><td>Lực căng ban đầu</td><td>F0</td><td>${F0.toFixed(1)} N</td><td>F0 = σ0.δ.b</td></tr>
-                <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class='highlight'>${Fr.toFixed(1)} N</b></td><td>Fr = 2.F0.sin(α1/2)</td></tr>
+                <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><span>${Fr.toFixed(1)} N</span></td><td>Fr = 2.F0.sin(α1/2)</td></tr>
             </table>
             `;
 
         } else if (belt_type === 'polyv') {  
-            // ================= ĐAI NHIỀU CHÊM =================
             var P1 = getVal('P1', 7.5);
             var n1 = getVal('n1', 1240);
             var u = getVal('pv_u', 3.5);
@@ -628,14 +631,14 @@ function calculateForm(event) {
             var Cu = getVal('pv_Cu', 1.14);
 
             var v_dai = (Math.PI * d1 * n1) / 60000;
-            var v_check = v_dai <= 40 ? "Đạt" : "CẢNH BÁO (>40 m/s)";
+            var v_check = v_dai <= 40 ? "ĐẠT" : "KHÔNG ĐẠT (>40 m/s)";
             
             var d2_lt = u * d1 * (1 - 0.01);
             var d2 = Math.round(d2_lt / 5) * 5; 
             
             var u_thuc = d1 > 0 ? d2 / (d1 * 0.99) : 0;
             var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
-            var u_check = delta_u <= 4 ? "Đạt" : "Cảnh báo (> 4%)";
+            var u_check = delta_u <= 4 ? "ĐẠT" : "KHÔNG ĐẠT (> 4%)";
 
             var K = L_tc - Math.PI * (d1 + d2) / 2;
             var delta = (d2 - d1) / 2;
@@ -643,7 +646,7 @@ function calculateForm(event) {
             var a_thuc = (K + Math.sqrt(val_inside_sqrt)) / 4;
             
             var alpha1 = a_thuc > 0 ? 180 - 57 * ((d2 - d1) / a_thuc) : 180;
-            var alpha_check = alpha1 >= 120 ? "Đạt" : "Cảnh báo (< 120°)";
+            var alpha_check = alpha1 >= 120 ? "ĐẠT" : "KHÔNG ĐẠT (< 120°)";
 
             var Z_calc = (P0 * Ca * Cl * Cu) > 0 ? (10 * P1 * Kd) / (P0 * Ca * Cl * Cu) : 0;
             var Z_chon = Math.ceil(Z_calc);
@@ -659,30 +662,29 @@ function calculateForm(event) {
             var Fr = 2 * F0 * Z_chon * Math.sin((Math.max(0, alpha1) / 2) * Math.PI / 180);
             
             result_html = `
-            <h2 style='text-align:center; color:#d35400; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI NHIỀU CHÊM (${prof})</h2>
+            <h2 style='text-align:center; color:#f39c12; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI NHIỀU CHÊM (${prof})</h2>
             <table>
             <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
             <tr><td>Momen xoắn trục chủ động</td><td>T1</td><td>${T1_pv.toFixed(0)} N.mm</td><td>d1_sb = 3.∛T1 ≈ ${d1_sb.toFixed(1)} mm</td></tr>
-            <tr><td>Đường kính vòng chia bánh nhỏ</td><td>d1</td><td><b style="color:blue;">${d1.toFixed(0)} mm</b></td><td>${d1_note}</td></tr>
-            <tr><td>Đường kính vòng chia bánh lớn</td><td>d2</td><td><b style="color:blue;">${d2.toFixed(0)} mm</b></td><td>Làm tròn chuẩn</td></tr>
-            <tr><td>Sai lệch tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=4 ? 'green' : 'red'};">${u_check}</td></tr>
-            <tr><td>Chiều dài đai chọn</td><td>L</td><td><b style="color:blue;">${L_tc.toFixed(0)} mm</b></td><td>Nên tra bảng chuẩn</td></tr>
-            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><b class="highlight">${a_thuc.toFixed(2)} mm</b></td><td>Tính ngược từ L</td></tr>
-            <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td style="color:${alpha1>=120 ? 'green' : 'red'};">${alpha_check}</td></tr>
+            <tr><td>Đường kính vòng chia bánh nhỏ</td><td>d1</td><td><span>${d1.toFixed(0)} mm</span></td><td>${d1_note}</td></tr>
+            <tr><td>Đường kính vòng chia bánh lớn</td><td>d2</td><td><span>${d2.toFixed(0)} mm</span></td><td>Làm tròn chuẩn</td></tr>
+            <tr><td>Sai lệch tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td class="${delta_u<=4 ? 'success' : 'highlight'}">${u_check}</td></tr>
+            <tr><td>Chiều dài đai chọn</td><td>L</td><td><span>${L_tc.toFixed(0)} mm</span></td><td>Nên tra bảng chuẩn</td></tr>
+            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><span>${a_thuc.toFixed(2)} mm</span></td><td>Tính ngược từ L</td></tr>
+            <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td class="${alpha1>=120 ? 'success' : 'highlight'}">${alpha_check}</td></tr>
             <tr><td>Số lượng chêm lý thuyết</td><td>z_lt</td><td>${Z_calc.toFixed(3)} chêm</td><td>z = 10.P.Kđ / ([P0]Cα.Cl.Cu)</td></tr>
-            <tr><td><b>Số lượng chêm thực tế</b></td><td><b>z</b></td><td><b class="highlight" style="font-size:1.2em;">${Z_chon} chêm</b></td><td>Làm tròn lên</td></tr>
-            <tr><td>Chiều rộng bánh đai</td><td>B</td><td><b>${B_dai.toFixed(2)} mm</b></td><td>B = (z-1)t + 2e (CT 4.17)</td></tr>
-            <tr><td>Đường kính ngoài bánh đai nhỏ</td><td>da1</td><td><b>${da1.toFixed(2)} mm</b></td><td>da1 = d1 - δ (CT 4.24)</td></tr>
-            <tr><td>Đường kính ngoài bánh đai lớn</td><td>da2</td><td><b>${da2.toFixed(2)} mm</b></td><td>da2 = d2 - δ (CT 4.24)</td></tr>
+            <tr><td><span>Số lượng chêm thực tế</span></td><td><span>z</span></td><td><span style="font-size:1.2em;">${Z_chon} chêm</span></td><td>Làm tròn lên</td></tr>
+            <tr><td>Chiều rộng bánh đai</td><td>B</td><td><span>${B_dai.toFixed(2)} mm</span></td><td>B = (z-1)t + 2e (CT 4.17)</td></tr>
+            <tr><td>Đường kính ngoài bánh đai nhỏ</td><td>da1</td><td><span>${da1.toFixed(2)} mm</span></td><td>da1 = d1 - δ (CT 4.24)</td></tr>
+            <tr><td>Đường kính ngoài bánh đai lớn</td><td>da2</td><td><span>${da2.toFixed(2)} mm</span></td><td>da2 = d2 - δ (CT 4.24)</td></tr>
             <tr><td>Lực vòng có ích</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>Ft = 1000.P1 / v</td></tr>
-            <tr><td>Lực căng ban đầu của 1 chêm</td><td>F0</td><td><b class="highlight">${F0.toFixed(1)} N</b></td><td>CT tương tự đai thang</td></tr>
-            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class="highlight">${Fr.toFixed(1)} N</b></td><td>Dùng để thiết kế Trục</td></tr>
+            <tr><td>Lực căng ban đầu của 1 chêm</td><td>F0</td><td><span>${F0.toFixed(1)} N</span></td><td>CT tương tự đai thang</td></tr>
+            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><span>${Fr.toFixed(1)} N</span></td><td>Dùng để thiết kế Trục</td></tr>
             </table>
             <p class="note" style="text-align:right;">* Trình tự tính và công thức đối chiếu theo Tài liệu Thiết kế DĐCK Tập 1, Trang 64-67.</p>
             `;
 
         } else if (belt_type === 'timing') {
-            // ================= ĐAI RĂNG =================
             var P1 = getVal('P1', 7.5);
             var n1 = getVal('n1', 1240);
             var u = getVal('timing_u', 2.0);
@@ -696,7 +698,7 @@ function calculateForm(event) {
             var z2 = Math.round(u * z1);
             var u_thuc = z1 > 0 ? z2 / z1 : 0;
             var delta_u = u > 0 ? Math.abs(u_thuc - u) / u * 100 : 0;
-            var u_check = delta_u === 0 ? "Đạt" : (delta_u <= 2 ? "Chấp nhận" : "Cảnh báo");
+            var u_check = delta_u === 0 ? "ĐẠT" : (delta_u <= 2 ? "ĐẠT (Chấp nhận)" : "KHÔNG ĐẠT (> 2%)");
 
             var d1 = m * z1;
             var d2 = m * z2;
@@ -714,36 +716,36 @@ function calculateForm(event) {
             
             var alpha1 = a_thuc > 0 ? 180 - 57 * ((d2 - d1) / a_thuc) : 180;
             var z0 = z1 * (alpha1 / 360);
-            var z0_check = z0 >= 6 ? "Đạt" : "CẢNH BÁO (< 6 răng)";
+            var z0_check = z0 >= 6 ? "ĐẠT" : "KHÔNG ĐẠT (< 6 răng)";
 
             var Ft = v_dai > 0 ? (1000 * P1) / v_dai : 0;
             var Fr = 1.2 * Ft;
 
             result_html = `
-            <h2 style='text-align:center; color:#2c3e50; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI RĂNG (m = ${m.toFixed(0)})</h2>
+            <h2 style='text-align:center; color:#bdc3c7; margin-top:0;'>BẢNG KẾT QUẢ THIẾT KẾ ĐAI RĂNG (m = ${m.toFixed(0)})</h2>
             <table>
             <tr><th>Đại lượng tính toán</th><th>Ký hiệu</th><th>Kết quả</th><th>Ghi chú / Đánh giá</th></tr>
             <tr><td>Bước răng</td><td>p</td><td>${p.toFixed(2)} mm</td><td>p = π.m</td></tr>
-            <tr><td>Số răng bánh dẫn</td><td>z1</td><td><b style="color:blue;">${z1} răng</b></td><td>Lấy theo form nhập</td></tr>
-            <tr><td>Số răng bánh bị dẫn</td><td>z2</td><td><b style="color:blue;">${z2} răng</b></td><td>Làm tròn z2 = u.z1</td></tr>
-            <tr><td>Sai số Tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=2 ? 'green' : 'red'};">${u_check}</td></tr>
-            <tr><td>Đường kính vòng chia d1</td><td>d1</td><td><b>${d1.toFixed(2)} mm</b></td><td>d1 = m.z1</td></tr>
-            <tr><td>Đường kính vòng chia d2</td><td>d2</td><td><b>${d2.toFixed(2)} mm</b></td><td>d2 = m.z2</td></tr>
+            <tr><td>Số răng bánh dẫn</td><td>z1</td><td><span>${z1} răng</span></td><td>Lấy theo form nhập</td></tr>
+            <tr><td>Số răng bánh bị dẫn</td><td>z2</td><td><span>${z2} răng</span></td><td>Làm tròn z2 = u.z1</td></tr>
+            <tr><td>Sai số Tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td class="${delta_u<=2 ? 'success' : 'highlight'}">${u_check}</td></tr>
+            <tr><td>Đường kính vòng chia d1</td><td>d1</td><td><span>${d1.toFixed(2)} mm</span></td><td>d1 = m.z1</td></tr>
+            <tr><td>Đường kính vòng chia d2</td><td>d2</td><td><span>${d2.toFixed(2)} mm</span></td><td>d2 = m.z2</td></tr>
             <tr><td>Vận tốc đai</td><td>v</td><td>${v_dai.toFixed(2)} m/s</td><td>Nên nhỏ hơn 50 m/s</td></tr>
-            <tr><td>Số răng của đai</td><td>z_đai</td><td><b class="highlight" style="font-size:1.2em;">${z_dai} răng</b></td><td>Làm tròn từ ${z_dai_calc.toFixed(1)}</td></tr>
-            <tr><td>Chiều dài đai thực tế</td><td>L</td><td><b>${L_thuc.toFixed(2)} mm</b></td><td>L = z_đai . p</td></tr>
-            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><b class="highlight">${a_thuc.toFixed(2)} mm</b></td><td>Tính từ L thực</td></tr>
+            <tr><td>Số răng của đai</td><td>z_đai</td><td><span style="font-size:1.2em;">${z_dai} răng</span></td><td>Làm tròn từ ${z_dai_calc.toFixed(1)}</td></tr>
+            <tr><td>Chiều dài đai thực tế</td><td>L</td><td><span>${L_thuc.toFixed(2)} mm</span></td><td>L = z_đai . p</td></tr>
+            <tr><td>Khoảng cách trục thực tế</td><td>a</td><td><span>${a_thuc.toFixed(2)} mm</span></td><td>Tính từ L thực</td></tr>
             <tr><td>Góc ôm bánh nhỏ</td><td>α1</td><td>${alpha1.toFixed(2)} độ</td><td>-</td></tr>
-            <tr><td><b>Số răng ăn khớp bánh nhỏ</b></td><td><b>z0</b></td><td><b class="highlight">${z0.toFixed(1)} răng</b></td><td style="color:${z0>=6 ? 'green' : 'red'}; font-weight:bold;">${z0_check}</td></tr>
+            <tr><td><span>Số răng ăn khớp bánh nhỏ</span></td><td><span>z0</span></td><td><span>${z0.toFixed(1)} răng</span></td><td class="${z0>=6 ? 'success' : 'highlight'}">${z0_check}</td></tr>
             <tr><td>Lực vòng truyền tải</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>Ft = 1000.P1 / v</td></tr>
-            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><b class="highlight">${Fr.toFixed(1)} N</b></td><td>Fr ≈ 1,2 Ft (Sách T.67)</td></tr>
+            <tr><td>Lực tác dụng lên trục</td><td>Fr</td><td><span>${Fr.toFixed(1)} N</span></td><td>Fr ≈ 1,2 Ft (Sách T.67)</td></tr>
             </table>
             `;
         } else {
             result_html = "<p>Phần này đang chờ phát triển thêm...</p>";
         }
     } catch (e) {
-        result_html = `<p style='color:red;'><b>Lỗi tính toán:</b> ${e.message}. Vui lòng kiểm tra lại số liệu nhập.</p>`;
+        result_html = `<p style='color:red;'><span>Lỗi tính toán:</span> ${e.message}. Vui lòng kiểm tra lại số liệu nhập.</p>`;
     }
 
     var resultBox = document.getElementById('result_box');
@@ -756,6 +758,7 @@ window.onload = function() {
     updateSubBeltCategory();
 };
 </script>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 <div class="container">
@@ -917,5 +920,20 @@ window.onload = function() {
 </div>
 
 </div>
+<script>
+    // Nhận tín hiệu đổi màu từ trang chủ index.html gửi vào
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.theme === 'light') {
+            document.body.classList.add('light-theme');
+        } else if (event.data && event.data.theme === 'dark') {
+            document.body.classList.remove('light-theme');
+        }
+    });
+
+    // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng
+    if (localStorage.getItem('ctmc_theme') === 'light') { 
+        document.body.classList.add('light-theme'); 
+    }
+</script>
 </body>
 </html>

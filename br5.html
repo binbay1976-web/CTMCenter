@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -21,25 +21,36 @@
     button:hover { background-color: #047857; }
     
     .result-box { margin-top: 30px; border-top: 3px solid #10b981; padding-top: 20px; display: none;}
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
-    th, td { padding: 10px 12px; border: 1px solid #e2e8f0; text-align: left; }
-    th { background-color: #eff6ff; color: #1e40af; width: 35%; }
+    
+    /* ĐÃ CHỈNH SỬA PHẦN CSS CỦA BẢNG TẠI ĐÂY */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+    th, td { padding: 10px 12px; border: 1px solid var(--dm-border); text-align: left; }
+    th { width: 35%; text-align: center; font-weight: 600; }
     td { text-align: center; }
-    tr:nth-child(even) { background-color: #f8fafc; }
+    
+    /* Tắt hoàn toàn tính năng xen kẽ màu theo yêu cầu, tạo màu đồng nhất */
+    tr:nth-child(even) td, tr:nth-child(odd) td, tr:nth-child(even), tr:nth-child(odd) { 
+        background-color: transparent !important; 
+    }
+    
+    /* ĐÃ SỬA: Chuyển thành chữ thường (nhạt) thay vì in đậm */
+    .success { color: #10b981 !important; font-weight: normal; } 
+    .highlight { color: #ff4d4d !important; font-weight: normal; } 
+    /* KẾT THÚC PHẦN CHỈNH SỬA CSS BẢNG */
+    
     .step-title { background-color: #1e40af !important; color: white !important; font-weight: bold; text-align: center; font-size: 1.1em;}
     .step-title-force { background-color: #b91c1c !important; color: white !important; font-weight: bold; text-align: center; font-size: 1.1em;}
     .error-box { background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; margin-top: 15px; font-size: 14px; color: #b91c1c; font-weight: bold;}
-    .success { color: #16a34a; font-weight: bold; }
-    .highlight { color: #dc2626; font-weight: bold; }
     .canvas-container { text-align: center; margin: 20px 0; background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; }
 </style>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 <div class="container">
-    <h1>Hệ Thống Tính Toán & Kiểm Tra (Hành Tinh Pro)</h1>
+    <h1>Hệ Thống Tính Toán & Kiểm Tra bánh răng Hành Tinh </h1>
 
     <div id="input_form">
-        <h3>1. THÔNG SỐ ĐỘNG HỌC & YÊU CẦU</h3>
+        <h3>I.THÔNG SỐ ĐỘNG HỌC & YÊU CẦU</h3>
         <div class="grid-4">
             <div><label>Công suất trục ra Po (kW):</label><input type="number" step="any" id="Po" value="15.7"></div>
             <div><label>Số vòng quay n1 (vg/ph):</label><input type="number" step="any" id="n1" value="187.5" oninput="autoCalcKinematics()"></div>
@@ -52,7 +63,7 @@
             <div><label>Hệ số quá tải Kqt:</label><input type="number" step="any" id="Kqt" value="2.0"></div>
         </div>
 
-        <h3>2. CÁC HỆ SỐ TRA BẢNG CẦN THIẾT (TỰ DO NHẬP)</h3>
+        <h3>II.CÁC HỆ SỐ TRA BẢNG CẦN THIẾT</h3>
         <div class="grid-4">
             <div><label>Hệ số dạng răng Kd:</label><input type="number" step="any" id="Kd" value="77"></div>
             <div><label>Hệ số phân tải vệ tinh Kc (Răng):</label><input type="number" step="any" id="Kc_rang" value="1.2"></div>
@@ -65,7 +76,7 @@
             <div><label>Hệ số YF3 (Vành bao):</label><input type="number" step="any" id="YF3" value="3.35"></div>
         </div>
 
-        <h3>3. CHIỀU TẢI TRỌNG & THÔNG SỐ Ổ LĂN</h3>
+        <h3>III.CHIỀU TẢI TRỌNG & THÔNG SỐ Ổ LĂN</h3>
         <div class="grid-3">
             <div><label>KFC Bánh 1 (Mặt trời):</label>
                 <select id="kfc_1"><option value="1.0">1 Phía (Quay 1 chiều) - 1.0</option><option value="0.75">2 Phía (Đảo chiều) - 0.75</option></select>
@@ -84,7 +95,7 @@
             <div><label>Hệ số an toàn s:</label><input type="number" step="any" id="s_olan" value="1.3"></div>
         </div>
 
-        <h3>4. VẬT LIỆU BÁNH RĂNG (Tra cứu Bảng 6.1 & 6.2)</h3>
+        <h3>IV.VẬT LIỆU BÁNH RĂNG </h3>
         <div class="grid-2">
             <div class="material-panel">
                 <h4 style="margin-top:0; color:#b91c1c;">VẬT LIỆU BÁNH 1 & 2 (Mặt trời & Vệ tinh)</h4>
@@ -433,56 +444,56 @@ function calculatePlanetaryPro() {
         let num_format = (num) => Number(num).toLocaleString('en-US', {maximumFractionDigits:0});
         let exp_format = (num) => Number(num).toExponential(2);
 
-        let html = `<h2 style="text-align:center; color:#1e40af; font-weight:900; margin-top:20px;">BÁO CÁO THIẾT KẾ (SƠ ĐỒ A)</h2>`;
+        let html = `<h2 style="text-align:center; font-weight:900; margin-top:20px;">BÁO CÁO THIẾT KẾ </h2>`;
         html += `<div class="canvas-container"><img src="${drawPlanetaryCanvas(d1, d2, aw, c, z1, z2, z3)}" style="max-width:100%; border-radius:8px;"></div>`;
         html += `<table>
-            <tr><td colspan="3" class="step-title">BƯỚC 1: ĐỘNG HỌC & ĐỒNG TRỤC</td></tr>
-            <tr><th>Tỉ số truyền chung (u10)</th><td><b>${u10.toFixed(3)}</b></td><td>= n1 / n0</td></tr>
-            <tr><th>Thông số đặc trưng (e)</th><td><b>${e.toFixed(3)}</b></td><td>e = u10 - 1</td></tr>
-            <tr><th>Tỉ số truyền nhánh u12 / u23</th><td><b>${u12.toFixed(3)} / ${u23_thuc.toFixed(3)}</b></td><td>u12 = 0.5(e-1), u23 = z3/z2</td></tr>
-            <tr><th>Mômen Trục ra To</th><td><b>${num_format(To)} N.mm</b></td><td>9.55 * 10^6 * Po / no</td></tr>
-            <tr><th>Mômen M.Trời / V.Tinh (T1/T2)</th><td><b>${num_format(T1)} / ${num_format(T2)} N.mm</b></td><td>T1 = To/(e+1) ; T2 = T1.u12/c</td></tr>
+            <tr><td colspan="3" class="step-title">1.ĐỘNG HỌC & ĐỒNG TRỤC</td></tr>
+            <tr><th>Tỉ số truyền chung (u10)</th><td><span>${u10.toFixed(3)}</span></td><td>= n1 / n0</td></tr>
+            <tr><th>Thông số đặc trưng (e)</th><td><span>${e.toFixed(3)}</span></td><td>e = u10 - 1</td></tr>
+            <tr><th>Tỉ số truyền nhánh u12 / u23</th><td><span>${u12.toFixed(3)} / ${u23_thuc.toFixed(3)}</span></td><td>u12 = 0.5(e-1), u23 = z3/z2</td></tr>
+            <tr><th>Mômen Trục ra To</th><td><span>${num_format(To)} N.mm</span></td><td>9.55 * 10^6 * Po / no</td></tr>
+            <tr><th>Mômen M.Trời / V.Tinh (T1/T2)</th><td><span>${num_format(T1)} / ${num_format(T2)} N.mm</span></td><td>T1 = To/(e+1) ; T2 = T1.u12/c</td></tr>
 
-            <tr><td colspan="3" class="step-title">BƯỚC 2: VẬT LIỆU VÀ ỨNG SUẤT CHO PHÉP</td></tr>
+            <tr><td colspan="3" class="step-title">2.VẬT LIỆU VÀ ỨNG SUẤT CHO PHÉP</td></tr>
             <tr><th>Số chu kỳ NHO (B1 / B3)</th><td>${exp_format(NHO1)} / ${exp_format(NHO3)}</td><td>30 * HB^2.4</td></tr>
             <tr><th>Số chu kỳ tương đương NH (B1/B2/B3)</th><td>${exp_format(N_H1)} / ${exp_format(N_H2)} / ${exp_format(N_H3_val)}</td><td>Từ Lh, n0, c</td></tr>
-            <tr><th>[σH] Cặp 1-2 / Cặp 2-3</th><td><b style="color:#d97706; font-size:1.1em;">${sH_cp_12.toFixed(1)} / ${sH_cp_3.toFixed(1)} MPa</b></td><td>Đã nhân KHL</td></tr>
-            <tr><th>[σF] B1 / B2 / B3</th><td><b style="color:#d97706; font-size:1.1em;">${sF_cp1.toFixed(1)} / ${sF_cp2.toFixed(1)} / ${sF_cp3.toFixed(1)} MPa</b></td><td>Đã xét KFC</td></tr>
+            <tr><th>[σH] Cặp 1-2 / Cặp 2-3</th><td><span style="font-size:1.1em;">${sH_cp_12.toFixed(1)} / ${sH_cp_3.toFixed(1)} MPa</span></td><td>Đã nhân KHL</td></tr>
+            <tr><th>[σF] B1 / B2 / B3</th><td><span style="font-size:1.1em;">${sF_cp1.toFixed(1)} / ${sF_cp2.toFixed(1)} / ${sF_cp3.toFixed(1)} MPa</span></td><td>Đã xét KFC</td></tr>
 
-            <tr><td colspan="3" class="step-title">BƯỚC 3: KÍCH THƯỚC HÌNH HỌC VÀ CHUẨN HÓA AW</td></tr>
+            <tr><td colspan="3" class="step-title">3.KÍCH THƯỚC HÌNH HỌC VÀ CHUẨN HÓA AW</td></tr>
             <tr><th>Khoảng cách trục Tính toán</th><td>${aw_calc.toFixed(2)} mm</td><td>Tính từ T1, u12...</td></tr>
-            <tr><th>Khoảng cách trục Tiêu Chuẩn aw</th><td><b style="color:#1d4ed8; font-size:1.1em;">${aw} mm</b></td><td>Nâng lên dãy số Bảng 6.14</td></tr>
-            <tr><th>Mô đun m</th><td><b style="color:#1d4ed8; font-size:1.1em;">${md.toFixed(1)} mm</b></td><td>Tiêu chuẩn (bảng 6.8)</td></tr>
-            <tr><th>Số răng Z1 / Z2 / Z3</th><td><b style="font-size:1.1em;">${z1} / ${z2} / ${z3}</b></td><td>Thỏa ĐK Đồng trục (Z1+Z3)/${c}</td></tr>
-            <tr><th>Hệ số dịch chỉnh vành răng (X3)</th><td><b style="color:#b91c1c; font-size:1.1em;">${x3.toFixed(3)}</b></td><td>Góc ăn khớp αtw3 = ${(atw3*180/Math.PI).toFixed(2)}°</td></tr>
+            <tr><th>Khoảng cách trục Tiêu Chuẩn aw</th><td><span style="font-size:1.1em;">${aw} mm</span></td><td>Nâng lên dãy số Bảng 6.14</td></tr>
+            <tr><th>Mô đun m</th><td><span style="font-size:1.1em;">${md.toFixed(1)} mm</span></td><td>Tiêu chuẩn (bảng 6.8)</td></tr>
+            <tr><th>Số răng Z1 / Z2 / Z3</th><td><span style="font-size:1.1em;">${z1} / ${z2} / ${z3}</span></td><td>Thỏa ĐK Đồng trục (Z1+Z3)/${c}</td></tr>
+            <tr><th>Hệ số dịch chỉnh vành răng (X3)</th><td><span style="font-size:1.1em;">${x3.toFixed(3)}</span></td><td>Góc ăn khớp αtw3 = ${(atw3*180/Math.PI).toFixed(2)}°</td></tr>
             <tr><th>Đường kính vòng lăn (dw1/dw2/dw3)</th><td>${dw1.toFixed(1)} / ${dw2.toFixed(1)} / ${dw3.toFixed(1)} mm</td><td></td></tr>
             <tr><th>Bề rộng vành răng bw12 / bw3</th><td>${bw12} / ${bw3} mm</td><td>Theo ψbd = ${psiba}</td></tr>
 
-            <tr><td colspan="3" class="step-title" style="background:#0f766e !important;">BƯỚC 4: KIỂM NGHIỆM BỀN CẶP 1-2 (RĂNG NGOÀI)</td></tr>
-            <tr><th>Ứng suất tiếp xúc (σH12)</th><td><b>${sH12_thuc.toFixed(1)} MPa</b></td><td class="${sH12_thuc<=sH_cp_12?'success':'highlight'}">${sH12_thuc<=sH_cp_12?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_cp_12.toFixed(1)})</td></tr>
-            <tr><th>Ứng suất uốn Bánh Mặt trời (σF1)</th><td><b>${sF1_thuc.toFixed(1)} MPa</b></td><td class="${sF1_thuc<=sF_cp1?'success':'highlight'}">${sF1_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
+            <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">4.KIỂM NGHIỆM BỀN CẶP 1-2 (RĂNG NGOÀI)</td></tr>
+            <tr><th>Ứng suất tiếp xúc (σH12)</th><td><span>${sH12_thuc.toFixed(1)} MPa</span></td><td class="${sH12_thuc<=sH_cp_12?'success':'highlight'}">${sH12_thuc<=sH_cp_12?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_cp_12.toFixed(1)})</td></tr>
+            <tr><th>Ứng suất uốn Bánh Mặt trời (σF1)</th><td><span>${sF1_thuc.toFixed(1)} MPa</span></td><td class="${sF1_thuc<=sF_cp1?'success':'highlight'}">${sF1_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
 
-            <tr><td colspan="3" class="step-title" style="background:#0f766e !important;">BƯỚC 5: KIỂM NGHIỆM BỀN CẶP 2-3 (RĂNG TRONG)</td></tr>
+            <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">5.KIỂM NGHIỆM BỀN CẶP 2-3 (RĂNG TRONG)</td></tr>
             <tr><th>Vận tốc v2o / Tải trọng KH / KF</th><td>${v2o.toFixed(2)} m/s | KH=${KH.toFixed(3)} | KF=${KF.toFixed(3)}</td><td>KHv = ${KHv.toFixed(3)}</td></tr>
             <tr><th>Trùng khớp (εα) / Hệ số Zε / ZH</th><td>εα = ${eps_alpha.toFixed(3)} | Zε = ${Zeps.toFixed(3)} | ZH=${ZH.toFixed(3)}</td><td>Tính theo công thức 6.11</td></tr>
-            <tr><th>Ứng suất tiếp xúc (σH3)</th><td><b>${sH3_thuc.toFixed(1)} MPa</b></td><td class="${sH3_thuc<=sH_cp_3?'success':'highlight'}">${sH3_thuc<=sH_cp_3?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_cp_3.toFixed(1)})</td></tr>
-            <tr><th>Ứng suất uốn Vệ tinh (σF2)</th><td><b>${sF2_thuc.toFixed(1)} MPa</b></td><td class="${sF2_thuc<=sF_cp1?'success':'highlight'}">${sF2_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
-            <tr><th>Ứng suất uốn Răng bao (σF3)</th><td><b>${sF3_thuc.toFixed(1)} MPa</b></td><td class="${sF3_thuc<=sF_cp3?'success':'highlight'}">${sF3_thuc<=sF_cp3?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp3.toFixed(1)})</td></tr>
+            <tr><th>Ứng suất tiếp xúc (σH3)</th><td><span>${sH3_thuc.toFixed(1)} MPa</span></td><td class="${sH3_thuc<=sH_cp_3?'success':'highlight'}">${sH3_thuc<=sH_cp_3?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_cp_3.toFixed(1)})</td></tr>
+            <tr><th>Ứng suất uốn Vệ tinh (σF2)</th><td><span>${sF2_thuc.toFixed(1)} MPa</span></td><td class="${sF2_thuc<=sF_cp1?'success':'highlight'}">${sF2_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
+            <tr><th>Ứng suất uốn Răng bao (σF3)</th><td><span>${sF3_thuc.toFixed(1)} MPa</span></td><td class="${sF3_thuc<=sF_cp3?'success':'highlight'}">${sF3_thuc<=sF_cp3?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp3.toFixed(1)})</td></tr>
             
-            <tr><td colspan="3" class="step-title" style="background:#0f766e !important;">KIỂM NGHIỆM QUÁ TẢI (Kqt = ${Kqt})</td></tr>
-            <tr><th>Quá tải Tiếp xúc Cặp 2-3 (σHmax)</th><td><b>${sH3_max_thuc.toFixed(1)} MPa</b></td><td class="${sH3_max_thuc<=sH_max3?'success':'highlight'}">${sH3_max_thuc<=sH_max3?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max3.toFixed(1)})</td></tr>
-            <tr><th>Quá tải Uốn Vệ tinh (σF2max)</th><td><b>${sF2_max_thuc.toFixed(1)} MPa</b></td><td class="${sF2_max_thuc<=sF_max1?'success':'highlight'}">${sF2_max_thuc<=sF_max1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_max1.toFixed(1)})</td></tr>
+            <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">KIỂM NGHIỆM QUÁ TẢI (Kqt = ${Kqt})</td></tr>
+            <tr><th>Quá tải Tiếp xúc Cặp 2-3 (σHmax)</th><td><span>${sH3_max_thuc.toFixed(1)} MPa</span></td><td class="${sH3_max_thuc<=sH_max3?'success':'highlight'}">${sH3_max_thuc<=sH_max3?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max3.toFixed(1)})</td></tr>
+            <tr><th>Quá tải Uốn Vệ tinh (σF2max)</th><td><span>${sF2_max_thuc.toFixed(1)} MPa</span></td><td class="${sF2_max_thuc<=sF_max1?'success':'highlight'}">${sF2_max_thuc<=sF_max1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_max1.toFixed(1)})</td></tr>
 
-            <tr><td colspan="3" class="step-title-force">BƯỚC 6: CHỌN Ổ LĂN VÀ KIỂM NGHIỆM LỰC</td></tr>
+            <tr><td colspan="3" class="step-title-force">6.CHỌN Ổ LĂN VÀ KIỂM NGHIỆM LỰC</td></tr>
             <tr><th>Đường kính ngoài tối đa ổ lăn</th><td>D_max = ${D_ngoai_o.toFixed(1)} mm</td><td>df2 - 2H (H=${H_vanh.toFixed(1)}mm)</td></tr>
             <tr><th>Lực vòng ăn khớp (Ft)</th><td>${num_format(Ft_ac)} N</td><td>Tại 1 điểm ăn khớp Cặp 2-3</td></tr>
-            <tr><th>Tổng lực đè lên Chốt Vệ Tinh (Fr)</th><td><b style="color:#b91c1c; font-size:1.1em;">${num_format(F_r)} N</b></td><td>Fr = 4.T1.Kc_o / (dw1.c)</td></tr>
-            <tr><th>Lực ly tâm Vệ Tinh (Flt)</th><td><b style="color:#1d4ed8; font-size:1.1em;">${F_lt.toLocaleString('en-US', {minimumFractionDigits:1, maximumFractionDigits:1})} N</b></td><td></td></tr>
-            <tr><th>Tải trọng quy ước Q</th><td><b style="color:#d97706; font-size:1.1em;">${num_format(Q_tai)} N</b></td><td>Q = V.s.√(Fr² + Flt²)</td></tr>
-            <tr><th>Tuổi thọ tính toán (Lh_tính)</th><td><b style="font-size:1.3em;" class="${L_h_tinh>=Lh?'success':'highlight'}">${num_format(L_h_tinh)} giờ</b></td><td>(Yêu cầu: ≥ ${Lh} giờ)</td></tr>
+            <tr><th>Tổng lực đè lên Chốt Vệ Tinh (Fr)</th><td><span style="font-size:1.1em;">${num_format(F_r)} N</span></td><td>Fr = 4.T1.Kc_o / (dw1.c)</td></tr>
+            <tr><th>Lực ly tâm Vệ Tinh (Flt)</th><td><span style="font-size:1.1em;">${F_lt.toLocaleString('en-US', {minimumFractionDigits:1, maximumFractionDigits:1})} N</span></td><td></td></tr>
+            <tr><th>Tải trọng quy ước Q</th><td><span style="font-size:1.1em;">${num_format(Q_tai)} N</span></td><td>Q = V.s.√(Fr² + Flt²)</td></tr>
+            <tr><th>Tuổi thọ tính toán (Lh_tính)</th><td><span style="font-size:1.3em;" class="${L_h_tinh>=Lh?'success':'highlight'}">${num_format(L_h_tinh)} giờ</span></td><td>(Yêu cầu: ≥ ${Lh} giờ)</td></tr>
 
-            <tr><td colspan="3" class="step-title" style="background:#475569 !important;">7. BẢNG TỔNG KẾT KÍCH THƯỚC BỘ TRUYỀN</td></tr>
-            <tr><th style="background:#f1f5f9;">Thông Số</th><th style="background:#f1f5f9;">Cặp Răng Ngoài 1-2</th><th style="background:#f1f5f9;">Cặp Răng Trong 2-3</th></tr>
+            <tr><td colspan="3" class="step-title" style="background-color:#475569 !important;">7. BẢNG TỔNG KẾT KÍCH THƯỚC BỘ TRUYỀN</td></tr>
+            <tr><th>Thông Số</th><th>Cặp Răng Ngoài 1-2</th><th>Cặp Răng Trong 2-3</th></tr>
             <tr><th>Đường kính chia d</th><td>d1=${d1.toFixed(1)} ; d2=${d2.toFixed(1)}</td><td>d3=${d3.toFixed(1)}</td></tr>
             <tr><th>Đường kính đỉnh da</th><td>da1=${da1_val.toFixed(1)} ; da2=${da2_val.toFixed(1)}</td><td>da3=${da3_val.toFixed(2)}</td></tr>
             <tr><th>Đường kính đáy df</th><td>df1=${df1_val.toFixed(1)} ; df2=${df2_val.toFixed(1)}</td><td>df3=${df3_val.toFixed(2)}</td></tr>
@@ -496,6 +507,21 @@ function calculatePlanetaryPro() {
 }
 
 window.onload = initDOM;
+</script>
+<script>
+    // Nhận tín hiệu đổi màu từ trang chủ index.html gửi vào
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.theme === 'light') {
+            document.body.classList.add('light-theme');
+        } else if (event.data && event.data.theme === 'dark') {
+            document.body.classList.remove('light-theme');
+        }
+    });
+
+    // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng
+    if (localStorage.getItem('ctmc_theme') === 'light') { 
+        document.body.classList.add('light-theme'); 
+    }
 </script>
 </body>
 </html>

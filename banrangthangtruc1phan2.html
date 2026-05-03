@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
 
     body {
         margin: 0;
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(180deg, #eef3f9 0%, #e9eef5 100%);
         color: #1b1f23;
     }
@@ -20,24 +20,27 @@
     }
 
     .title-box {
-        background: linear-gradient(135deg, #173b6d, #29589b);
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
         color: #fff;
         padding: 18px 24px;
-        border-radius: 18px;
-        box-shadow: 0 10px 24px rgba(20, 48, 86, 0.18);
+        border-radius: 12px;
+        box-shadow: 0 10px 24px rgba(185, 28, 28, 0.2);
         margin-bottom: 18px;
+        text-align: center;
+        text-transform: uppercase;
     }
 
     .title-box h2 {
         margin: 0;
-        font-size: 28px;
-        letter-spacing: 0.3px;
+        font-size: 24px;
+        letter-spacing: 0.5px;
     }
 
     .title-box p {
         margin: 8px 0 0 0;
         font-size: 14px;
-        opacity: 0.95;
+        opacity: 0.9;
+        text-transform: none;
     }
 
     .controls-wrap {
@@ -49,26 +52,31 @@
 
     .control-card {
         background: #ffffff;
-        border-radius: 18px;
+        border-radius: 12px;
         border: 1px solid #dbe5f0;
-        box-shadow: 0 8px 20px rgba(30, 50, 90, 0.08);
+        box-shadow: 0 8px 20px rgba(30, 50, 90, 0.05);
         padding: 16px;
+        display: flex;
+        flex-direction: column;
     }
 
     .control-card h3 {
         margin: 0 0 14px 0;
-        font-size: 16px;
-        color: #173b6d;
+        font-size: 15px;
+        color: #b91c1c;
+        border-bottom: 1px dashed #cbd5e1;
+        padding-bottom: 8px;
     }
 
     .input-grid {
         display: grid;
         gap: 10px;
+        flex-grow: 1;
     }
 
     .field {
         display: grid;
-        grid-template-columns: 78px 1fr;
+        grid-template-columns: 50px 1fr;
         align-items: center;
         gap: 8px;
     }
@@ -76,13 +84,13 @@
     .field label {
         font-size: 14px;
         font-weight: 600;
-        color: #26374c;
+        color: #475569;
     }
 
     .field input {
         width: 100%;
-        height: 38px;
-        border-radius: 10px;
+        height: 36px;
+        border-radius: 8px;
         border: 1px solid #cfd9e6;
         background: #f8fbff;
         padding: 0 12px;
@@ -92,343 +100,200 @@
     }
 
     .field input:focus {
-        border-color: #5a8dee;
-        box-shadow: 0 0 0 3px rgba(90, 141, 238, 0.14);
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
         background: #fff;
     }
 
-    .btn-row {
-        display: flex;
-        align-items: end;
-        justify-content: center;
-    }
-
     .btn-update {
+        width: 100%;
         border: none;
-        padding: 13px 26px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #8b3dff, #c548e8);
+        padding: 14px 20px;
+        border-radius: 8px;
+        background: #b91c1c;
         color: white;
         font-size: 15px;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 10px 18px rgba(164, 73, 233, 0.25);
+        box-shadow: 0 10px 18px rgba(185, 28, 28, 0.2);
         transition: 0.2s;
+        text-transform: uppercase;
+        margin-top: auto;
     }
 
     .btn-update:hover {
+        background: #991b1b;
         transform: translateY(-1px);
-        box-shadow: 0 12px 22px rgba(164, 73, 233, 0.32);
-    }
-
-    .note-box, .result-box {
-        background: #ffffff;
-        border-radius: 18px;
-        border: 1px solid #dbe5f0;
-        box-shadow: 0 8px 20px rgba(30, 50, 90, 0.08);
-        padding: 16px 18px;
-        margin-bottom: 18px;
     }
 
     .note-box {
-        font-size: 14px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px dashed #cbd5e1;
+        padding: 16px 18px;
+        margin-bottom: 18px;
+        font-size: 13px;
         line-height: 1.7;
-        color: #33485f;
+        color: #475569;
     }
 
-    .result-box {
-        font-size: 14px;
-        line-height: 1.8;
-    }
+    /* KHU VỰC KẾT QUẢ ĐƯỢC ẨN LÚC ĐẦU */
+    #result_wrapper { display: none; margin-top: 30px; }
 
-    .result-box b {
-        color: #173b6d;
-    }
+    /* BẢNG KẾT QUẢ NỀN ĐEN CHỮ TRẮNG */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; background-color: #000; color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    th, td { padding: 12px; border: 1px solid #444; text-align: center; }
+    th { background-color: #222; color: #fff; font-weight: bold; width: 25%; }
+    tr:nth-child(even) td { background-color: #1a1a1a; }
+    .val-highlight { color: #10b981; font-weight: bold; } /* Xanh lá */
 
     .svg-wrap {
         background: #ffffff;
-        border-radius: 22px;
-        border: 1px solid #dbe5f0;
-        box-shadow: 0 10px 24px rgba(30, 50, 90, 0.10);
-        padding: 14px;
+        border-radius: 12px;
+        border: 2px dashed #cbd5e1;
+        box-shadow: 0 10px 24px rgba(30, 50, 90, 0.05);
+        padding: 20px;
+        text-align: center;
+        overflow-x: auto;
     }
 
     svg {
-        width: 100%;
+        background: white;
+        border-radius: 8px;
+        max-width: 100%;
         height: auto;
-        display: block;
-        background: #fff;
-        border-radius: 16px;
+        border: 1px solid #e2e8f0;
     }
 
-    text {
-        font-size: 13px;
-        fill: #111;
-        font-family: Arial, sans-serif;
-    }
-
-    .truc {
-        stroke: #111;
-        stroke-width: 4;
-    }
-
-    .hinh {
-        stroke: #111;
-        stroke-width: 2.1;
-        fill: none;
-    }
-
-    .kyhieu {
-        stroke: #111;
-        stroke-width: 1.5;
-        fill: none;
-    }
-
-    .arrow {
-        stroke: #b82fd4;
-        stroke-width: 2.5;
-        fill: none;
-        marker-end: url(#arrowMagenta);
-    }
-
-    .axis {
-        stroke: #111;
-        stroke-width: 1.5;
-    }
-
-    .axis-left {
-        stroke: #111;
-        stroke-width: 1.5;
-    }
-
-    .tick-line {
-        stroke: #111;
-        stroke-width: 1.3;
-    }
-
-    .grid-line {
-        stroke: #e6edf6;
-        stroke-width: 1;
-    }
-
-    .q, .m, .t {
-        stroke: #111;
-        stroke-width: 3;
-        fill: none;
-    }
-
-    .q-fill {
-        fill: url(#hatchVertical);
-        stroke: #111;
-        stroke-width: 0.9;
-    }
-
-    .m-fill {
-        fill: url(#hatchVertical);
-        stroke: #111;
-        stroke-width: 0.9;
-    }
-
-    .qx-fill {
-        fill: url(#hatchDiagonalXOZ);
-        stroke: #111;
-        stroke-width: 0.9;
-    }
-
-    .my-fill {
-        fill: url(#hatchDiagonalXOZ);
-        stroke: #111;
-        stroke-width: 0.9;
-    }
-
-    .t-fill {
-        fill: url(#hatchVertical);
-        stroke: #111;
-        stroke-width: 0.9;
-    }
-
-    .dong {
-        stroke: #63d7e5;
-        stroke-width: 1.2;
-        stroke-dasharray: 5 5;
-    }
-
-    .value-text {
-        font-size: 12px;
-        fill: #111;
-        font-weight: 600;
-    }
-
-    .label-blue {
-        fill: #234fd6;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .coord {
-        stroke: #333;
-        stroke-width: 1.8;
-        fill: none;
-        marker-end: url(#arrowBlack);
-    }
-
-    .coord-text {
-        font-size: 12px;
-        fill: #333;
-        font-weight: 600;
-    }
-
-    .diagram-title {
-        font-size: 18px;
-        font-weight: 700;
-        fill: #000;
-    }
-
-    .diagram-unit {
-        font-size: 14px;
-        font-weight: 500;
-        fill: #000;
-    }
-
-    .tick-text {
-        font-size: 12px;
-        fill: #111;
-    }
-
-    .tick-unit {
-        font-size: 11px;
-        fill: #444;
-    }
+    /* SVG STYLES GIỮ NGUYÊN TỪ BẢN GỐC */
+    text { font-size: 13px; fill: #111; font-family: Arial, sans-serif; }
+    .truc { stroke: #111; stroke-width: 4; }
+    .hinh { stroke: #111; stroke-width: 2.1; fill: none; }
+    .kyhieu { stroke: #111; stroke-width: 1.5; fill: none; }
+    .arrow { stroke: #b82fd4; stroke-width: 2.5; fill: none; marker-end: url(#arrowMagenta); }
+    .axis { stroke: #111; stroke-width: 1.5; }
+    .axis-left { stroke: #111; stroke-width: 1.5; }
+    .tick-line { stroke: #111; stroke-width: 1.3; }
+    .grid-line { stroke: #e6edf6; stroke-width: 1; }
+    .q, .m, .t { stroke: #111; stroke-width: 3; fill: none; }
+    .q-fill { fill: url(#hatchVertical); stroke: #111; stroke-width: 0.9; }
+    .m-fill { fill: url(#hatchVertical); stroke: #111; stroke-width: 0.9; }
+    .qx-fill { fill: url(#hatchDiagonalXOZ); stroke: #111; stroke-width: 0.9; }
+    .my-fill { fill: url(#hatchDiagonalXOZ); stroke: #111; stroke-width: 0.9; }
+    .t-fill { fill: url(#hatchVertical); stroke: #111; stroke-width: 0.9; }
+    .dong { stroke: #63d7e5; stroke-width: 1.2; stroke-dasharray: 5 5; }
+    .value-text { font-size: 12px; fill: #111; font-weight: 600; }
+    .label-blue { fill: #234fd6; font-size: 13px; font-weight: 600; }
+    .coord { stroke: #333; stroke-width: 1.8; fill: none; marker-end: url(#arrowBlack); }
+    .coord-text { font-size: 12px; fill: #333; font-weight: 600; }
+    .diagram-title { font-size: 18px; font-weight: 700; fill: #000; }
+    .diagram-unit { font-size: 14px; font-weight: 500; fill: #000; }
+    .tick-text { font-size: 12px; fill: #111; }
 </style>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 <div class="page">
 
     <div class="title-box">
-        <h2>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1</h2>
-        <p>Nhập lực, kích thước và mômen để cập nhật sơ đồ và các biểu đồ nội lực.</p>
+        <h2>SƠ ĐỒ LỰC VÀ BIỂU ĐỒ NỘI LỰC TRỤC 1</h2>
+        <p>Qy, Mx, Qx, My, T1</p>
     </div>
 
     <div class="controls-wrap">
         <div class="control-card">
-            <h3>Lực theo phương y</h3>
+            <h3>Lực Phương Y</h3>
             <div class="input-grid">
-                <div class="field">
-                    <label for="FAy">FAy</label>
-                    <input type="number" id="FAy" value="200">
-                </div>
-                <div class="field">
-                    <label for="Fr1">Fr1</label>
-                    <input type="number" id="Fr1" value="50">
-                </div>
-                <div class="field">
-                    <label for="FCy">FCy</label>
-                    <input type="number" id="FCy" value="150">
-                </div>
+                <div class="field"><label>FAy</label><input type="number" id="FAy" value="200"></div>
+                <div class="field"><label>Fr1</label><input type="number" id="Fr1" value="50"></div>
+                <div class="field"><label>FCy</label><input type="number" id="FCy" value="150"></div>
             </div>
         </div>
 
         <div class="control-card">
-            <h3>Lực theo phương x</h3>
+            <h3>Lực Phương X</h3>
             <div class="input-grid">
-                <div class="field">
-                    <label for="FAx">FAx</label>
-                    <input type="number" id="FAx" value="200">
-                </div>
-                <div class="field">
-                    <label for="Ft1">Ft1</label>
-                    <input type="number" id="Ft1" value="300">
-                </div>
-                <div class="field">
-                    <label for="FCx">FCx</label>
-                    <input type="number" id="FCx" value="50">
-                </div>
-                <div class="field">
-                    <label for="Fk">Fk</label>
-                    <input type="number" id="Fk" value="50">
-                </div>
+                <div class="field"><label>FAx</label><input type="number" id="FAx" value="200"></div>
+                <div class="field"><label>Ft1</label><input type="number" id="Ft1" value="300"></div>
+                <div class="field"><label>FCx</label><input type="number" id="FCx" value="50"></div>
+                <div class="field"><label>Fk</label><input type="number" id="Fk" value="50"></div>
             </div>
         </div>
 
         <div class="control-card">
-            <h3>Kích thước đoạn trục</h3>
+            <h3>Kích Thước & Mômen</h3>
             <div class="input-grid">
-                <div class="field">
-                    <label for="AB">AB</label>
-                    <input type="number" id="AB" value="247">
-                </div>
-                <div class="field">
-                    <label for="BC">BC</label>
-                    <input type="number" id="BC" value="307.4">
-                </div>
-                <div class="field">
-                    <label for="CD">CD</label>
-                    <input type="number" id="CD" value="120">
-                </div>
+                <div class="field"><label>AB</label><input type="number" id="AB" value="247"></div>
+                <div class="field"><label>BC</label><input type="number" id="BC" value="307.4"></div>
+                <div class="field"><label>CD</label><input type="number" id="CD" value="120"></div>
+                <div class="field"><label>T1</label><input type="number" id="T1" value="68542.5"></div>
             </div>
         </div>
 
-        <div class="control-card">
-            <h3>Mômen xoắn</h3>
-            <div class="input-grid">
-                <div class="field">
-                    <label for="T1">T1</label>
-                    <input type="number" id="T1" value="68542.5">
-                </div>
-                <div class="btn-row" style="margin-top: 8px;">
-                    <button class="btn-update" onclick="updateDiagrams()">Cập nhật biểu đồ</button>
-                </div>
-            </div>
+        <div class="control-card" style="display: flex;">
+             <button class="btn-update" onclick="triggerUpdate()">VẼ BIỂU ĐỒ & XEM KẾT QUẢ</button>
         </div>
     </div>
 
     <div class="note-box">
-        <b>Quy ước:</b><br>
-        Qy: đơn vị lực <b>N</b>.<br>
-        Mx: đơn vị mômen <b>N.mm</b>.<br>
-        Qx: đơn vị lực <b>N</b>.<br>
-        My: đơn vị mômen <b>N.mm</b>.<br>
-        T1: đơn vị mômen xoắn <b>N.mm</b>.
+        <b>Quy ước cơ bản:</b><br>
+        Qy: hệ OXY, Y hướng lên. | Mx: hệ OXY, Y hướng xuống. <br>
+        Qx: hệ OXZ, X hướng ra. | My: hệ OXZ, X hướng vào. | T1: hệ OYX, Y hướng lên.
     </div>
 
-    <div class="result-box" id="resultBox"></div>
+    <!-- KHU VỰC KẾT QUẢ ĐƯỢC ẨN ĐI LÚC ĐẦU -->
+    <div id="result_wrapper">
+        <div id="resultBox"></div>
 
-    <div class="svg-wrap">
-        <svg width="1240" height="1240" viewBox="0 0 1240 1240">
-            <defs>
-                <marker id="arrowMagenta" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#b82fd4"></polygon>
-                </marker>
+        <div class="svg-wrap">
+            <svg width="1240" height="1240" viewBox="0 0 1240 1240">
+                <defs>
+                    <marker id="arrowMagenta" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#b82fd4"></polygon>
+                    </marker>
 
-                <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <polygon points="0 0, 9 3, 0 6" fill="#333"></polygon>
-                </marker>
+                    <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 9 3, 0 6" fill="#333"></polygon>
+                    </marker>
 
-                <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
-                    <rect width="8" height="8" fill="white"></rect>
-                    <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
-                    <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
-                </pattern>
+                    <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <rect width="8" height="8" fill="white"></rect>
+                        <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
+                        <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
+                    </pattern>
 
-                <pattern id="hatchDiagonalXOZ" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
-                    <rect width="8" height="8" fill="white"></rect>
-                    <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
-                    <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
-                </pattern>
-            </defs>
+                    <pattern id="hatchDiagonalXOZ" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
+                        <rect width="8" height="8" fill="white"></rect>
+                        <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
+                        <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
+                    </pattern>
+                </defs>
 
-            <g id="topLayer"></g>
-            <g id="qyLayer"></g>
-            <g id="mxLayer"></g>
-            <g id="qxLayer"></g>
-            <g id="myLayer"></g>
-            <g id="tLayer"></g>
-            <g id="coordLayer"></g>
-        </svg>
+                <g id="topLayer"></g>
+                <g id="qyLayer"></g>
+                <g id="mxLayer"></g>
+                <g id="qxLayer"></g>
+                <g id="myLayer"></g>
+                <g id="tLayer"></g>
+                <g id="coordLayer"></g>
+            </svg>
+        </div>
     </div>
 </div>
 
 <script>
+// Hàm trung gian bật khối hiển thị trước rồi mới vẽ hình để tránh lỗi SVG bounding box
+function triggerUpdate() {
+    document.getElementById('result_wrapper').style.display = 'block';
+    updateDiagrams();
+    setTimeout(() => {
+        document.getElementById('result_wrapper').scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+}
+
+// =========================================================================
+// GIỮ NGUYÊN 100% ĐOẠN CODE TOÁN HỌC VÀ VẼ SVG TỪ BẢN GỐC CỦA BẠN
+// =========================================================================
 function createSvgEl(tag, attrs = {}) {
     const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
     for (const key in attrs) el.setAttribute(key, attrs[key]);
@@ -485,7 +350,6 @@ function formatTickValueWithUnit(n, unit) {
     return `${formatNumber(n)} ${unit}`;
 }
 
-// OXY: Y lên
 function drawCoordOXY_Yup(layer, x, y) {
     addLine(layer, x, y, x, y - 28, "coord");
     addLine(layer, x, y, x + 34, y, "coord");
@@ -493,7 +357,6 @@ function drawCoordOXY_Yup(layer, x, y) {
     addText(layer, x + 40, y + 4, "X", "coord-text");
 }
 
-// OXY: Y xuống
 function drawCoordOXY_Ydown(layer, x, y) {
     addLine(layer, x, y, x, y + 28, "coord");
     addLine(layer, x, y, x + 34, y, "coord");
@@ -501,7 +364,6 @@ function drawCoordOXY_Ydown(layer, x, y) {
     addText(layer, x + 40, y + 4, "X", "coord-text");
 }
 
-// OXZ: X ra
 function drawCoordOXZ_Xout(layer, x, y) {
     addLine(layer, x, y, x + 34, y, "coord");
     addLine(layer, x, y, x - 24, y + 22, "coord");
@@ -509,7 +371,6 @@ function drawCoordOXZ_Xout(layer, x, y) {
     addText(layer, x - 36, y + 28, "X", "coord-text");
 }
 
-// OXZ: X chéo lên phải
 function drawCoordOXZ_Xin(layer, x, y) {
     addLine(layer, x, y, x + 36, y, "coord");
     addLine(layer, x, y, x + 28, y - 28, "coord");
@@ -517,7 +378,6 @@ function drawCoordOXZ_Xin(layer, x, y) {
     addText(layer, x + 32, y - 34, "X", "coord-text");
 }
 
-// OYX: Y lên
 function drawCoordOYX_Yup(layer, x, y) {
     addLine(layer, x, y, x, y - 28, "coord");
     addLine(layer, x, y, x + 34, y, "coord");
@@ -613,16 +473,34 @@ function updateDiagrams() {
     const MY_D = 0;
 
     document.getElementById("resultBox").innerHTML = `
-        <b>Qy (N):</b> ${formatNumber(QY_AB)}, ${formatNumber(QY_BC)}, ${formatNumber(QY_CD)}<br>
-        <b>Mx (N.mm):</b> ${formatNumber(MX_A)}, ${formatNumber(MX_B)}, ${formatNumber(MX_C)}, ${formatNumber(MX_D)}<br>
-        <b>Qx (N):</b> ${formatNumber(QX_A)}, ${formatNumber(QX_AB)}, ${formatNumber(QX_BC)}, ${formatNumber(QX_CD)}, ${formatNumber(QX_D)}<br>
-        <b>My (N.mm):</b> ${formatNumber(MY_A)}, ${formatNumber(MY_B)}, ${formatNumber(MY_C)}, ${formatNumber(MY_D)}<br>
-        <b>T1 (N.mm):</b> ${formatNumber(T1)}
+        <table>
+            <tr><th colspan="4" style="background-color: #b91c1c; color: white; text-transform: uppercase; font-size: 16px;">BẢNG GIÁ TRỊ NỘI LỰC VÀ PHẢN LỰC</th></tr>
+            <tr>
+                <th>Lực cắt Qy (N)</th>
+                <td colspan="3">AB = <b class="val-highlight">${formatNumber(QY_AB)}</b> | BC = <b class="val-highlight">${formatNumber(QY_BC)}</b> | CD = <b class="val-highlight">${formatNumber(QY_CD)}</b></td>
+            </tr>
+            <tr>
+                <th>Mômen uốn Mx (N.mm)</th>
+                <td colspan="3">A = <b>${formatNumber(MX_A)}</b> | B = <b>${formatNumber(MX_B)}</b> | C = <b>${formatNumber(MX_C)}</b> | D = <b>${formatNumber(MX_D)}</b></td>
+            </tr>
+            <tr>
+                <th>Lực cắt Qx (N)</th>
+                <td colspan="3">A = <b>${formatNumber(QX_A)}</b> | AB = <b>${formatNumber(QX_AB)}</b> | BC = <b class="val-highlight">${formatNumber(QX_BC)}</b> | CD = <b class="val-highlight">${formatNumber(QX_CD)}</b> | D = <b>${formatNumber(QX_D)}</b></td>
+            </tr>
+            <tr>
+                <th>Mômen uốn My (N.mm)</th>
+                <td colspan="3">A = <b>${formatNumber(MY_A)}</b> | B = <b>${formatNumber(MY_B)}</b> | C = <b class="val-highlight">${formatNumber(MY_C)}</b> | D = <b>${formatNumber(MY_D)}</b></td>
+            </tr>
+            <tr>
+                <th>Mômen xoắn T1 (N.mm)</th>
+                <td colspan="3"><b class="val-highlight" style="font-size: 1.2em;">${formatNumber(T1)}</b> (Đoạn B → D)</td>
+            </tr>
+        </table>
     `;
 
     const totalLength = AB + BC + CD;
-    const drawStart = 180;
-    const drawEnd = 980;
+    const drawStart = 100;
+    const drawEnd = 930;
     const drawWidth = drawEnd - drawStart;
     const kx = drawWidth / totalLength;
 
@@ -631,19 +509,16 @@ function updateDiagrams() {
     const xC = xB + BC * kx;
     const xD = xC + CD * kx;
 
-    const xAxisLeft = 128;
-
     const yShaft = 120;
     const yQy0 = 360;
-    const yMx0 = 540;
-    const yQx0 = 720;
-    const yMy0 = 900;
-    const yT0  = 1080;
+    const yMx0 = 520;
+    const yQx0 = 700;
+    const yMy0 = 860;
+    const yT0  = 1040;
 
-    // top shaft
     addLine(topLayer, xA - 34, yShaft, xB - 44, yShaft, "truc");
     addLine(topLayer, xB + 44, yShaft, xD - 48, yShaft, "truc");
-    addLine(topLayer, xD + 22, yShaft, 1120, yShaft, "truc");
+    addLine(topLayer, xD + 22, yShaft, 1090, yShaft, "truc");
 
     addText(topLayer, xA - 62, yShaft - 18, "A");
     const bearingA_len = 44;
@@ -655,7 +530,7 @@ function updateDiagrams() {
     addLine(topLayer, xA + 52, yShaft - 18, xA + 80, yShaft - 18, "kyhieu");
     addLine(topLayer, xA + 66, yShaft - 32, xA + 66, yShaft - 4, "kyhieu");
     addCircle(topLayer, xA + 66, yShaft + 34, 14, "kyhieu");
-    addCircle(topLayer, xA + 66, yShaft + 34, 3, "", "#111");
+    addCircle(topLayer, xA + 66, yShaft + 34, 3, "", "black");
 
     addLine(topLayer, xA, yShaft, xA - 50, yShaft + 30, "arrow");
     addText(topLayer, xA - 82, yShaft + 40, "FAx", "label-blue");
@@ -672,6 +547,9 @@ function updateDiagrams() {
 
     addLine(topLayer, xB, yBbase, xB + 52, yBbase - 40, "arrow");
     addText(topLayer, xB + 56, yBbase - 35, "Ft1", "label-blue");
+
+    addLine(topLayer, xB, yBbase, xB + 78, yBbase, "arrow");
+    addText(topLayer, xB + 82, yBbase + 5, "Fa1", "label-blue");
 
     addText(topLayer, xC - 6, yShaft - 18, "C");
     const bearingC_len = 52;
@@ -694,82 +572,69 @@ function updateDiagrams() {
     addLine(topLayer, xD - 3, yShaft - 16, xD + 3, yShaft + 16, "kyhieu");
     addLine(topLayer, xD + 3, yShaft - 16, xD - 3, yShaft + 16, "kyhieu");
 
-    [xA, xB, xC, xD].forEach(x => addLine(topLayer, x, yShaft, x, 1140, "dong"));
+    [xA,xB,xC,xD].forEach(x => addLine(topLayer, x, yShaft, x, 1100, "dong"));
 
-    drawTopCoord(coordLayer, 1140, 88);
+    drawTopCoord(coordLayer, 1110, 88);
 
     drawShearDiagramRect(qyLayer, {
-        title: "Qy",
-        unit: "N",
+        label: "Qy",
         xA, xB, xC, xD, y0: yQy0,
-        xAxisLeft,
         values: [QY_AB, QY_BC, QY_CD],
         fillClass: "q-fill",
         lineClass: "q",
         positiveDown: false
     });
-    drawCoordOXY_Yup(qyLayer, 1140, yQy0 + 8);
+    drawCoordOXY_Yup(qyLayer, 1110, yQy0 + 8);
 
     drawMomentDiagramStandard(mxLayer, {
-        title: "Mx",
-        unit: "N.mm",
+        label: "Mₓ",
         xA, xB, xC, xD, y0: yMx0,
-        xAxisLeft,
         moments: [MX_A, MX_B, MX_C, MX_D],
         fillClass: "m-fill",
         lineClass: "m",
         positiveDown: true
     });
-    drawCoordOXY_Ydown(mxLayer, 1140, yMx0 + 8);
+    drawCoordOXY_Ydown(mxLayer, 1110, yMx0 + 8);
 
     drawShearDiagramXOZ(qxLayer, {
-        title: "Qx",
-        unit: "N",
+        label: "Qx",
         xA, xB, xC, xD, y0: yQx0,
-        xAxisLeft,
         values: [QX_AB, QX_BC, QX_CD],
         fillClass: "qx-fill",
         lineClass: "q"
     });
-    drawCoordOXZ_Xout(qxLayer, 1140, yQx0 + 8);
+    drawCoordOXZ_Xout(qxLayer, 1110, yQx0 + 8);
 
     drawMomentDiagramXOZ(myLayer, {
-        title: "My",
-        unit: "N.mm",
+        label: "Mᵧ",
         xA, xB, xC, xD, y0: yMy0,
-        xAxisLeft,
         moments: [MY_A, MY_B, MY_C, MY_D],
         fillClass: "my-fill",
         lineClass: "m"
     });
-    drawCoordOXZ_Xin(myLayer, 1140, yMy0 + 8);
+    drawCoordOXZ_Xin(myLayer, 1110, yMy0 + 8);
 
     drawTorsionDiagram(tLayer, {
-        title: "T₁",
-        unit: "N.mm",
+        label: "T₁",
         xA, xB, xC, xD, y0: yT0,
-        xAxisLeft,
         T1,
         fillClass: "t-fill",
         lineClass: "t"
     });
-    drawCoordOYX_Yup(tLayer, 1140, yT0 + 8);
+    drawCoordOYX_Yup(tLayer, 1110, yT0 + 8);
 }
 
 function drawShearDiagramRect(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, values, fillClass, lineClass, positiveDown } = config;
+    const { label, xA, xB, xC, xD, y0, values, fillClass, lineClass, positiveDown } = config;
     const [vAB, vBC, vCD] = values;
 
-    const maxV = Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), 1);
-    const niceMax = Math.ceil(maxV / 10) * 10;
-
-    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addText(layer, 34, y0 - 8, label);
     addLine(layer, xA, y0, xD, y0, "axis");
-    addLine(layer, xAxisLeft, y0 - 85, xAxisLeft, y0 + 85, "axis-left");
-    drawVerticalTicks(layer, xAxisLeft, y0, niceMax, unit, positiveDown);
+    addLine(layer, xA, y0 - 105, xA, y0 + 105, "axis-left");
 
+    const maxV = Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), 1);
     const maxHeight = 62;
-    const scale = maxHeight / niceMax;
+    const scale = maxV > 0 ? maxHeight / maxV : 0;
 
     const mapY = (v) => positiveDown ? y0 + v * scale : y0 - v * scale;
 
@@ -803,25 +668,22 @@ function drawShearDiagramRect(layer, config) {
     addText(layer, xC, y0 + 24, "C", "", "middle");
     addText(layer, xD + 10, y0 + 24, "D");
 
-    addText(layer, (xA + xB) / 2, (vAB >= 0 ? yAB - 12 : yAB + 26), formatTickValueWithUnit(Math.abs(vAB), unit), "value-text", "middle");
-    addText(layer, (xB + xC) / 2, (vBC >= 0 ? yBC - 12 : yBC + 26), formatTickValueWithUnit(Math.abs(vBC), unit), "value-text", "middle");
-    addText(layer, (xC + xD) / 2, (vCD >= 0 ? yCD - 12 : yCD + 26), formatTickValueWithUnit(Math.abs(vCD), unit), "value-text", "middle");
+    addText(layer, (xA + xB) / 2, (vAB >= 0 ? yAB - 12 : yAB + 26), formatNumber(Math.abs(vAB)), "value-text", "middle");
+    addText(layer, (xB + xC) / 2, (vBC >= 0 ? yBC - 12 : yBC + 26), formatNumber(Math.abs(vBC)), "value-text", "middle");
+    addText(layer, (xC + xD) / 2, (vCD >= 0 ? yCD - 12 : yCD + 26), formatNumber(Math.abs(vCD)), "value-text", "middle");
 }
 
 function drawMomentDiagramStandard(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, moments, fillClass, lineClass, positiveDown } = config;
+    const { label, xA, xB, xC, xD, y0, moments, fillClass, lineClass, positiveDown } = config;
     const [mA, mB, mC, mD] = moments;
 
-    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
-    const niceMax = Math.ceil(maxM / 1000) * 1000 || 1000;
-
-    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addText(layer, 34, y0 - 8, label);
     addLine(layer, xA, y0, xD, y0, "axis");
-    addLine(layer, xAxisLeft, y0 - 85, xAxisLeft, y0 + 85, "axis-left");
-    drawVerticalTicks(layer, xAxisLeft, y0, niceMax, unit, positiveDown);
+    addLine(layer, xA, y0 - 115, xA, y0 + 115, "axis-left");
 
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
     const maxHeight = 70;
-    const scale = maxHeight / niceMax;
+    const scale = maxM > 0 ? maxHeight / maxM : 0;
 
     const mapY = (m) => positiveDown ? y0 + m * scale : y0 - m * scale;
 
@@ -852,23 +714,21 @@ function drawMomentDiagramStandard(layer, config) {
     addText(layer, xC, y0 + 24, "C", "", "middle");
     addText(layer, xD + 10, y0 + 24, "D");
 
-    if (mB !== 0) addText(layer, xB, (mB >= 0 ? yB + 26 : yB - 12), formatTickValueWithUnit(Math.abs(mB), unit), "value-text", "middle");
-    if (mC !== 0) addText(layer, xC, (mC >= 0 ? yC + 26 : yC - 12), formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
+    if (mB !== 0) addText(layer, xB, (mB >= 0 ? yB + 26 : yB - 12), formatNumber(Math.abs(mB)), "value-text", "middle");
+    if (mC !== 0) addText(layer, xC, (mC >= 0 ? yC + 26 : yC - 12), formatNumber(Math.abs(mC)), "value-text", "middle");
 }
 
 function drawShearDiagramXOZ(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, values, fillClass, lineClass } = config;
+    const { label, xA, xB, xC, xD, y0, values, fillClass, lineClass } = config;
     const [vAB, vBC, vCD] = values;
 
-    const maxV = Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), 1);
-    const niceMax = Math.ceil(maxV / 10) * 10;
-
-    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addText(layer, 34, y0 - 8, label);
     addLine(layer, xA, y0, xD, y0, "axis");
-    addLine(layer, xAxisLeft, y0 - 85, xAxisLeft, y0 + 85, "axis-left");
-    drawVerticalTicks(layer, xAxisLeft, y0, niceMax, unit, true);
+    addLine(layer, xA, y0 - 95, xA, y0 + 95, "axis-left");
 
-    const scale = 46 / niceMax;
+    const maxV = Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), 1);
+    const scale = maxV > 0 ? 46 / maxV : 0;
+
     const dx = -28;
     const dy = 32;
 
@@ -895,24 +755,22 @@ function drawShearDiagramXOZ(layer, config) {
     addText(layer, xC, y0 + 24, "C", "", "middle");
     addText(layer, xD + 10, y0 + 24, "D");
 
-    addText(layer, (xA + xB) / 2, y0 + Math.max(oAB.oy, 0) + 34, formatTickValueWithUnit(Math.abs(vAB), unit), "value-text", "middle");
-    addText(layer, (xB + xC) / 2, y0 + Math.max(oBC.oy, 0) - 12, formatTickValueWithUnit(Math.abs(vBC), unit), "value-text", "middle");
-    addText(layer, (xC + xD) / 2, y0 + Math.max(oCD.oy, 0) - 12, formatTickValueWithUnit(Math.abs(vCD), unit), "value-text", "middle");
+    addText(layer, (xA + xB) / 2, y0 + Math.max(oAB.oy, 0) + 34, formatNumber(Math.abs(vAB)), "value-text", "middle");
+    addText(layer, (xB + xC) / 2, y0 + Math.max(oBC.oy, 0) - 12, formatNumber(Math.abs(vBC)), "value-text", "middle");
+    addText(layer, (xC + xD) / 2, y0 + Math.max(oCD.oy, 0) - 12, formatNumber(Math.abs(vCD)), "value-text", "middle");
 }
 
 function drawMomentDiagramXOZ(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, moments, fillClass, lineClass } = config;
+    const { label, xA, xB, xC, xD, y0, moments, fillClass, lineClass } = config;
     const [mA, mB, mC, mD] = moments;
 
-    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
-    const niceMax = Math.ceil(maxM / 1000) * 1000 || 1000;
-
-    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addText(layer, 34, y0 - 8, label);
     addLine(layer, xA, y0, xD, y0, "axis");
-    addLine(layer, xAxisLeft, y0 - 85, xAxisLeft, y0 + 85, "axis-left");
-    drawVerticalTicks(layer, xAxisLeft, y0, niceMax, unit, false);
+    addLine(layer, xA, y0 - 105, xA, y0 + 105, "axis-left");
 
-    const scale = 58 / niceMax;
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
+    const scale = maxM > 0 ? 58 / maxM : 0;
+
     const dx = 28;
     const dy = -32;
 
@@ -947,23 +805,20 @@ function drawMomentDiagramXOZ(layer, config) {
     addText(layer, xC, y0 + 24, "C", "", "middle");
     addText(layer, xD + 10, y0 + 24, "D");
 
-    if (mB !== 0) addText(layer, xB + oB.ox + 18, y0 + oB.oy - 16, formatTickValueWithUnit(Math.abs(mB), unit), "value-text", "middle");
-    if (mC !== 0) addText(layer, xC + oC.ox + 18, y0 + oC.oy - 16, formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
+    if (mB !== 0) addText(layer, xB + oB.ox + 18, y0 + oB.oy - 16, formatNumber(Math.abs(mB)), "value-text", "middle");
+    if (mC !== 0) addText(layer, xC + oC.ox + 18, y0 + oC.oy - 16, formatNumber(Math.abs(mC)), "value-text", "middle");
 }
 
 function drawTorsionDiagram(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, T1, fillClass, lineClass } = config;
+    const { label, xA, xB, xC, xD, y0, T1, fillClass, lineClass } = config;
+
+    addText(layer, 34, y0 - 8, label);
+    addLine(layer, xA, y0, xD, y0, "axis");
+    addLine(layer, xA, y0 - 105, xA, y0 + 105, "axis-left");
 
     const maxT = Math.max(Math.abs(T1), 1);
-    const niceMax = Math.ceil(maxT / 1000) * 1000 || 1000;
-
-    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
-    addLine(layer, xA, y0, xD, y0, "axis");
-    addLine(layer, xAxisLeft, y0 - 85, xAxisLeft, y0 + 85, "axis-left");
-    drawVerticalTicks(layer, xAxisLeft, y0, niceMax, unit, false);
-
     const maxHeight = 62;
-    const scale = maxHeight / niceMax;
+    const scale = maxT > 0 ? maxHeight / maxT : 0;
 
     const yT = y0 - T1 * scale;
 
@@ -986,11 +841,15 @@ function drawTorsionDiagram(layer, config) {
     addText(layer, xD + 10, y0 + 24, "D");
 
     if (T1 !== 0) {
-        addText(layer, (xB + xD) / 2, (T1 > 0 ? yT - 12 : yT + 26), formatTickValueWithUnit(Math.abs(T1), unit), "value-text", "middle");
+        addText(layer, (xB + xD) / 2, (T1 > 0 ? yT - 12 : yT + 26), formatNumber(Math.abs(T1)), "value-text", "middle");
     }
 }
-
-updateDiagrams();
+</script>
+<script>
+    // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng
+    if (localStorage.getItem('ctmc_theme') === 'light') { 
+        document.body.classList.add('light-theme'); 
+    }
 </script>
 </body>
 </html>

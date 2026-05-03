@@ -1,244 +1,141 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1</title>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f2f2f2;
-    margin: 0;
-    padding: 20px;
-}
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
+    .container { max-width: 1250px; margin: auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #0ea5e9; border-bottom: 3px solid #0ea5e9; padding-bottom: 15px; margin-top: 0;}
+    
+    .form-box { padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px; }
+    .form-title { color: #0ea5e9; font-size: 18px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; border-bottom: 2px dashed #cbd5e1; padding-bottom: 10px;}
+    
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
+    
+    label { font-weight: 600; font-size: 13px; color: #475569; display: block; margin-bottom: 5px;}
+    input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #ffffff; transition: 0.3s; }
+    input:focus { border-color: #0ea5e9; outline: none; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+    
+    button { width: 100%; padding: 15px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; color: white; background-color: #0ea5e9; margin-top: 10px;}
+    button:hover { background-color: #0284c7; }
+    
+    .note { font-size: 13px; color: #64748b; font-style: italic; margin-top: 15px; text-align: center; padding: 10px; background: #f1f5f9; border-radius: 6px; border: 1px dashed #cbd5e1;}
+    
+    /* Khu vực ẩn lúc đầu */
+    #result_wrapper { display: none; margin-top: 30px; }
+    
+    .result-box { margin-top: 20px; padding: 20px; background-color: #000; color: #fff; border-radius: 8px; border: 1px solid #444; font-size: 15px; line-height: 1.8; font-family: monospace; }
+    .result-box b { color: #0ea5e9; }
+    
+    .svg-container { margin-top: 20px; text-align: center; background: #fff; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; overflow-x: auto;}
+    svg { background: white; max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 6px;}
 
-.controls {
-    margin: 0 auto 16px auto;
-    background: #fff;
-    padding: 14px 16px;
-    width: 1180px;
-    border: 1px solid #cfcfcf;
-    box-sizing: border-box;
-    text-align: left;
-    border-radius: 6px;
-}
-
-.controls label {
-    margin: 0 14px 8px 0;
-    font-size: 14px;
-    display: inline-block;
-}
-
-.controls input {
-    width: 90px;
-    padding: 4px 6px;
-    font-size: 14px;
-}
-
-.controls button {
-    padding: 7px 16px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.note {
-    margin-top: 8px;
-    font-size: 13px;
-    color: #444;
-    line-height: 1.5;
-}
-
-.result-box {
-    margin-top: 8px;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-svg {
-    background: white;
-    border: 1px solid #cfcfcf;
-    border-radius: 6px;
-}
-
-text {
-    font-size: 13px;
-    fill: black;
-}
-
-.truc {
-    stroke: black;
-    stroke-width: 4;
-}
-
-.hinh {
-    stroke: black;
-    stroke-width: 2.2;
-    fill: none;
-}
-
-.kyhieu {
-    stroke: black;
-    stroke-width: 1.5;
-}
-
-.arrow {
-    stroke: #c03fd1;
-    stroke-width: 2.4;
-    fill: none;
-    marker-end: url(#arrowMagenta);
-}
-
-.axis {
-    stroke: black;
-    stroke-width: 1.5;
-}
-
-.axis-left {
-    stroke: black;
-    stroke-width: 1.5;
-}
-
-.q, .m, .t {
-    stroke: black;
-    stroke-width: 3;
-    fill: none;
-}
-
-.q-fill {
-    fill: url(#hatchVertical);
-    stroke: black;
-    stroke-width: 0.8;
-}
-
-.m-fill {
-    fill: url(#hatchVertical);
-    stroke: black;
-    stroke-width: 0.8;
-}
-
-.qx-fill {
-    fill: url(#hatchDiagonalXOZ);
-    stroke: black;
-    stroke-width: 0.8;
-}
-
-.my-fill {
-    fill: url(#hatchDiagonalXOZ);
-    stroke: black;
-    stroke-width: 0.8;
-}
-
-.t-fill {
-    fill: url(#hatchVertical);
-    stroke: black;
-    stroke-width: 0.8;
-}
-
-.dong {
-    stroke: #58d7e8;
-    stroke-width: 1.2;
-    stroke-dasharray: 5 5;
-}
-
-.value-text {
-    font-size: 12px;
-    fill: black;
-}
-
-.label-blue {
-    fill: #2446d8;
-    font-size: 13px;
-}
-
-.coord {
-    stroke: #333;
-    stroke-width: 1.8;
-    fill: none;
-    marker-end: url(#arrowBlack);
-}
-
-.coord-text {
-    font-size: 12px;
-    fill: #333;
-}
+    text { font-size: 13px; fill: black; }
+    .truc { stroke: black; stroke-width: 4; }
+    .hinh { stroke: black; stroke-width: 2.2; fill: none; }
+    .kyhieu { stroke: black; stroke-width: 1.5; }
+    .arrow { stroke: #c03fd1; stroke-width: 2.4; fill: none; marker-end: url(#arrowMagenta); }
+    .axis { stroke: black; stroke-width: 1.5; }
+    .axis-left { stroke: black; stroke-width: 1.5; }
+    .q, .m, .t { stroke: black; stroke-width: 3; fill: none; }
+    .q-fill, .m-fill, .t-fill { fill: url(#hatchVertical); stroke: black; stroke-width: 0.8; }
+    .qx-fill, .my-fill { fill: url(#hatchDiagonalXOZ); stroke: black; stroke-width: 0.8; }
+    .dong { stroke: #58d7e8; stroke-width: 1.2; stroke-dasharray: 5 5; }
+    .value-text { font-size: 12px; fill: black; font-weight: bold;}
+    .label-blue { fill: #2446d8; font-size: 13px; font-weight: bold;}
+    .coord { stroke: #333; stroke-width: 1.8; fill: none; marker-end: url(#arrowBlack); }
+    .coord-text { font-size: 12px; fill: #333; font-weight: bold;}
 </style>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 
-<h3>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1</h3>
+<div class="container">
+    <h1>SƠ ĐỒ LỰC VÀ BIỂU ĐỒ NỘI LỰC</h1>
 
-<div class="controls">
-    <div>
-        <label>FAy: <input type="number" id="FAy" value="200"></label>
-        <label>Fr1: <input type="number" id="Fr1" value="50"></label>
-        <label>FCy: <input type="number" id="FCy" value="150"></label>
+    <div class="form-box">
+        <div class="form-title">NHẬP THÔNG SỐ ĐẦU VÀO</div>
+        
+        <div class="grid-3">
+            <div><label>Phản lực FAy (N):</label><input type="number" id="FAy" value="200"></div>
+            <div><label>Lực hướng tâm Fr1 (N):</label><input type="number" id="Fr1" value="50"></div>
+            <div><label>Phản lực FCy (N):</label><input type="number" id="FCy" value="150"></div>
+        </div>
+
+        <div class="grid-4">
+            <div><label>Phản lực FAx (N):</label><input type="number" id="FAx" value="200"></div>
+            <div><label>Lực vòng Ft1 (N):</label><input type="number" id="Ft1" value="300"></div>
+            <div><label>Phản lực FCx (N):</label><input type="number" id="FCx" value="50"></div>
+            <div><label>Lực khớp nối Fk (N):</label><input type="number" id="Fk" value="50"></div>
+        </div>
+
+        <div class="grid-4">
+            <div><label>Đoạn AB (mm):</label><input type="number" id="AB" value="247"></div>
+            <div><label>Đoạn BC (mm):</label><input type="number" id="BC" value="307.4"></div>
+            <div><label>Đoạn CD (mm):</label><input type="number" id="CD" value="120"></div>
+            <div><label>Mômen xoắn T1 (N.mm):</label><input type="number" id="T1" value="68542.5"></div>
+        </div>
+
+        <div class="note">
+            Qy: hệ OXY, Y hướng lên. | Mx: hệ OXY, Y hướng xuống. <br>
+            Qx: hệ OXZ, X hướng ra. | My: hệ OXZ, X hướng vào. | T1: hệ OYX, Y hướng lên.
+        </div>
+
+        <button onclick="triggerUpdate()">Vẽ Biểu Đồ & Xem Kết Quả</button>
     </div>
 
-    <div>
-        <label>FAx: <input type="number" id="FAx" value="200"></label>
-        <label>Ft1: <input type="number" id="Ft1" value="300"></label>
-        <label>FCx: <input type="number" id="FCx" value="50"></label>
-        <label>Fk: <input type="number" id="Fk" value="50"></label>
-    </div>
+    <!-- Wrapper chứa phần kết quả và canvas (Ẩn lúc đầu) -->
+    <div id="result_wrapper">
+        <div class="form-title">TỔNG HỢP KẾT QUẢ TÍNH TOÁN</div>
+        <div class="result-box" id="resultBox"></div>
+        
+        <div class="svg-container">
+            <svg width="1240" height="1180" viewBox="0 0 1240 1180">
+                <defs>
+                    <marker id="arrowMagenta" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#c03fd1"></polygon>
+                    </marker>
 
-    <div>
-        <label>AB: <input type="number" id="AB" value="247"></label>
-        <label>BC: <input type="number" id="BC" value="307.4"></label>
-        <label>CD: <input type="number" id="CD" value="120"></label>
-    </div>
+                    <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 9 3, 0 6" fill="#333"></polygon>
+                    </marker>
 
-    <div>
-        <label>T1: <input type="number" id="T1" value="68542.5"></label>
-    </div>
+                    <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <rect width="8" height="8" fill="white"></rect>
+                        <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+                        <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+                    </pattern>
 
-    <div>
-        <button onclick="updateDiagrams()">Cập nhật</button>
-    </div>
+                    <pattern id="hatchDiagonalXOZ" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
+                        <rect width="8" height="8" fill="white"></rect>
+                        <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+                        <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
+                    </pattern>
+                </defs>
 
-    <div class="note">
-        Qy: hệ OXY, Y hướng lên.  
-        Mx: hệ OXY, Y hướng xuống.  
-        Qx: hệ OXZ, X hướng ra.  
-        My: hệ OXZ, X hướng vào.  
-        T1: hệ OYX, Y hướng lên.
+                <g id="topLayer"></g>
+                <g id="qyLayer"></g>
+                <g id="mxLayer"></g>
+                <g id="qxLayer"></g>
+                <g id="myLayer"></g>
+                <g id="tLayer"></g>
+                <g id="coordLayer"></g>
+            </svg>
+        </div>
     </div>
-
-    <div class="result-box" id="resultBox"></div>
 </div>
 
-<svg width="1240" height="1180" viewBox="0 0 1240 1180">
-    <defs>
-        <marker id="arrowMagenta" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#c03fd1"></polygon>
-        </marker>
-
-        <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-            <polygon points="0 0, 9 3, 0 6" fill="#333"></polygon>
-        </marker>
-
-        <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
-            <rect width="8" height="8" fill="white"></rect>
-            <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
-            <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
-        </pattern>
-
-        <pattern id="hatchDiagonalXOZ" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
-            <rect width="8" height="8" fill="white"></rect>
-            <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
-            <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.4"></line>
-        </pattern>
-    </defs>
-
-    <g id="topLayer"></g>
-    <g id="qyLayer"></g>
-    <g id="mxLayer"></g>
-    <g id="qxLayer"></g>
-    <g id="myLayer"></g>
-    <g id="tLayer"></g>
-    <g id="coordLayer"></g>
-</svg>
-
 <script>
+// Hàm trung gian để kích hoạt hiển thị và chạy hàm vẽ
+function triggerUpdate() {
+    document.getElementById('result_wrapper').style.display = 'block';
+    updateDiagrams();
+    document.getElementById('result_wrapper').scrollIntoView({ behavior: 'smooth' });
+}
+
 function createSvgEl(tag, attrs = {}) {
     const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
     for (const key in attrs) el.setAttribute(key, attrs[key]);
@@ -388,11 +285,11 @@ function updateDiagrams() {
     const MY_D = 0;
 
     document.getElementById("resultBox").innerHTML = `
-        <b>Qy:</b> ${formatNumber(QY_AB)}, ${formatNumber(QY_BC)}, ${formatNumber(QY_CD)}<br>
-        <b>Mx:</b> ${formatNumber(MX_A)}, ${formatNumber(MX_B)}, ${formatNumber(MX_C)}, ${formatNumber(MX_D)}<br>
-        <b>Qx:</b> ${formatNumber(QX_A)}, ${formatNumber(QX_AB)}, ${formatNumber(QX_BC)}, ${formatNumber(QX_CD)}, ${formatNumber(QX_D)}<br>
-        <b>My:</b> ${formatNumber(MY_A)}, ${formatNumber(MY_B)}, ${formatNumber(MY_C)}, ${formatNumber(MY_D)}<br>
-        <b>T1(B→D):</b> ${formatNumber(T1)}
+        <b>[Qy]:</b> ${formatNumber(QY_AB)}, ${formatNumber(QY_BC)}, ${formatNumber(QY_CD)}<br>
+        <b>[Mx]:</b> ${formatNumber(MX_A)}, ${formatNumber(MX_B)}, ${formatNumber(MX_C)}, ${formatNumber(MX_D)}<br>
+        <b>[Qx]:</b> ${formatNumber(QX_A)}, ${formatNumber(QX_AB)}, ${formatNumber(QX_BC)}, ${formatNumber(QX_CD)}, ${formatNumber(QX_D)}<br>
+        <b>[My]:</b> ${formatNumber(MY_A)}, ${formatNumber(MY_B)}, ${formatNumber(MY_C)}, ${formatNumber(MY_D)}<br>
+        <b>[T1](B→D):</b> ${formatNumber(T1)}
     `;
 
     const totalLength = AB + BC + CD;
@@ -742,9 +639,12 @@ function drawTorsionDiagram(layer, config) {
         addText(layer, (xB + xD) / 2, (T1 > 0 ? yT - 12 : yT + 26), formatNumber(Math.abs(T1)), "value-text", "middle");
     }
 }
-
-updateDiagrams();
 </script>
-
+<script>
+    // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng
+    if (localStorage.getItem('ctmc_theme') === 'light') { 
+        document.body.classList.add('light-theme'); 
+    }
+</script>
 </body>
 </html>

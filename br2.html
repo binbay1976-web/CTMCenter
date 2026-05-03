@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -19,14 +19,23 @@
     button:hover { background-color: #1d4ed8; }
     
     .result-box { margin-top: 20px; padding: 25px; border: 2px solid #10b981; border-radius: 8px; background-color: #f8fafc; display: none;}
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; background: white;}
-    th, td { padding: 10px; border: 1px solid #e2e8f0; text-align: left; }
-    th { background-color: #eff6ff; color: #1e3a8a; font-weight: 600; text-align: center;}
-    td { text-align: center; }
-    tr:nth-child(even) { background-color: #f8fafc; }
     
-    .highlight { color: #dc2626; font-weight: bold; }
-    .success { color: #16a34a; font-weight: bold; }
+    /* ĐÃ CHỈNH SỬA PHẦN CSS CỦA BẢNG TẠI ĐÂY */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+    th, td { padding: 10px; border: 1px solid var(--dm-border); text-align: left; }
+    th { font-weight: 600; text-align: center;}
+    td { text-align: center; }
+    
+    /* Tắt hoàn toàn tính năng xen kẽ màu theo yêu cầu, tạo màu đồng nhất */
+    tr:nth-child(even) td, tr:nth-child(odd) td, tr:nth-child(even), tr:nth-child(odd) { 
+        background-color: transparent !important; 
+    }
+    
+    /* ĐÃ SỬA: Chuyển thành chữ thường (nhạt) thay vì in đậm */
+    .highlight { color: #ff4d4d !important; font-weight: normal; } 
+    .success { color: #10b981 !important; font-weight: normal; } 
+    /* KẾT THÚC PHẦN CHỈNH SỬA CSS BẢNG */
+    
     .step-title { background-color: #2563eb !important; color: white !important; font-weight: bold; text-align: center; font-size: 16px;}
     .material-panel { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px;}
     
@@ -34,13 +43,14 @@
     .canvas-container { text-align: center; margin: 20px auto; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; padding: 15px; max-width: 800px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
     canvas { max-width: 100%; height: auto; }
 </style>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 <div class="container">
     <h1>THIẾT KẾ BÁNH RĂNG TRỤ NGHIÊNG</h1>
     
     <form id="main_form">
-        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">BƯỚC 0: CÁC THÔNG SỐ ĐẦU VÀO</h3>
+        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">I.CÁC THÔNG SỐ ĐẦU VÀO</h3>
         <div class="grid-5">
             <div><label>Công suất P1 (kW):</label><input type="number" step="any" id="P1" value="15.7" required></div>
             <div><label>Vòng quay n1 (vg/ph):</label><input type="number" step="any" id="n1" value="187.5" required></div>
@@ -74,7 +84,7 @@
             </div>
         </div>
 
-        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">BƯỚC 1 & 2: VẬT LIỆU, ỨNG SUẤT VÀ SƠ ĐỒ BỐ TRÍ</h3>
+        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">II.VẬT LIỆU, ỨNG SUẤT VÀ SƠ ĐỒ BỐ TRÍ</h3>
         <div class="grid-2">
             <div class="material-panel">
                 <h4 style="margin-top:0; color:#1d4ed8;">VẬT LIỆU BÁNH 1 (CHỦ ĐỘNG)</h4>
@@ -237,7 +247,6 @@
     function calculate_shlim(id, h) { return id==='fH1' ? 2*h+70 : id==='fH2' ? 18*h+150 : id==='fH3' ? 17*h+200 : 23*h; }
     function calculate_sflim(id, h) { return id==='fF1' ? 1.8*h : id==='fF2' ? 550 : id==='fF3' ? 900 : 750; }
 
-    // HÀM VẼ CANVAS ĐÃ ĐƯỢC FIX LỖI TỶ LỆ TRÀN VIỀN
     function drawHelicalCanvas(canvasId, aw, d1, d2) {
         const canvas = document.getElementById(canvasId);
         if(!canvas) return;
@@ -248,16 +257,13 @@
         
         const padding = 50; 
         
-        // Tính toán không gian cần thiết cho cả chiều Rộng và chiều Cao
         const totalWidth = aw + (d1/2) + (d2/2);
         const totalHeight = Math.max(d1, d2);
 
-        // Lấy tỷ lệ scale an toàn nhất để vừa vặn cả 2 chiều
         const scaleX = (W - padding * 2) / totalWidth;
         const scaleY = (H - padding * 2) / totalHeight;
         const scale = Math.min(scaleX, scaleY);
         
-        // Căn giữa theo chiều ngang (Vì nếu scale theo Height thì Width sẽ dư)
         const drawnWidth = totalWidth * scale;
         const startX = (W - drawnWidth) / 2;
 
@@ -265,19 +271,16 @@
         const cy = H / 2; 
         const cx2 = cx1 + aw * scale;
 
-        // Vẽ bánh 1
         ctx.beginPath(); ctx.arc(cx1, cy, (d1/2)*scale, 0, 2*Math.PI);
         ctx.fillStyle = 'rgba(59, 130, 246, 0.2)'; ctx.fill();
         ctx.lineWidth = 2; ctx.strokeStyle = '#1e3a8a'; ctx.setLineDash([5, 5]); ctx.stroke();
         ctx.setLineDash([]);
         
-        // Vẽ bánh 2
         ctx.beginPath(); ctx.arc(cx2, cy, (d2/2)*scale, 0, 2*Math.PI);
         ctx.fillStyle = 'rgba(239, 68, 68, 0.2)'; ctx.fill();
         ctx.lineWidth = 2; ctx.strokeStyle = '#991b1b'; ctx.setLineDash([5, 5]); ctx.stroke();
         ctx.setLineDash([]);
 
-        // Tâm và trục nối
         ctx.fillStyle = 'black';
         ctx.beginPath(); ctx.arc(cx1, cy, 4, 0, 2*Math.PI); ctx.fill();
         ctx.beginPath(); ctx.arc(cx2, cy, 4, 0, 2*Math.PI); ctx.fill();
@@ -285,7 +288,6 @@
         ctx.beginPath(); ctx.moveTo(cx1, cy); ctx.lineTo(cx2, cy);
         ctx.strokeStyle = '#475569'; ctx.setLineDash([10, 5, 2, 5]); ctx.stroke(); ctx.setLineDash([]);
 
-        // Đường xiên minh họa
         ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 1.5;
         for(let i = cx1 - (d1/4)*scale; i < cx1 + (d1/4)*scale; i+=15) {
             ctx.beginPath(); ctx.moveTo(i, cy - 15); ctx.lineTo(i+12, cy + 15); ctx.stroke();
@@ -295,8 +297,7 @@
             ctx.beginPath(); ctx.moveTo(i, cy - 20); ctx.lineTo(i-15, cy + 20); ctx.stroke();
         }
 
-        // Chú thích
-        ctx.fillStyle = '#1e293b'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'center';
+        ctx.fillStyle = '#1e293b'; ctx.font = 'normal 15px Arial'; ctx.textAlign = 'center';
         ctx.fillText(`a_w = ${aw.toFixed(2)} mm`, (cx1+cx2)/2, cy - 15);
         ctx.fillStyle = '#64748b'; ctx.font = 'italic 13px Arial';
         ctx.fillText("(Mô phỏng Bánh Răng Trụ Nghiêng)", (cx1+cx2)/2, cy + 30);
@@ -459,14 +460,14 @@
                         if (sH_thuc_new <= sH_cp_cx) { aw_new = aw_thuc_new; break; } 
                         else { aw_new = aw_thuc_new + 2; }
                     }
-                    aw_suggestion_html = `<tr><td colspan="3" style="background-color:#fef3c7; color:#b45309; padding:15px;">
-                        <b>⚠️ BÁO CÁO TỪ VÒNG LẶP MÔ PHỎNG:</b><br>
+                    aw_suggestion_html = `<tr><td colspan="3" style="background-color:#2a2a2a; color:#fbbf24; padding:15px; border: 1px solid #fbbf24;">
+                        <span>⚠️ BÁO CÁO TỪ VÒNG LẶP MÔ PHỎNG:</span><br>
                         Ứng suất sinh ra (${sH_thuc.toFixed(1)} MPa) lớn hơn [σH] = ${sH_cp_cx.toFixed(1)} MPa (Vượt ${error_pct.toFixed(1)}%).<br>
-                        <b style="color:#047857;">Hệ thống đã tự động chạy vòng lặp tìm nghiệm chẵn và chốt a<sub>w</sub> = ${aw_new.toFixed(1)} mm ở BẢNG 2!</b>
+                        <span>Hệ thống đã tự động chạy vòng lặp tìm nghiệm chẵn và chốt a<sub>w</sub> = ${aw_new.toFixed(1)} mm ở BẢNG 2!</span>
                     </td></tr>`;
                 } else {
-                    aw_suggestion_html = `<tr><td colspan="3" style="background-color:#fee2e2; color:#b91c1c; padding:15px;">
-                        <b>🚨 GIỚI HẠN ĐỎ (Vượt ${error_pct.toFixed(1)}% > 20%):</b><br>Ứng suất tiếp xúc đang vượt quá xa mức chịu đựng của vật liệu. Hãy đổi Mác thép khác.
+                    aw_suggestion_html = `<tr><td colspan="3" style="background-color:#3f1010; color:#ff4d4d; padding:15px; border: 1px solid #ff4d4d;">
+                        <span>🚨 GIỚI HẠN ĐỎ (Vượt ${error_pct.toFixed(1)}% > 20%):</span><br>Ứng suất tiếp xúc đang vượt quá xa mức chịu đựng của vật liệu. Hãy đổi Mác thép khác.
                     </td></tr>`;
                 }
             }
@@ -486,19 +487,19 @@
                 let sF1_max = sF1_thuc * Kqt; let sF2_max = sF2_thuc * Kqt;
 
                 html_uon_quatai_b1 = `
-                <tr><td colspan="3" class="step-title">BƯỚC 6: KIỂM NGHIỆM ĐỘ BỀN UỐN MỎI</td></tr>
-                <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><b style="color:#047857;">${sF1_thuc.toFixed(1)} MPa</b></td><td class="${sF1_thuc<=sF_cp1?'success':'highlight'}">${sF1_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
-                <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><b style="color:#047857;">${sF2_thuc.toFixed(1)} MPa</b></td><td class="${sF2_thuc<=sF_cp2?'success':'highlight'}">${sF2_thuc<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
-                <tr><td colspan="3" class="step-title">BƯỚC 7: KIỂM NGHIỆM QUÁ TẢI (TĨNH)</td></tr>
-                <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><b style="color:#047857;">${sH_max.toFixed(1)} MPa</b></td><td class="${sH_max<=sH_max_cp?'success':'highlight'}">${sH_max<=sH_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
-                <tr><th>Quá tải Uốn B1 (σF1max)</th><td><b style="color:#047857;">${sF1_max.toFixed(1)} MPa</b></td><td class="${sF1_max<=sF1_max_cp?'success':'highlight'}">${sF1_max<=sF1_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF1_max_cp.toFixed(1)})</td></tr>
-                <tr><th>Quá tải Uốn B2 (σF2max)</th><td><b style="color:#047857;">${sF2_max.toFixed(1)} MPa</b></td><td class="${sF2_max<=sF2_max_cp?'success':'highlight'}">${sF2_max<=sF2_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
-                <tr><td colspan="3" class="step-title">BƯỚC 8 & 9: TỔNG KẾT KÍCH THƯỚC CHẾ TẠO VÀ LỰC</td></tr>
-                <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><b style="color:#1d4ed8;">${bw1} / ${bw2} mm</b></td><td>Bánh nhỏ làm rộng hơn 4mm</td></tr>
+                <tr><td colspan="3" class="step-title">4.KIỂM NGHIỆM ĐỘ BỀN UỐN MỎI</td></tr>
+                <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><span>${sF1_thuc.toFixed(1)} MPa</span></td><td class="${sF1_thuc<=sF_cp1?'success':'highlight'}">${sF1_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
+                <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><span>${sF2_thuc.toFixed(1)} MPa</span></td><td class="${sF2_thuc<=sF_cp2?'success':'highlight'}">${sF2_thuc<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
+                <tr><td colspan="3" class="step-title">5.KIỂM NGHIỆM QUÁ TẢI (TĨNH)</td></tr>
+                <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><span>${sH_max.toFixed(1)} MPa</span></td><td class="${sH_max<=sH_max_cp?'success':'highlight'}">${sH_max<=sH_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
+                <tr><th>Quá tải Uốn B1 (σF1max)</th><td><span>${sF1_max.toFixed(1)} MPa</span></td><td class="${sF1_max<=sF1_max_cp?'success':'highlight'}">${sF1_max<=sF1_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF1_max_cp.toFixed(1)})</td></tr>
+                <tr><th>Quá tải Uốn B2 (σF2max)</th><td><span>${sF2_max.toFixed(1)} MPa</span></td><td class="${sF2_max<=sF2_max_cp?'success':'highlight'}">${sF2_max<=sF2_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
+                <tr><td colspan="3" class="step-title">6.TỔNG KẾT KÍCH THƯỚC CHẾ TẠO VÀ LỰC</td></tr>
+                <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><span>${bw1} / ${bw2} mm</span></td><td>Bánh nhỏ làm rộng hơn 4mm</td></tr>
                 <tr><th>Đường kính chia (d1 / d2)</th><td>${d1.toFixed(2)} / ${d2.toFixed(2)} mm</td><td>d = m.z / cosβ</td></tr>
                 <tr><th>Đường kính vòng đỉnh (da1 / da2)</th><td>${da1.toFixed(2)} / ${da2.toFixed(2)} mm</td><td>da = d + 2m</td></tr>
                 <tr><th>Đường kính vòng chân (df1 / df2)</th><td>${df1.toFixed(2)} / ${df2.toFixed(2)} mm</td><td>df = d - 2.5m</td></tr>
-                <tr><th>Lực (Ft / Fr / Fa)</th><td><b style="color:#d97706;">${Ft.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>Fa là lực dọc trục đặc thù răng nghiêng</td></tr>
+                <tr><th>Lực (Ft / Fr / Fa)</th><td><span>${Ft.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa.toLocaleString('en-US',{maximumFractionDigits:0})} N</span></td><td>Fa là lực dọc trục đặc thù răng nghiêng</td></tr>
                 `;
             }
 
@@ -506,19 +507,19 @@
             <h2 style="text-align:center; color:#1e3a8a;">BẢNG 1: TÍNH NHÁP SƠ BỘ (a<sub>w</sub> = ${aw.toFixed(1)} mm)</h2>
             <div class="canvas-container"><canvas id="canvas_b1" width="700" height="350"></canvas></div>
             <table>
-                <tr><td colspan="3" class="step-title">BƯỚC 1: VẬT LIỆU BÁNH RĂNG</td></tr>
+                <tr><td colspan="3" class="step-title">1.VẬT LIỆU BÁNH RĂNG</td></tr>
                 <tr><th>Mác thép & Độ cứng</th><td>B1: ${mat1.name} (${mat1.hard_type} ${b1_hard_val.toFixed(1)})<br>B2: ${mat2.name} (${mat2.hard_type} ${b2_hard_val.toFixed(1)})</td><td><span class="${mat_color}">${mat_check}</span></td></tr>
                 <tr><th>Tiếp xúc Cơ sở ([σH1] / [σH2])</th><td>${sH_cp1_base.toFixed(1)} / ${sH_cp2_base.toFixed(1)} MPa</td><td>Chưa tính độ nhám ZR</td></tr>
-                <tr><th>Tiếp xúc CHUNG ([σH])</th><td>Sơ bộ: <b>${sH_cp_sobo.toFixed(1)}</b> | K.nghiệm: <b style="color:#b91c1c;">${sH_cp_cx.toFixed(1)}</b> MPa</td><td>Trung bình cộng (Áp dụng ZR = ${ZR})</td></tr>
+                <tr><th>Tiếp xúc CHUNG ([σH])</th><td>Sơ bộ: <span>${sH_cp_sobo.toFixed(1)}</span> | K.nghiệm: <span class="highlight">${sH_cp_cx.toFixed(1)}</span> MPa</td><td>Trung bình cộng (Áp dụng ZR = ${ZR})</td></tr>
                 <tr><th>Uốn cho phép ([σF1] / [σF2])</th><td>${sF_cp1.toFixed(1)} / ${sF_cp2.toFixed(1)} MPa</td><td>Từ Bảng 6.2</td></tr>
-                <tr><td colspan="3" class="step-title">BƯỚC 3 & 4: KÍCH THƯỚC CƠ BẢN & ĐỘNG HỌC</td></tr>
-                <tr><th>Khoảng cách trục (aw)</th><td><b style="color:#1d4ed8; font-size:1.1em;">${aw.toFixed(1)} mm</b></td><td>Làm tròn chuẩn từ ${aw_calc.toFixed(2)} mm</td></tr>
-                <tr><th>Mô đun tiêu chuẩn (m)</th><td><b>${m.toFixed(1)} mm</b></td><td>Tính theo hệ số m_coef = ${m_coef}</td></tr>
-                <tr><th>Số răng (z1 / z2)</th><td><b>${z1} / ${z2} răng</b></td><td>-</td></tr>
+                <tr><td colspan="3" class="step-title">2.KÍCH THƯỚC CƠ BẢN & ĐỘNG HỌC</td></tr>
+                <tr><th>Khoảng cách trục (aw)</th><td><span style="font-size:1.1em;">${aw.toFixed(1)} mm</span></td><td>Làm tròn chuẩn từ ${aw_calc.toFixed(2)} mm</td></tr>
+                <tr><th>Mô đun tiêu chuẩn (m)</th><td><span>${m.toFixed(1)} mm</span></td><td>Tính theo hệ số m_coef = ${m_coef}</td></tr>
+                <tr><th>Số răng (z1 / z2)</th><td><span>${z1} / ${z2} răng</span></td><td>-</td></tr>
                 <tr><th>Sai số Tỉ số truyền (Δu)</th><td>${delta_u.toFixed(2)} %</td><td class="${delta_u<=4?'success':'highlight'}">${check_u}</td></tr>
-                <tr><th>Góc nghiêng thực tế (β)</th><td><b style="color:#d97706;">${beta_deg.toFixed(2)} độ</b></td><td>Tính chính xác từ β sơ bộ</td></tr>
-                <tr><td colspan="3" class="step-title">BƯỚC 5: KIỂM NGHIỆM BỀN MỎI TIẾP XÚC</td></tr>
-                <tr><th>Ứng suất tiếp xúc thực tế (σH)</th><td><b style="color:#047857;">${sH_thuc.toFixed(1)} MPa</b></td><td class="${color_sH}">${check_sH} (So với ${sH_cp_cx.toFixed(1)})</td></tr>
+                <tr><th>Góc nghiêng thực tế (β)</th><td><span>${beta_deg.toFixed(2)} độ</span></td><td>Tính chính xác từ β sơ bộ</td></tr>
+                <tr><td colspan="3" class="step-title">3.KIỂM NGHIỆM BỀN MỎI TIẾP XÚC</td></tr>
+                <tr><th>Ứng suất tiếp xúc thực tế (σH)</th><td><span>${sH_thuc.toFixed(1)} MPa</span></td><td class="${color_sH}">${check_sH} (So với ${sH_cp_cx.toFixed(1)})</td></tr>
                 ${aw_suggestion_html}
                 ${html_uon_quatai_b1}
             </table>`;
@@ -550,27 +551,27 @@
                 <div class="canvas-container"><canvas id="canvas_b2" width="700" height="350"></canvas></div>
                 <table>
                     <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">KÍCH THƯỚC CƠ BẢN ĐƯỢC CẬP NHẬT</td></tr>
-                    <tr><th>Khoảng cách trục (aw)</th><td><b style="color:#047857; font-size:1.1em;">${aw_new.toFixed(1)} mm</b></td><td>Từ vòng lặp tự động sửa lỗi</td></tr>
-                    <tr><th>Mô đun tiêu chuẩn (m)</th><td><b>${m_new.toFixed(1)} mm</b></td><td>Tính theo hệ số m_coef = ${m_coef}</td></tr>
-                    <tr><th>Số răng (z1 / z2)</th><td><b>${z1_new} / ${z2_new} răng</b></td><td>Đã phân bổ lại</td></tr>
-                    <tr><th>Góc nghiêng thực tế (β)</th><td><b style="color:#047857;">${beta_deg_new.toFixed(2)} độ</b></td><td>Góc nghiêng sau điều chỉnh</td></tr>
+                    <tr><th>Khoảng cách trục (aw)</th><td><span style="font-size:1.1em;">${aw_new.toFixed(1)} mm</span></td><td>Từ vòng lặp tự động sửa lỗi</td></tr>
+                    <tr><th>Mô đun tiêu chuẩn (m)</th><td><span>${m_new.toFixed(1)} mm</span></td><td>Tính theo hệ số m_coef = ${m_coef}</td></tr>
+                    <tr><th>Số răng (z1 / z2)</th><td><span>${z1_new} / ${z2_new} răng</span></td><td>Đã phân bổ lại</td></tr>
+                    <tr><th>Góc nghiêng thực tế (β)</th><td><span>${beta_deg_new.toFixed(2)} độ</span></td><td>Góc nghiêng sau điều chỉnh</td></tr>
                     
-                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">BƯỚC 5 & 6: KIỂM NGHIỆM BỀN MỎI LẦN 2</td></tr>
-                    <tr><th>Ứng suất tiếp xúc (σH)</th><td><b style="color:#047857;">${sH_thuc_new.toFixed(1)} MPa</b></td><td class="success">ĐẠT (≤ ${sH_cp_cx.toFixed(1)})</td></tr>
-                    <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><b style="color:#047857;">${sF1_thuc_new.toFixed(1)} MPa</b></td><td class="${sF1_thuc_new<=sF_cp1?'success':'highlight'}">${sF1_thuc_new<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
-                    <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><b style="color:#047857;">${sF2_thuc_new.toFixed(1)} MPa</b></td><td class="${sF2_thuc_new<=sF_cp2?'success':'highlight'}">${sF2_thuc_new<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">4. KIỂM NGHIỆM BỀN MỎI LẦN 2</td></tr>
+                    <tr><th>Ứng suất tiếp xúc (σH)</th><td><span>${sH_thuc_new.toFixed(1)} MPa</span></td><td class="success">ĐẠT (≤ ${sH_cp_cx.toFixed(1)})</td></tr>
+                    <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><span>${sF1_thuc_new.toFixed(1)} MPa</span></td><td class="${sF1_thuc_new<=sF_cp1?'success':'highlight'}">${sF1_thuc_new<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
+                    <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><span>${sF2_thuc_new.toFixed(1)} MPa</span></td><td class="${sF2_thuc_new<=sF_cp2?'success':'highlight'}">${sF2_thuc_new<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
 
-                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">BƯỚC 7: KIỂM NGHIỆM QUÁ TẢI LẦN 2</td></tr>
-                    <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><b style="color:#047857;">${sH_max_new.toFixed(1)} MPa</b></td><td class="${sH_max_new<=sH_max_cp?'success':'highlight'}">${sH_max_new<=sH_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
-                    <tr><th>Quá tải Uốn B1 (σF1max)</th><td><b style="color:#047857;">${sF1_max_new.toFixed(1)} MPa</b></td><td class="${sF1_max_new<=sF1_max_cp?'success':'highlight'}">${sF1_max_new<=sF1_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF1_max_cp.toFixed(1)})</td></tr>
-                    <tr><th>Quá tải Uốn B2 (σF2max)</th><td><b style="color:#047857;">${sF2_max_new.toFixed(1)} MPa</b></td><td class="${sF2_max_new<=sF2_max_cp?'success':'highlight'}">${sF2_max_new<=sF2_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">5.KIỂM NGHIỆM QUÁ TẢI LẦN 2</td></tr>
+                    <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><span>${sH_max_new.toFixed(1)} MPa</span></td><td class="${sH_max_new<=sH_max_cp?'success':'highlight'}">${sH_max_new<=sH_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
+                    <tr><th>Quá tải Uốn B1 (σF1max)</th><td><span>${sF1_max_new.toFixed(1)} MPa</span></td><td class="${sF1_max_new<=sF1_max_cp?'success':'highlight'}">${sF1_max_new<=sF1_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF1_max_cp.toFixed(1)})</td></tr>
+                    <tr><th>Quá tải Uốn B2 (σF2max)</th><td><span>${sF2_max_new.toFixed(1)} MPa</span></td><td class="${sF2_max_new<=sF2_max_cp?'success':'highlight'}">${sF2_max_new<=sF2_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
 
-                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">TỔNG KẾT CHẾ TẠO VÀ LỰC MỚI</td></tr>
-                    <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><b style="color:#047857;">${bw1_new} / ${bw2_new} mm</b></td><td>Đã tính lại</td></tr>
+                    <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">6.TỔNG KẾT CHẾ TẠO VÀ LỰC MỚI</td></tr>
+                    <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><span>${bw1_new} / ${bw2_new} mm</span></td><td>Đã tính lại</td></tr>
                     <tr><th>Đường kính chia (d1 / d2)</th><td>${d1_new.toFixed(2)} / ${d2_new.toFixed(2)} mm</td><td>d = m.z / cosβ</td></tr>
                     <tr><th>Đường kính vòng đỉnh (da1 / da2)</th><td>${da1_new.toFixed(2)} / ${da2_new.toFixed(2)} mm</td><td>da = d + 2m</td></tr>
                     <tr><th>Đường kính vòng chân (df1 / df2)</th><td>${df1_new.toFixed(2)} / ${df2_new.toFixed(2)} mm</td><td>df = d - 2.5m</td></tr>
-                    <tr><th>Lực (Ft / Fr / Fa)</th><td><b style="color:#d97706;">${Ft_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa_new.toLocaleString('en-US',{maximumFractionDigits:0})} N</b></td><td>Fa là lực dọc trục đặc thù răng nghiêng</td></tr>
+                    <tr><th>Lực (Ft / Fr / Fa)</th><td><span>${Ft_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa_new.toLocaleString('en-US',{maximumFractionDigits:0})} N</span></td><td>Fa là lực dọc trục đặc thù răng nghiêng</td></tr>
                 </table>`;
             }
 
@@ -584,12 +585,27 @@
             }, 50);
 
         } catch (e) {
-            document.getElementById('result_area').innerHTML = `<div style='background:#fee2e2; border-left:4px solid #ef4444; padding:15px; color:#b91c1c; font-weight:bold;'>Lỗi tính toán: ${e.message}</div>`;
+            document.getElementById('result_area').innerHTML = `<div style='background-color:#3f1010; border-left:4px solid #ff4d4d; padding:15px; color:#ff4d4d; font-weight:bold;'>Lỗi tính toán: ${e.message}</div>`;
             document.getElementById('result_area').style.display = 'block';
         }
     }
 
     window.onload = initUI;
+</script>
+<script>
+    // Nhận tín hiệu đổi màu từ trang chủ index.html gửi vào
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.theme === 'light') {
+            document.body.classList.add('light-theme');
+        } else if (event.data && event.data.theme === 'dark') {
+            document.body.classList.remove('light-theme');
+        }
+    });
+
+    // Khi load lại trang con, giữ nguyên chế độ màu đang cài đặt ở trang chủ
+    if (localStorage.getItem('ctmc_theme') === 'light') {
+        document.body.classList.add('light-theme');
+    }
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -20,11 +20,22 @@
     button { width: 100%; background-color: #d35400; color: white; padding: 15px; margin-top: 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; text-transform: uppercase; transition: 0.3s;}
     button:hover { background-color: #ba4a00; }
     .result-box { margin-top: 30px; padding: 25px; background-color: #fdfefe; border: 2px solid #e67e22; border-radius: 8px; overflow-x: auto; display: none; }
+    
+    /* ĐÃ CHỈNH SỬA PHẦN CSS BẢNG TẠI ĐÂY */
     table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
-    th, td { padding: 10px; border: 1px solid #dee2e6; text-align: center; }
-    th { background-color: #e67e22; color: white; }
-    tr:nth-child(even) { background-color: #fae5d3; }
-    .highlight { color: #c0392b; font-weight: bold; }
+    th, td { padding: 10px; border: 1px solid var(--dm-border, #555); text-align: center; }
+    th { font-weight: 600; }
+    
+    /* Tắt hoàn toàn tính năng xen kẽ màu theo yêu cầu, tạo màu đồng nhất */
+    tr:nth-child(even) td, tr:nth-child(odd) td, tr:nth-child(even), tr:nth-child(odd) { 
+        background-color: transparent !important; 
+    }
+    
+    /* ĐÃ SỬA: Chuyển thành chữ thường (nhạt) thay vì in đậm */
+    .highlight { color: #ff4d4d !important; font-weight: normal; } 
+    .success { color: #10b981 !important; font-weight: normal; } 
+    /* KẾT THÚC PHẦN CHỈNH SỬA CSS BẢNG */
+    
     details > summary { list-style: none; cursor: pointer; background: #8e44ad; color: white; font-weight: bold; padding: 12px 20px; border-radius: 6px; display: inline-block; transition: background 0.3s ease; }
     details > summary:hover { background: #732d91; }
     details > summary::-webkit-details-marker { display: none; }
@@ -277,7 +288,7 @@ function drawChainSchematicJS(d1, d2, a) {
     ctx.stroke();
     
     ctx.fillStyle = '#34495e';
-    ctx.font = 'bold 14px Arial';
+    ctx.font = 'normal 14px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(`<----- a = ${a.toFixed(0)} mm ----->`, tx(a/2), ty(d1/2 + 45));
 
@@ -360,16 +371,16 @@ function calculateChain(event) {
         var Kx = Kx_dict[x_strands] || 1.0;
         var Pt_max_allowable = P_allow * Kx;
         
-        var check_ben, check_color;
+        var check_ben, check_color_class;
         if (P_allow === 0) {
             check_ben = "KHÔNG ĐẠT (Lỗi đọc [P])";
-            check_color = "red";
+            check_color_class = "highlight";
         } else if (Pt_max_allowable >= Pt) {
             check_ben = `ĐẠT (${Pt_max_allowable.toFixed(2)} ≥ ${Pt.toFixed(2)})`;
-            check_color = "green";
+            check_color_class = "success";
         } else {
             check_ben = `KHÔNG ĐẠT (${Pt_max_allowable.toFixed(2)} < ${Pt.toFixed(2)}) - Đổi [P] hoặc Tăng dãy xích!`;
-            check_color = "red";
+            check_color_class = "highlight";
         }
 
         // Khoảng cách trục & Mắt xích
@@ -387,7 +398,7 @@ function calculateChain(event) {
         // Va đập (i)
         var i_va_dap = X > 0 ? (z1 * n1) / (15 * X) : 0;
         var check_i = i_va_dap <= i_allow ? `ĐẠT (${i_va_dap.toFixed(1)} ≤ ${i_allow})` : `KHÔNG ĐẠT (${i_va_dap.toFixed(1)} > ${i_allow})`;
-        var color_i = i_va_dap <= i_allow ? "green" : "red";
+        var class_i = i_va_dap <= i_allow ? "success" : "highlight";
 
         // Lực và hệ số an toàn s
         var v = (z1 * p * n1) / 60000;
@@ -398,7 +409,7 @@ function calculateChain(event) {
         var sum_force = kd * Ft + F0 + Fv;
         var s_he_so = sum_force > 0 ? Q_force / sum_force : 0;
         var check_s = s_he_so >= s_allow ? `ĐẠT (${s_he_so.toFixed(2)} ≥ ${s_allow})` : `KHÔNG ĐẠT (${s_he_so.toFixed(2)} < ${s_allow})`;
-        var color_s = s_he_so >= s_allow ? "green" : "red";
+        var class_s = s_he_so >= s_allow ? "success" : "highlight";
         var Fr = kx * Ft;
 
         // Kích thước đĩa xích
@@ -427,7 +438,7 @@ function calculateChain(event) {
             <details style="cursor: pointer; outline: none;">
                 <summary>🖼️ Bấm vào đây để Hiện / Ẩn Sơ đồ Truyền Động</summary>
                 <div style="margin-top: 15px;">
-                    <img src="${schematic_img}" alt="Sơ đồ Xích" style="max-width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <img src="${schematic_img}" alt="Sơ đồ Xích" style="max-width: 100%; border: 1px solid #ddd; padding: 10px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background-color: #fff;">
                 </div>
             </details>
         </div>
@@ -436,47 +447,47 @@ function calculateChain(event) {
         var type_name = chain_type === 'con_lan' ? "XÍCH CON LĂN" : (chain_type === 'ong' ? "XÍCH ỐNG" : "XÍCH RĂNG");
 
         var result_html = `
-        <h2 style='text-align:center; color:#d35400; margin-top:0;'>BẢNG THÔNG SỐ THIẾT KẾ ${type_name}</h2>
+        <h2 style='text-align:center; color:#e67e22; margin-top:0;'>BẢNG THÔNG SỐ THIẾT KẾ ${type_name}</h2>
         ${img_html}
         
-        <h4 style="color:#2980b9; margin-bottom: 5px;">A. Kết quả chọn và kiểm nghiệm bền</h4>
+        <h4 style="color:#3498db; margin-bottom: 5px;">A. Kết quả chọn và kiểm nghiệm bền</h4>
         <table>
             <tr><th>Thông số</th><th>Ký hiệu</th><th>Kết quả</th><th>Đánh giá / Công thức</th></tr>
             <tr><td>Hệ số sử dụng tổng</td><td>k</td><td>${k_total.toFixed(2)}</td><td>k0.ka.kdc.kbt.kd.kc</td></tr>
             <tr><td>Hệ số số răng</td><td>kz</td><td>${kz.toFixed(3)}</td><td>${kz_numerator}/z1</td></tr>
-            <tr><td>Số răng bánh dẫn</td><td>z1</td><td><b style="color:blue;">${z1} răng</b></td><td>Tra bảng 5.4 theo u</td></tr>
-            <tr><td>Số răng bánh bị dẫn</td><td>z2</td><td><b style="color:blue;">${z2} răng</b></td><td>u.z1 (Làm tròn số lẻ)</td></tr>
-            <tr><td>Sai số Tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td style="color:${delta_u<=4 ? 'green' : 'red'}; font-weight:bold;">${u_check}</td></tr>
+            <tr><td>Số răng bánh dẫn</td><td>z1</td><td><span>${z1} răng</span></td><td>Tra bảng 5.4 theo u</td></tr>
+            <tr><td>Số răng bánh bị dẫn</td><td>z2</td><td><span>${z2} răng</span></td><td>u.z1 (Làm tròn số lẻ)</td></tr>
+            <tr><td>Sai số Tỉ số truyền</td><td>Δu</td><td>${delta_u.toFixed(2)} %</td><td class="${delta_u<=4 ? 'success' : 'highlight'}">${u_check}</td></tr>
             <tr><td>Công suất tính toán</td><td>Pt</td><td>${Pt.toFixed(2)} kW</td><td>P.k.kz.kn</td></tr>
-            <tr><td><b>Kiểm tra mòn ([P])</b></td><td><b>Pt ≤ [P].Kx</b></td><td><b style="color:${check_color};">${check_ben}</b></td><td>[P] đã chọn: ${P_allow} kW</td></tr>
+            <tr><td><span>Kiểm tra mòn ([P])</span></td><td><span>Pt ≤ [P].Kx</span></td><td><span class="${check_color_class}">${check_ben}</span></td><td>[P] đã chọn: ${P_allow} kW</td></tr>
         </table>
 
-        <h4 style="color:#8e44ad; margin-bottom: 5px;">B. Động học, Khoảng cách trục & Mắt xích</h4>
+        <h4 style="color:#9b59b6; margin-bottom: 5px;">B. Động học, Khoảng cách trục & Mắt xích</h4>
         <table>
             <tr><th>Thông số</th><th>Ký hiệu</th><th>Kết quả</th><th>Đánh giá / Công thức</th></tr>
             <tr><td>Vận tốc vòng xích</td><td>v</td><td>${v.toFixed(2)} m/s</td><td>-</td></tr>
-            <tr><td>Số mắt xích</td><td>X</td><td><b style="color:#8e44ad;">${X} mắt</b></td><td>Làm tròn thành số chẵn</td></tr>
+            <tr><td>Số mắt xích</td><td>X</td><td><span style="font-size:1.1em;">${X} mắt</span></td><td>Làm tròn thành số chẵn</td></tr>
             <tr><td>Khoảng cách trục lý thuyết</td><td>a*</td><td>${a_thuc_ly_thuyet.toFixed(2)} mm</td><td>Tính ngược từ X</td></tr>
-            <tr><td><b>Khoảng cách lắp ráp</b></td><td><b>a</b></td><td><b style="color:#8e44ad; font-size:1.1em;">${a_thuc.toFixed(2)} mm</b></td><td>Đã trừ độ võng Δa = ${delta_a_factor}a*</td></tr>
-            <tr><td><b>Kiểm nghiệm va đập</b></td><td><b>i ≤ [i]</b></td><td><b style="color:${color_i};">${check_i}</b></td><td>Bảng 5.9</td></tr>
+            <tr><td><span>Khoảng cách lắp ráp</span></td><td><span>a</span></td><td><span style="font-size:1.1em;">${a_thuc.toFixed(2)} mm</span></td><td>Đã trừ độ võng Δa = ${delta_a_factor}a*</td></tr>
+            <tr><td><span>Kiểm nghiệm va đập</span></td><td><span>i ≤ [i]</span></td><td><span class="${class_i}">${check_i}</span></td><td>Bảng 5.9</td></tr>
         </table>
 
-        <h4 style="color:#27ae60; margin-bottom: 5px;">C. Phân tích Lực & Độ bền mỏi (An toàn đứt)</h4>
+        <h4 style="color:#2ecc71; margin-bottom: 5px;">C. Phân tích Lực & Độ bền mỏi (An toàn đứt)</h4>
         <table>
             <tr><th>Thông số</th><th>Ký hiệu</th><th>Kết quả</th><th>Đánh giá / Công thức</th></tr>
             <tr><td>Lực vòng truyền tải</td><td>Ft</td><td>${Ft.toFixed(1)} N</td><td>1000.P1 / v</td></tr>
             <tr><td>Lực ly tâm</td><td>Fv</td><td>${Fv.toFixed(1)} N</td><td>q.v²</td></tr>
             <tr><td>Lực căng do xích chùng</td><td>F0</td><td>${F0.toFixed(1)} N</td><td>9.81.kf.q.a</td></tr>
-            <tr><td><b>Kiểm nghiệm đứt (s)</b></td><td><b>s ≥ [s]</b></td><td><b style="color:${color_s}; font-size:1.1em;">${check_s}</b></td><td>Q / (kd.Ft+F0+Fv)</td></tr>
-            <tr><td><b>Lực tác dụng lên trục</b></td><td><b>Fr</b></td><td><b class='highlight' style='font-size:1.1em;'>${Fr.toFixed(1)} N</b></td><td>kx.Ft (Dùng cho thiết kế Trục)</td></tr>
+            <tr><td><span>Kiểm nghiệm đứt (s)</span></td><td><span>s ≥ [s]</span></td><td><span class="${class_s}" style="font-size:1.1em;">${check_s}</span></td><td>Q / (kd.Ft+F0+Fv)</td></tr>
+            <tr><td><span>Lực tác dụng lên trục</span></td><td><span>Fr</span></td><td><span class='highlight' style='font-size:1.1em;'>${Fr.toFixed(1)} N</span></td><td>kx.Ft (Dùng cho thiết kế Trục)</td></tr>
         </table>
 
-        <h4 style="color:#c0392b; margin-bottom: 5px;">D. Kích thước chế tạo đĩa xích</h4>
+        <h4 style="color:#2980b9; margin-bottom: 5px;">D. Kích thước chế tạo đĩa xích</h4>
         <table>
             <tr><th>Vòng đo</th><th>Bánh dẫn 1 (z1)</th><th>Bánh bị dẫn 2 (z2)</th></tr>
             <tr><td>Đường kính vòng chia (d)</td><td>${d1_pitch.toFixed(2)} mm</td><td>${d2_pitch.toFixed(2)} mm</td></tr>
             <tr><td>Đường kính vòng đỉnh (da)</td><td>${da1.toFixed(2)} mm</td><td>${da2.toFixed(2)} mm</td></tr>
-            <tr><td>Đường kính vòng chân (df)</td><td><b style="color:#c0392b;">${df1_text}</b></td><td><b style="color:#c0392b;">${df2_text}</b></td></tr>
+            <tr><td>Đường kính vòng chân (df)</td><td><span>${df1_text}</span></td><td><span>${df2_text}</span></td></tr>
             <tr><td colspan="3" class="note" style="text-align:center;">${note_text}</td></tr>
         </table>
         `;
@@ -487,7 +498,7 @@ function calculateChain(event) {
 
     } catch (e) {
         var resultBox = document.getElementById('result_box');
-        resultBox.innerHTML = `<p style='color:red;'><b>Lỗi tính toán:</b> ${e.message}</p>`;
+        resultBox.innerHTML = `<p style='color:red;'><span>Lỗi tính toán:</span> ${e.message}</p>`;
         resultBox.style.display = 'block';
     }
 }
@@ -497,12 +508,13 @@ window.onload = function() {
     updateKd();
 };
 </script>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 <div class="container">
-<h2>HỆ THỐNG THIẾT KẾ BỘ TRUYỀN XÍCH TOÀN DIỆN</h2>
+<h2>HỆ THỐNG THIẾT KẾ BỘ TRUYỀN XÍCH </h2>
 <form onsubmit="calculateChain(event)">
-<h3>BƯỚC 0 & 1: Thông Số Động Học & Loại Xích</h3>
+<h3>I.Thông Số Động Học & Loại Xích</h3>
 <div class="grid-4">
     <div><label>Loại xích:</label>
         <select id="chain_type" onchange="updatePitchOptions()">
@@ -517,7 +529,7 @@ window.onload = function() {
 </div>
 
 <div class="table-section">
-    <h3 style="margin-top: 0;">BƯỚC 3.4: Chọn Bước Xích & Tra Bảng (Tự chọn [P] theo dc, B)</h3>
+    <h3 style="margin-top: 0;">II.Chọn Bước Xích & Tra Bảng </h3>
     <div class="grid-4">
         <div>
             <label>Chọn Bước xích p (mm):</label>
@@ -560,7 +572,7 @@ window.onload = function() {
     </div>
 </div>
 
-<h3>BƯỚC 3.1 & BƯỚC 6: Hệ Số Điều Kiện Sử Dụng (k) & Độ Võng</h3>
+<h3>III.Hệ Số Điều Kiện Sử Dụng (k) & Độ Võng</h3>
 <div class="grid-3">
     <div><label>Đường nối tâm (k0):</label>
         <select id="k0">
@@ -642,5 +654,15 @@ window.onload = function() {
 <div id="result_box" class="result-box"></div>
 
 </div>
+<script>
+    // CHỈ nhận tín hiệu đổi màu từ trang chủ index.html gửi vào
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.theme === 'light') {
+            document.body.classList.add('light-theme');
+        } else if (event.data && event.data.theme === 'dark') {
+            document.body.classList.remove('light-theme');
+        }
+    });
+</script>
 </body>
 </html>

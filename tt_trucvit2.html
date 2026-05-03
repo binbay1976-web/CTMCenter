@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -22,12 +22,24 @@
     
     button { width: 100%; background-color: #b91c1c; color: white; padding: 15px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px;}
     button:hover { background-color: #991b1b; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);}
-    th, td { padding: 10px 12px; border: 1px solid #e2e8f0; text-align: left; }
-    th { background-color: #fef2f2; color: #b91c1c; width: 35%; }
+    
+    /* ĐÃ CHỈNH SỬA PHẦN CSS BẢNG TẠI ĐÂY */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; background-color: transparent; color: inherit; }
+    th, td { padding: 10px 12px; border: 1px solid #cbd5e1; text-align: left; }
+    th { background-color: transparent; font-weight: bold; width: 35%; text-align: center; }
+    td { text-align: center; }
+    
+    /* Tắt tính năng xen kẽ màu để bảo đảm màu đồng nhất */
+    tr:nth-child(even) td, tr:nth-child(odd) td, tr:nth-child(even), tr:nth-child(odd) { 
+        background-color: transparent !important; 
+    }
+    
+    /* ĐÃ SỬA: Chuyển thành chữ thường (nhạt) thay vì in đậm */
+    .success { color: #16a34a !important; font-weight: normal; } 
+    .highlight { color: #dc2626 !important; font-weight: normal; } 
+    /* KẾT THÚC PHẦN CHỈNH SỬA CSS BẢNG */
+    
     .step-title { background-color: #b91c1c !important; color: white !important; font-weight: bold; text-align: center; font-size: 1.1em;}
-    .success { color: #16a34a; font-weight: bold; }
-    .highlight { color: #dc2626; font-weight: bold; }
     .readonly { background-color: #e2e8f0 !important; color: #475569; border-color: #cbd5e1; font-weight: 600; }
     
     .canvas-wrapper { width: 100%; overflow-x: auto; background: #ffffff; border: 2px solid #cbd5e1; border-radius: 8px; margin-top: 20px; text-align: center; padding: 20px 0;}
@@ -463,7 +475,7 @@
 
             if (ratio > 0) {
                 if (ratio <= 15) {
-                    ai_suggestion_html += `<div style='color:#d97706; font-weight:bold; margin-bottom:5px;'>CẢNH BÁO: Ứng suất σH = ${sig_H_thuc.toFixed(1)} vượt ${ratio.toFixed(1)}% mức cho phép ${sig_H_cp.toFixed(1)}. Trợ lý AI đang áp dụng Ma Trận Quyết Định (Trường hợp A)...</div>`;
+                    ai_suggestion_html += `<div style='color:#d97706; margin-bottom:5px;'>CẢNH BÁO: Ứng suất σH = ${sig_H_thuc.toFixed(1)} vượt ${ratio.toFixed(1)}% mức cho phép ${sig_H_cp.toFixed(1)}. Trợ lý AI đang áp dụng Ma Trận Quyết Định (Trường hợp A)...</div>`;
                     
                     let new_aw = STANDARD_AW.find(a => a > aw_choose) || aw_choose;
                     if (new_aw > aw_choose) {
@@ -508,24 +520,24 @@
                             else new_sig_H_cp = new_sig_H_cp || 150;
 
                             if (new_sig_H <= new_sig_H_cp) {
-                                ai_suggestion_html += `<div style='color:#16a34a; font-weight:bold; border-left:3px solid #16a34a; padding-left:10px;'>=> HOÀN THÀNH (ĐẠT): Đã tăng aw=${new_aw}mm, điều chỉnh z2=${new_z2} (Δu=${delta_u.toFixed(1)}%), ép x=${new_x.toFixed(3)}. Ứng suất mới σH = ${new_sig_H.toFixed(1)} MPa. Dữ liệu bên dưới đã được CẬP NHẬT!</div>`;
+                                ai_suggestion_html += `<div style='color:#16a34a; border-left:3px solid #16a34a; padding-left:10px;'>=> HOÀN THÀNH (ĐẠT): Đã tăng aw=${new_aw}mm, điều chỉnh z2=${new_z2} (Δu=${delta_u.toFixed(1)}%), ép x=${new_x.toFixed(3)}. Ứng suất mới σH = ${new_sig_H.toFixed(1)} MPa. Dữ liệu bên dưới đã được CẬP NHẬT!</div>`;
                                 aw_choose = new_aw; m_choose = new_m; z2 = new_z2; x = new_x;
                                 gamma_w_rad = new_gamma_w_rad; vs_thuc = new_vs_thuc;
                                 ccx = new_ccx; K_hv = new_K_hv; KH_beta = new_KH_beta; KH = new_KH; KF = KH; sig_H_thuc = new_sig_H;
                                 sig_H_cp = new_sig_H_cp; theta = new_theta;
                             } else {
-                                ai_suggestion_html += `<div style='color:#dc2626; font-weight:bold;'>=> THẤT BẠI: Đã thử tăng aw lên ${new_aw}mm, điều chỉnh z2=${new_z2} nhưng do vận tốc trượt tăng (vs=${new_vs_thuc.toFixed(2)}) làm [σH] giảm xuống ${new_sig_H_cp.toFixed(2)} MPa. Ứng suất mới σH=${new_sig_H.toFixed(1)} vẫn KHÔNG ĐẠT. Xin hãy ĐỔI VẬT LIỆU bánh vít!</div>`;
+                                ai_suggestion_html += `<div style='color:#dc2626;'>=> THẤT BẠI: Đã thử tăng aw lên ${new_aw}mm, điều chỉnh z2=${new_z2} nhưng do vận tốc trượt tăng (vs=${new_vs_thuc.toFixed(2)}) làm [σH] giảm xuống ${new_sig_H_cp.toFixed(2)} MPa. Ứng suất mới σH=${new_sig_H.toFixed(1)} vẫn KHÔNG ĐẠT. Xin hãy ĐỔI VẬT LIỆU bánh vít!</div>`;
                             }
                         } else {
-                            ai_suggestion_html += `<div style='color:#dc2626; font-weight:bold;'>=> THẤT BẠI: Đổi z2=${new_z2} gây sai số Δu=${delta_u.toFixed(1)}% > 4%. Xin hãy ĐỔI VẬT LIỆU bánh vít!</div>`;
+                            ai_suggestion_html += `<div style='color:#dc2626;'>=> THẤT BẠI: Đổi z2=${new_z2} gây sai số Δu=${delta_u.toFixed(1)}% > 4%. Xin hãy ĐỔI VẬT LIỆU bánh vít!</div>`;
                         }
                     }
                 } else if (ratio > 15 && ratio <= 30) {
-                    ai_suggestion_html += `<div style='color:#dc2626; font-weight:bold; margin-bottom:5px;'>⚠️ TƯ VẤN KỸ SƯ TRƯỞNG (TRƯỜNG HỢP B):</div>
-                                           <div style='color:#dc2626;'>Ứng suất vượt mức trung bình (${ratio.toFixed(1)}%). <b>KHÔNG TĂNG KÍCH THƯỚC NỮA</b> vì sẽ làm hộp số phình to quá mức. <br><b>Giải pháp:</b> Nâng cấp vật liệu bánh vít.</div>`;
+                    ai_suggestion_html += `<div style='color:#dc2626; margin-bottom:5px;'>⚠️ TƯ VẤN KỸ SƯ TRƯỞNG (TRƯỜNG HỢP B):</div>
+                                           <div style='color:#dc2626;'>Ứng suất vượt mức trung bình (${ratio.toFixed(1)}%). <span>KHÔNG TĂNG KÍCH THƯỚC NỮA</span> vì sẽ làm hộp số phình to quá mức. <br><span>Giải pháp:</span> Nâng cấp vật liệu bánh vít.</div>`;
                 } else {
-                    ai_suggestion_html += `<div style='color:#991b1b; font-weight:bold; margin-bottom:5px;'>🛑 TƯ VẤN KỸ SƯ TRƯỞNG (TRƯỜNG HỢP C):</div>
-                                           <div style='color:#991b1b;'>Ứng suất vượt quá ngưỡng cực lớn (${ratio.toFixed(1)}% > 30%). <br><b>Giải pháp:</b> THAY ĐỔI CẤU TRÚC HỆ THỐNG DẪN ĐỘNG. Thiết kế lại sơ đồ động.</div>`;
+                    ai_suggestion_html += `<div style='color:#991b1b; margin-bottom:5px;'>🛑 TƯ VẤN KỸ SƯ TRƯỞNG (TRƯỜNG HỢP C):</div>
+                                           <div style='color:#991b1b;'>Ứng suất vượt quá ngưỡng cực lớn (${ratio.toFixed(1)}% > 30%). <br><span>Giải pháp:</span> THAY ĐỔI CẤU TRÚC HỆ THỐNG DẪN ĐỘNG. Thiết kế lại sơ đồ động.</div>`;
                 }
             }
 
@@ -586,65 +598,65 @@
             let P1_thuc = (T2 * n2) / (9.55e6 * eta_thuc);
             let A_calc = (1000 * P1_thuc * (1 - eta_thuc)) / (cooling_factor * beta_nhiet * (td_cp - t0));
 
-            // XUẤT KẾT QUẢ HTML (KHÔI PHỤC FULL BẢNG CHI TIẾT GỐC)
+            // XUẤT KẾT QUẢ HTML
             let resHTML = ai_html_final + `
             <div class="canvas-wrapper">
                 <h4 style="margin: 0 0 10px 0; color: #475569;">BẢN VẼ SƠ ĐỒ KÍCH THƯỚC ĐÃ TÍNH TOÁN (CANVAS 2D)</h4>
                 <canvas id="diagramCanvas" width="1100" height="500"></canvas>
             </div>
 
-            <h2 style="text-align:center; color:#b91c1c; font-weight:900; margin-top:30px;">BÁO CÁO THIẾT KẾ BỘ TRUYỀN TRỤC VÍT (CHUẨN 10 BẢNG)</h2>
+            <h2 style="text-align:center; color:#b91c1c; font-weight:900; margin-top:30px;">BÁO CÁO THIẾT KẾ BỘ TRUYỀN TRỤC VÍT</h2>
             <table>
-                <tr><td colspan="3" class="step-title">BƯỚC 1: ĐỘNG HỌC & CHU KỲ TẢI TRỌNG</td></tr>
-                <tr><th>Tỉ số truyền u | Số răng z1, z2</th><td><b style="color:#1d4ed8;">u = ${u.toFixed(1)} | z1 = ${z1} | z2 = ${z2.toFixed(1)}</b></td><td>Số răng trục vít chọn theo u</td></tr>
-                <tr><th>Mômen xoắn lớn nhất T2</th><td><b>${T2.toLocaleString()} N.mm</b></td><td>Hiệu suất giả định η=${eta_sb}</td></tr>
-                <tr><th>Vận tốc trượt vs (Sơ bộ)</th><td><b>${vs_sb.toFixed(2)} m/s</b></td><td>Dự đoán chọn nhóm vật liệu</td></tr>
-                <tr><th>Sơ đồ tải trọng</th><td><b style="color:#d97706;">${load_str}</b></td><td>Đánh giá mỏi theo tải thực</td></tr>
-                <tr><th>Số chu kỳ tương đương NHE / NFE</th><td><b>${formatExp(N_HE_thuc)} / ${formatExp(N_FE_thuc)}</b></td><td>Công thức: 60.n2.Lh.K</td></tr>
+                <tr><td colspan="3" class="step-title">1.ĐỘNG HỌC & CHU KỲ TẢI TRỌNG</td></tr>
+                <tr><th>Tỉ số truyền u | Số răng z1, z2</th><td><span>u = ${u.toFixed(1)} | z1 = ${z1} | z2 = ${z2.toFixed(1)}</span></td><td>Số răng trục vít chọn theo u</td></tr>
+                <tr><th>Mômen xoắn lớn nhất T2</th><td><span>${T2.toLocaleString()} N.mm</span></td><td>Hiệu suất giả định η=${eta_sb}</td></tr>
+                <tr><th>Vận tốc trượt vs (Sơ bộ)</th><td><span>${vs_sb.toFixed(2)} m/s</span></td><td>Dự đoán chọn nhóm vật liệu</td></tr>
+                <tr><th>Sơ đồ tải trọng</th><td><span>${load_str}</span></td><td>Đánh giá mỏi theo tải thực</td></tr>
+                <tr><th>Số chu kỳ tương đương NHE / NFE</th><td><span>${formatExp(N_HE_thuc)} / ${formatExp(N_FE_thuc)}</span></td><td>Công thức: 60.n2.Lh.K</td></tr>
 
-                <tr><td colspan="3" class="step-title" style="background:#0f766e !important;">BƯỚC 2: CẶP VẬT LIỆU BÁNH VÍT - TRỤC VÍT (BẢNG 7.1, 7.2)</td></tr>
-                <tr><th>Vật liệu Bánh Vít (Nhóm ${mat_group})</th><td>Giới hạn bền σb = <b>${sig_b.toFixed(1)} MPa</b></td><td>${mat_id}</td></tr>
-                <tr><th>Vật liệu Trục Vít ghép đôi</th><td><b style="color:#b91c1c;">${worm_mat_name}</b></td><td>Đồng bộ theo Bảng 7.2</td></tr>
-                <tr><th>Hệ số tuổi thọ KHL / KFL</th><td><b>${K_HL.toFixed(3)} / ${K_FL.toFixed(3)}</b></td><td>${ [1,2].includes(mat_group) ? "Có xét chu kỳ mỏi" : "Không xét theo Nhóm" }</td></tr>
-                <tr><th>[σH] Tiếp xúc cho phép</th><td><b style="color:#0f766e; font-size:1.1em;">${sig_H_cp.toFixed(2)} MPa</b></td><td>${ mat_group===1 ? "Tính theo KHL" : "Nội suy từ Bảng 7.2 theo vs" }</td></tr>
-                <tr><th>[σF] Uốn cho phép</th><td><b style="color:#0f766e; font-size:1.1em;">${sig_F_cp.toFixed(1)} MPa</b></td><td></td></tr>
+                <tr><td colspan="3" class="step-title">2.CẶP VẬT LIỆU BÁNH VÍT - TRỤC VÍT </td></tr>
+                <tr><th>Vật liệu Bánh Vít (Nhóm ${mat_group})</th><td>Giới hạn bền σb = <span>${sig_b.toFixed(1)} MPa</span></td><td>${mat_id}</td></tr>
+                <tr><th>Vật liệu Trục Vít ghép đôi</th><td><span>${worm_mat_name}</span></td><td>Đồng bộ theo Bảng 7.2</td></tr>
+                <tr><th>Hệ số tuổi thọ KHL / KFL</th><td><span>${K_HL.toFixed(3)} / ${K_FL.toFixed(3)}</span></td><td>${ [1,2].includes(mat_group) ? "Có xét chu kỳ mỏi" : "Không xét theo Nhóm" }</td></tr>
+                <tr><th>[σH] Tiếp xúc cho phép</th><td><span style="font-size:1.1em;">${sig_H_cp.toFixed(2)} MPa</span></td><td>${ mat_group===1 ? "Tính theo KHL" : "Nội suy từ Bảng 7.2 theo vs" }</td></tr>
+                <tr><th>[σF] Uốn cho phép</th><td><span style="font-size:1.1em;">${sig_F_cp.toFixed(1)} MPa</span></td><td></td></tr>
 
-                <tr><td colspan="3" class="step-title" style="background:#4338ca !important;">BƯỚC 3: KÍCH THƯỚC BỘ TRUYỀN (BẢNG 7.3, 7.9, 7.10)</td></tr>
-                <tr><th>Khoảng cách trục aw</th><td><b style="color:#4338ca; font-size:1.1em;">Chọn ${aw_choose.toFixed(1)} mm</b></td><td>Tính toán sơ bộ aw ≥ ${aw_min_ct.toFixed(1)} mm</td></tr>
-                <tr><th>Môđun m | Hệ số q (Bảng 7.3)</th><td><b>m = ${m_choose.toFixed(1)} mm | q = ${q_choose.toFixed(1)}</b></td><td>Phải là thông số tiêu chuẩn</td></tr>
-                <tr><th>Hệ số dịch chỉnh x | Góc vít γ</th><td><b style="color:#b91c1c;">x = ${x.toFixed(3)}</b> | γ = ${radians_to_degrees(gamma_w_rad).toFixed(2)}°</td><td>x = aw/m - 0.5(z2+q)</td></tr>
-                <tr><th>Trục vít (Chia d1, Đỉnh da1, Chân df1)</th><td><b>d1=${d1.toFixed(1)} | da1=${da1.toFixed(1)} | df1=${df1.toFixed(1)}</b></td><td>Đơn vị: mm</td></tr>
-                <tr><th>Bánh vít (Chia d2, Đỉnh da2, Chân df2)</th><td><b>d2=${d2.toFixed(1)} | da2=${da2.toFixed(1)} | df2=${df2.toFixed(1)}</b></td><td>Đường kính ngoài cùng daM2 <b>${daM2_max_str}</b></td></tr>
-                <tr><th>Chiều rộng bánh vít b2</th><td><b>${b2} mm</b></td><td>b2 ≤ ${b2_min_calc.toFixed(1)} mm</td></tr>
-                <tr><th>Chiều dài cắt ren trục vít b1</th><td><b style="color:#b91c1c;">${b1} mm</b></td><td>Tra Bảng 7.10</td></tr>
+                <tr><td colspan="3" class="step-title">3.KÍCH THƯỚC BỘ TRUYỀN </td></tr>
+                <tr><th>Khoảng cách trục aw</th><td><span style="font-size:1.1em;">Chọn ${aw_choose.toFixed(1)} mm</span></td><td>Tính toán sơ bộ aw ≥ ${aw_min_ct.toFixed(1)} mm</td></tr>
+                <tr><th>Môđun m | Hệ số q (Bảng 7.3)</th><td><span>m = ${m_choose.toFixed(1)} mm | q = ${q_choose.toFixed(1)}</span></td><td>Phải là thông số tiêu chuẩn</td></tr>
+                <tr><th>Hệ số dịch chỉnh x | Góc vít γ</th><td><span>x = ${x.toFixed(3)}</span> | γ = ${radians_to_degrees(gamma_w_rad).toFixed(2)}°</td><td>x = aw/m - 0.5(z2+q)</td></tr>
+                <tr><th>Trục vít (Chia d1, Đỉnh da1, Chân df1)</th><td><span>d1=${d1.toFixed(1)} | da1=${da1.toFixed(1)} | df1=${df1.toFixed(1)}</span></td><td>Đơn vị: mm</td></tr>
+                <tr><th>Bánh vít (Chia d2, Đỉnh da2, Chân df2)</th><td><span>d2=${d2.toFixed(1)} | da2=${da2.toFixed(1)} | df2=${df2.toFixed(1)}</span></td><td>Đường kính ngoài cùng daM2 <span>${daM2_max_str}</span></td></tr>
+                <tr><th>Chiều rộng bánh vít b2</th><td><span>${b2} mm</span></td><td>b2 ≤ ${b2_min_calc.toFixed(1)} mm</td></tr>
+                <tr><th>Chiều dài cắt ren trục vít b1</th><td><span>${b1} mm</span></td><td>Tra Bảng 7.10</td></tr>
 
-                <tr><td colspan="3" class="step-title" style="background:#b91c1c !important;">BƯỚC 4: THÔNG SỐ ĐỘNG LỰC HỌC (BẢNG 7.5, 7.6, 7.7)</td></tr>
-                <tr><th>Vận tốc trượt thực tế (vs)</th><td><b>${vs_thuc.toFixed(2)} m/s</b></td><td>Dùng để tra bảng cấp chính xác</td></tr>
-                <tr><th>Cấp chính xác (Bảng 7.6)</th><td><b>Cấp ${ccx}</b></td><td>Tự động chọn theo vs</td></tr>
-                <tr><th>Hệ số tải trọng động KHv (Bảng 7.7)</th><td><b>${K_hv.toFixed(3)}</b></td><td>Hệ số tổng KH = KHβ.KHv = ${KH.toFixed(3)}</td></tr>
-                <tr><th>Hệ số biến dạng Trục vít θ (Bảng 7.5)</th><td><b>${theta}</b></td><td>Dùng cho tính độ võng trục</td></tr>
+                <tr><td colspan="3" class="step-title">4.THÔNG SỐ ĐỘNG LỰC HỌC (BẢNG 7.5, 7.6, 7.7)</td></tr>
+                <tr><th>Vận tốc trượt thực tế (vs)</th><td><span>${vs_thuc.toFixed(2)} m/s</span></td><td>Dùng để tra bảng cấp chính xác</td></tr>
+                <tr><th>Cấp chính xác (Bảng 7.6)</th><td><span>Cấp ${ccx}</span></td><td>Tự động chọn theo vs</td></tr>
+                <tr><th>Hệ số tải trọng động KHv (Bảng 7.7)</th><td><span>${K_hv.toFixed(3)}</span></td><td>Hệ số tổng KH = KHβ.KHv = ${KH.toFixed(3)}</td></tr>
+                <tr><th>Hệ số biến dạng Trục vít θ (Bảng 7.5)</th><td><span>${theta}</span></td><td>Dùng cho tính độ võng trục</td></tr>
 
-                <tr><td colspan="3" class="step-title" style="background:#ea580c !important;">BƯỚC 5: KIỂM NGHIỆM BỀN (BẢNG 7.4, 7.8)</td></tr>
-                <tr><th>Góc ma sát ρ' (Bảng 7.4)</th><td><b style="color:#ea580c;">${rho_deg.toFixed(3)}°</b></td><td>Nội suy. Hiệu suất thực η = ${eta_thuc.toFixed(3)}</td></tr>
-                <tr><th>Hệ số dạng răng YF (Bảng 7.8)</th><td><b>${YF.toFixed(3)}</b></td><td>Nội suy từ số răng tương đương Zv2 = ${zv2.toFixed(1)}</td></tr>
+                <tr><td colspan="3" class="step-title">5.KIỂM NGHIỆM BỀN </td></tr>
+                <tr><th>Góc ma sát ρ' (Bảng 7.4)</th><td><span>${rho_deg.toFixed(3)}°</span></td><td>Nội suy. Hiệu suất thực η = ${eta_thuc.toFixed(3)}</td></tr>
+                <tr><th>Hệ số dạng răng YF (Bảng 7.8)</th><td><span>${YF.toFixed(3)}</span></td><td>Nội suy từ số răng tương đương Zv2 = ${zv2.toFixed(1)}</td></tr>
                 <tr><th>Ứng suất Tiếp xúc (σH)</th>
-                    <td><b style="font-size:1.1em;">${sig_H_thuc.toFixed(1)} MPa</b></td>
+                    <td><span style="font-size:1.1em;">${sig_H_thuc.toFixed(1)} MPa</span></td>
                     <td class="${sig_H_thuc <= sig_H_cp ? 'success' : 'highlight'}">${sig_H_thuc <= sig_H_cp ? 'ĐẠT' : 'KHÔNG ĐẠT'} (≤ ${sig_H_cp.toFixed(2)} MPa)</td>
                 </tr>
                 <tr><th>Ứng suất Uốn (σF)</th>
-                    <td><b style="font-size:1.1em;">${sig_F_thuc.toFixed(1)} MPa</b></td>
+                    <td><span style="font-size:1.1em;">${sig_F_thuc.toFixed(1)} MPa</span></td>
                     <td class="${sig_F_thuc <= sig_F_cp ? 'success' : 'highlight'}">${sig_F_thuc <= sig_F_cp ? 'ĐẠT' : 'KHÔNG ĐẠT'} (≤ ${sig_F_cp.toFixed(1)} MPa)</td>
                 </tr>
 
-                <tr><td colspan="3" class="step-title" style="background:#475569 !important;">BƯỚC 6: TÍNH NHIỆT TRUYỀN ĐỘNG TRỤC VÍT</td></tr>
-                <tr><th>Hệ số tỏa/thoát nhiệt</th><td><b>${cool_str}</b> | ψ = <b>${psi.toFixed(2)}</b></td><td>Nhiệt độ môi trường t0 = ${t0.toFixed(1)}°C</td></tr>
-                <tr><th>Hệ số giảm nhiệt β</th><td><b style="color:#1d4ed8;">β = ${beta_nhiet.toFixed(3)}</b></td><td>${beta_str}</td></tr>
+                <tr><td colspan="3" class="step-title">6.TÍNH NHIỆT TRUYỀN ĐỘNG TRỤC VÍT</td></tr>
+                <tr><th>Hệ số tỏa/thoát nhiệt</th><td><span>${cool_str}</span> | ψ = <span>${psi.toFixed(2)}</span></td><td>Nhiệt độ môi trường t0 = ${t0.toFixed(1)}°C</td></tr>
+                <tr><th>Hệ số giảm nhiệt β</th><td><span>β = ${beta_nhiet.toFixed(3)}</span></td><td>${beta_str}</td></tr>
                 <tr><th>Nhiệt độ dầu cho phép [td]</th>
-                    <td><b style="font-size:1.1em;">${td_cp.toFixed(1)} °C</b></td>
+                    <td><span style="font-size:1.1em;">${td_cp.toFixed(1)} °C</span></td>
                     <td>Thừa nhận [td] = ${td_cp}°C</td>
                 </tr>
                 <tr><th>Diện tích tản nhiệt cần thiết (A)</th>
-                    <td><b style="font-size:1.2em; color:#b91c1c;">A = ${A_calc.toFixed(3)} m²</b></td>
+                    <td><span style="font-size:1.2em;">A = ${A_calc.toFixed(3)} m²</span></td>
                     <td class="success">Tính theo công thức (7.32)</td>
                 </tr>
             </table>`;
@@ -659,17 +671,18 @@
             });
 
         } catch (e) {
-            document.getElementById('result_area').innerHTML = `<div class='error-box'><b>Lỗi tính toán:</b> Hãy kiểm tra lại thông số đầu vào.<br>Chi tiết: ${e.message}</div>`;
+            document.getElementById('result_area').innerHTML = `<div class='error-box'><span>Lỗi tính toán:</span> Hãy kiểm tra lại thông số đầu vào.<br>Chi tiết: ${e.message}</div>`;
         }
     }
 </script>
+<link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 <div class="container">
-    <h1>THIẾT KẾ TRỤC VÍT (FULL TÍNH TOÁN & VẼ CAD 2D CHI TIẾT)</h1>
+    <h1>THIẾT KẾ TRỤC VÍT-BÁNH VÍT </h1>
 
     <div id="input_form">
-        <h3>PHẦN 1: ĐỘNG HỌC & CHẾ ĐỘ TẢI TRỌNG</h3>
+        <h3>I.ĐỘNG HỌC & CHẾ ĐỘ TẢI TRỌNG</h3>
         <div class="grid-4">
             <div><label>Mômen xoắn lớn nhất T2 (N.mm):</label><input type="number" step="any" id="T2" value="670000" required></div>
             <div><label>Số vòng quay n1 (vg/ph):</label><input type="number" step="any" id="n1" value="930" required></div>
@@ -699,7 +712,7 @@
             </div>
         </div>
 
-        <h3>PHẦN 2: CẶP VẬT LIỆU BÁNH VÍT - TRỤC VÍT</h3>
+        <h3>II.CẶP VẬT LIỆU BÁNH VÍT - TRỤC VÍT</h3>
         <div class="grid-4">
             <div style="grid-column: span 2;">
                 <label>Vật Liệu Bánh Vít (Bảng 7.1):</label>
@@ -720,7 +733,7 @@
             </div>
         </div>
 
-        <h3>PHẦN 3: THÔNG SỐ TẢN NHIỆT & LÀM MÁT</h3>
+        <h3>III.THÔNG SỐ TẢN NHIỆT & LÀM MÁT</h3>
         <div class="grid-4">
             <div><label>Hệ số tản nhiệt đáy hộp (ψ):</label><input type="number" step="any" id="psi" min="0.1" max="0.5" value="0.25" required><div class="hint">Thường lấy 0.25 - 0.3</div></div>
             <div><label>Nhiệt độ môi trường t0 (°C):</label><input type="number" step="any" id="t0" value="20" required></div>
@@ -757,12 +770,18 @@
         <button onclick="calculateSystem()">Khởi Động Tính Toán & Tự Động Vẽ Bản Vẽ</button>
     </div>
 
-    <div id="result_area" style="margin-top: 10px; border-top: 3px solid #10b981; padding-top: 20px;"></div>
+    <div id="result_area" style="margin-top: 10px; padding-top: 20px;"></div>
 </div>
 
 <script>
     // Initialize app
-    window.onload = () => { initApp(); calculateSystem(); };
+    window.onload = () => { initApp(); };
+</script>
+<script>
+    // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng
+    if (localStorage.getItem('ctmc_theme') === 'light') { 
+        document.body.classList.add('light-theme'); 
+    }
 </script>
 </body>
 </html>

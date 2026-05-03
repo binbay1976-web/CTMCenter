@@ -39,6 +39,30 @@
   --shadow:        0 8px 32px rgba(0,0,0,0.4);
 }
 
+body.light-theme {
+  --bg-primary:    #f0f4f8;
+  --bg-secondary:  #ffffff;
+  --bg-tertiary:   #f8fafc;
+  --bg-hover:      #e2e8f0;
+  --border:        #cbd5e1;
+  --border-light:  #e2e8f0;
+
+  --text-primary:  #0f172a;
+  --text-secondary:#475569;
+  --text-muted:    #64748b;
+
+  --shadow:        0 8px 30px rgba(0,0,0,0.08);
+}
+/* Sidebar collapsed state */
+#app.sidebar-collapsed {
+  --sidebar-w: 0px;
+}
+#app.sidebar-collapsed #sidebar {
+  width: 0;
+  overflow: hidden;
+  border-right: none;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body { height: 100%; overflow: hidden; }
@@ -329,6 +353,53 @@ body {
 }
 .nav-direct .nav-module-icon { flex-shrink: 0; }
 
+/* Search bar */
+.sidebar-search {
+  padding: 8px 10px 4px;
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+  z-index: 2;
+  border-bottom: 1px solid var(--border-light);
+}
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-icon {
+  position: absolute;
+  left: 9px;
+  font-size: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+#sidebar-search {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 12px;
+  padding: 6px 8px 6px 28px;
+  outline: none;
+  transition: var(--transition);
+  font-family: inherit;
+}
+#sidebar-search::placeholder { color: var(--text-muted); }
+#sidebar-search:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+}
+.search-no-result {
+  display: none;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+}
+
 /* Sidebar footer */
 .sidebar-footer {
   margin-top: auto;
@@ -496,6 +567,76 @@ body {
   border: 1px solid var(--border);
 }
 
+/* Recent modules section */
+.recent-section {
+  margin-top: 32px;
+  width: 100%;
+  max-width: 720px;
+}
+.recent-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+.recent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.recent-chip {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.recent-chip:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: var(--dm-blue-bg, rgba(88,166,255,0.1));
+}
+
+/* Error screen */
+#error-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--text-secondary);
+}
+.error-icon { font-size: 48px; }
+.error-msg {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 360px;
+  line-height: 1.6;
+}
+.btn-retry {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 8px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+.btn-retry:hover { background: var(--bg-hover); }
+
 /* Loading bar */
 #loading-bar {
   position: absolute;
@@ -625,6 +766,11 @@ body {
   #sidebar.open { transform: translateX(0); }
   .logo-area { min-width: auto; border-right: none; }
 }
+
+/* Sidebar transition for collapse */
+#sidebar { transition: width 0.25s ease, transform var(--transition); }
+#app.sidebar-collapsed #sidebar { width: 0; overflow: hidden; border-right: none; }
+#app.sidebar-collapsed .logo-area { border-right: none; }
 </style>
 </head>
 <body>
@@ -650,8 +796,10 @@ body {
 
     <div class="header-actions">
       <div class="status-dot" title="Sẵn sàng"></div>
-      <button class="btn-icon" onclick="goHome()" title="Trang chủ">🏠</button>
-      <button class="btn-icon" onclick="reloadFrame()" title="Tải lại module">↺</button>
+      <button class="btn-icon" onclick="toggleSidebarCollapse()" title="Thu/mở sidebar [Ctrl+B]">◫</button>
+      <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()" title="Đổi giao diện Sáng/Tối">☀️</button>
+      <button class="btn-icon" onclick="goHome()" title="Trang chủ [Esc]">🏠</button>
+      <button class="btn-icon" onclick="reloadFrame()" title="Tải lại module [F5]">↺</button>
       <button class="btn-icon" onclick="openFrameTab()" title="Mở trong tab mới">⊞</button>
     </div>
   </header>
@@ -661,6 +809,14 @@ body {
 
     <!-- SIDEBAR -->
     <aside id="sidebar">
+      <!-- Search -->
+      <div class="sidebar-search">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input id="sidebar-search" type="text" placeholder="Tìm module..." oninput="searchModules(this.value)" autocomplete="off">
+        </div>
+      </div>
+      <div class="search-no-result" id="search-no-result">Không tìm thấy module.</div>
       <div class="sidebar-section-title">PHẦN MỀM</div>
 
       <!-- MODULE 1: HTD -->
@@ -783,6 +939,14 @@ body {
     <main id="content">
       <div id="loading-bar"></div>
 
+      <!-- Error screen -->
+      <div id="error-screen">
+        <div class="error-icon">⚠️</div>
+        <div class="error-msg" id="error-msg">Không thể tải module này.</div>
+        <button class="btn-retry" onclick="reloadFrame()">↺ Thử lại</button>
+        <button class="btn-retry" onclick="goHome()" style="margin-left:8px">🏠 Về trang chủ</button>
+      </div>
+
       <!-- Welcome screen -->
       <section id="welcome-screen">
         <div class="welcome-logo">⚙️</div>
@@ -848,6 +1012,12 @@ body {
             </div>
           </div>
         </div>
+
+        <!-- Recent modules -->
+        <div class="recent-section" id="recent-section" style="display:none">
+          <div class="recent-title">🕐 Đã mở gần đây</div>
+          <div class="recent-chips" id="recent-chips"></div>
+        </div>
       </section>
 
       <!-- iframe wrap -->
@@ -895,6 +1065,33 @@ let currentFile = null;
 let currentModule = null;
 let currentItemEl = null;
 let openModules = new Set();
+const MAX_RECENT = 6;
+
+/* ===========================
+   RECENT MODULES
+=========================== */
+function getRecent() {
+  try { return JSON.parse(localStorage.getItem('ctmc_recent') || '[]'); } catch { return []; }
+}
+function addRecent(file, modName, itemName) {
+  let list = getRecent().filter(r => r.file !== file);
+  list.unshift({ file, modName, itemName });
+  if (list.length > MAX_RECENT) list = list.slice(0, MAX_RECENT);
+  localStorage.setItem('ctmc_recent', JSON.stringify(list));
+  renderRecent();
+}
+function renderRecent() {
+  const list = getRecent();
+  const sec = document.getElementById('recent-section');
+  const chips = document.getElementById('recent-chips');
+  if (!list.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  chips.innerHTML = list.map(r =>
+    `<div class="recent-chip" onclick="loadModule('${r.modName}','${r.itemName}','${r.file}',null)" title="${r.modName} · ${r.itemName}">
+      ⚡ ${r.itemName}
+    </div>`
+  ).join('');
+}
 
 /* ===========================
    TIME
@@ -908,10 +1105,13 @@ setInterval(updateTime, 1000);
 updateTime();
 
 /* ===========================
-   SIDEBAR TOGGLE (mobile)
+   SIDEBAR TOGGLES
 =========================== */
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
+}
+function toggleSidebarCollapse() {
+  document.getElementById('app').classList.toggle('sidebar-collapsed');
 }
 
 /* ===========================
@@ -933,6 +1133,59 @@ function toggleModule(modId) {
     chvEl.classList.add('open');
     hdrEl.classList.add('active-module');
   }
+}
+
+/* ===========================
+   SEARCH SIDEBAR
+=========================== */
+function searchModules(query) {
+  const q = query.toLowerCase().trim();
+  const allItems = document.querySelectorAll('.nav-sub-item, .nav-module-header, .nav-direct');
+  const noRes = document.getElementById('search-no-result');
+  let found = 0;
+
+  if (!q) {
+    // Restore all
+    document.querySelectorAll('.nav-module').forEach(m => m.style.display = '');
+    document.querySelectorAll('.nav-sub-item, .nav-direct').forEach(el => el.style.display = '');
+    noRes.style.display = 'none';
+    return;
+  }
+
+  document.querySelectorAll('.nav-module').forEach(mod => {
+    const header = mod.querySelector('.nav-module-header');
+    const subItems = mod.querySelectorAll('.nav-sub-item');
+    const headerText = header?.textContent.toLowerCase() || '';
+    let modVisible = false;
+
+    subItems.forEach(item => {
+      const match = item.textContent.toLowerCase().includes(q);
+      item.style.display = match ? '' : 'none';
+      if (match) { modVisible = true; found++; }
+    });
+
+    if (subItems.length === 0 && headerText.includes(q)) {
+      modVisible = true; found++;
+    }
+    mod.style.display = modVisible ? '' : 'none';
+
+    // Auto-expand matched groups
+    if (modVisible && mod.querySelector('.nav-sub-items')) {
+      const modId = mod.querySelector('.nav-module-header')?.id?.replace('hdr-','');
+      if (modId && !openModules.has(modId)) {
+        mod.querySelector('.nav-sub-items')?.classList.add('open');
+        mod.querySelector('.nav-chevron')?.classList.add('open');
+      }
+    }
+  });
+
+  document.querySelectorAll('.nav-direct').forEach(el => {
+    const match = el.textContent.toLowerCase().includes(q);
+    el.style.display = match ? '' : 'none';
+    if (match) found++;
+  });
+
+  noRes.style.display = found === 0 ? 'block' : 'none';
 }
 
 /* ===========================
@@ -975,8 +1228,9 @@ function _load(file, modName, itemName) {
   document.getElementById('status-text').textContent = 'Đang tải...';
   document.getElementById('loader-text').textContent = 'Đang tải: ' + itemName + '...';
 
-  // Show iframe wrap, hide welcome
+  // Show iframe wrap, hide welcome & error
   document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('error-screen').style.display = 'none';
   const iWrap = document.getElementById('iframe-wrap');
   iWrap.style.display = 'flex';
   iWrap.style.flexDirection = 'column';
@@ -988,29 +1242,53 @@ function _load(file, modName, itemName) {
   // Loading bar animation
   const bar = document.getElementById('loading-bar');
   bar.style.width = '0%';
-  setTimeout(() => bar.style.width = '60%', 50);
-  setTimeout(() => bar.style.width = '85%', 400);
+  const t1 = setTimeout(() => bar.style.width = '60%', 50);
+  const t2 = setTimeout(() => bar.style.width = '85%', 400);
+
+  // Timeout fallback: if iframe doesn't load in 10s → show error
+  const loadTimeout = setTimeout(() => showFrameError(itemName), 10000);
 
   // Load iframe
   const frame = document.getElementById('module-frame');
   frame.src = '';
-  setTimeout(() => {
-    frame.src = file;
-  }, 80);
+  setTimeout(() => { frame.src = file; }, 80);
 
   frame.onload = function() {
+    clearTimeout(loadTimeout);
     bar.style.width = '100%';
+    
+    // Gửi thư cài đặt theme cho module ngay khi nó vừa tải xong
+    const isLight = document.body.classList.contains('light-theme');
+    frame.contentWindow.postMessage({ theme: isLight ? 'light' : 'dark' }, '*');
+
     setTimeout(() => {
       bar.style.width = '0%';
       loader.classList.add('hidden');
       document.getElementById('status-text').textContent = 'Sẵn sàng';
     }, 300);
+    addRecent(file, modName, itemName);
+  };
+
+  frame.onerror = function() {
+    clearTimeout(loadTimeout);
+    clearTimeout(t1); clearTimeout(t2);
+    showFrameError(itemName);
   };
 
   // Close mobile sidebar
   if (window.innerWidth <= 900) {
     document.getElementById('sidebar').classList.remove('open');
   }
+}
+
+function showFrameError(itemName) {
+  const loader = document.getElementById('frame-loader');
+  loader.classList.add('hidden');
+  document.getElementById('iframe-wrap').style.display = 'none';
+  document.getElementById('error-msg').textContent = `Không thể tải module "${itemName}". File có thể không tồn tại hoặc bị lỗi.`;
+  document.getElementById('error-screen').style.display = 'flex';
+  document.getElementById('status-text').textContent = 'Lỗi tải module';
+  document.getElementById('loading-bar').style.width = '0%';
 }
 
 /* ===========================
@@ -1026,6 +1304,7 @@ function goHome() {
   });
 
   document.getElementById('welcome-screen').style.display = 'flex';
+  document.getElementById('error-screen').style.display = 'none';
   document.getElementById('iframe-wrap').style.display = 'none';
   document.getElementById('module-frame').src = '';
   document.getElementById('bc-current').textContent = 'Trang chủ';
@@ -1062,6 +1341,36 @@ function openFrameTab() {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') goHome();
   if (e.key === 'F5' && currentFile) { e.preventDefault(); reloadFrame(); }
+  if (e.ctrlKey && e.key === 'b') { e.preventDefault(); toggleSidebarCollapse(); }
+  if (e.ctrlKey && e.key === 'k') { e.preventDefault(); document.getElementById('sidebar-search')?.focus(); }
+});
+
+/* ===========================
+   THEME TOGGLE
+=========================== */
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-theme');
+  localStorage.setItem('ctmc_theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-toggle').textContent = isLight ? '🌙' : '☀️';
+
+  // Dùng postMessage để gửi thư xuyên qua Iframe một cách an toàn
+  const frame = document.getElementById('module-frame');
+  if (frame.contentWindow) {
+      frame.contentWindow.postMessage({ theme: isLight ? 'light' : 'dark' }, '*');
+  }
+}
+
+/* ===========================
+   INIT
+=========================== */
+document.addEventListener('DOMContentLoaded', () => {
+  renderRecent();
+
+  // Khôi phục giao diện người dùng đã chọn trước đó
+  if (localStorage.getItem('ctmc_theme') === 'light') {
+    document.body.classList.add('light-theme');
+    document.getElementById('theme-toggle').textContent = '🌙';
+  }
 });
 </script>
 </body>
