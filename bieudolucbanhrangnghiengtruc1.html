@@ -275,6 +275,14 @@
             <h3>Mômen & Khác</h3>
             <div class="input-grid">
                 <div class="field">
+                    <label for="Fa1">Fa1</label>
+                    <input type="number" id="Fa1" value="500">
+                </div>
+                <div class="field">
+                    <label for="dw1">dw1</label>
+                    <input type="number" id="dw1" value="40">
+                </div>
+                <div class="field">
                     <label for="T1">T1</label>
                     <input type="number" id="T1" value="68542.5">
                 </div>
@@ -497,6 +505,9 @@ function updateDiagrams() {
     const FCx = parseFloat(document.getElementById("FCx").value) || 0;
     const Fk  = parseFloat(document.getElementById("Fk").value) || 0;
 
+    const Fa1 = parseFloat(document.getElementById("Fa1").value) || 0;
+    const dw1 = parseFloat(document.getElementById("dw1").value) || 0;
+
     const AB = parseFloat(document.getElementById("AB").value) || 1;
     const BC = parseFloat(document.getElementById("BC").value) || 1;
     const CD = parseFloat(document.getElementById("CD").value) || 1;
@@ -505,10 +516,17 @@ function updateDiagrams() {
 
     const QY_AB = -FAy;
     const QY_BC = -FAy + Fr1;
-    const QY_CD = -FAy + Fr1 + FCy;
+    const QY_CD = -FAy + Fr1 - FCy;
 
+    const MFa1 = Fa1 * (dw1 / 2.0);
     const MX_A = 0;
-    const MX_B = QY_AB * AB;
+    const MX_B_LEFT = QY_AB * AB;
+    let MX_B_RIGHT = MX_B_LEFT;
+    if (MX_B_LEFT > 0) {
+        MX_B_RIGHT = MX_B_LEFT + MFa1;
+    } else if (MX_B_LEFT < 0) {
+        MX_B_RIGHT = MX_B_LEFT - MFa1;
+    }
     const MX_C = 0;
     const MX_D = 0;
 
@@ -533,7 +551,7 @@ function updateDiagrams() {
             </tr>
             <tr>
                 <th>Mômen uốn Mx (N.mm)</th>
-                <td colspan="3">A = <b>${formatNumber(MX_A)}</b> | B = <b>${formatNumber(MX_B)}</b> | C = <b>${formatNumber(MX_C)}</b> | D = <b>${formatNumber(MX_D)}</b></td>
+                <td colspan="3">A = <b>${formatNumber(MX_A)}</b> | B(trái) = <b class="val-highlight">${formatNumber(MX_B_LEFT)}</b> | B(phải) = <b class="val-highlight">${formatNumber(MX_B_RIGHT)}</b> | C = <b>${formatNumber(MX_C)}</b> | D = <b>${formatNumber(MX_D)}</b></td>
             </tr>
             <tr>
                 <th>Lực cắt Qx (N)</th>
@@ -593,8 +611,17 @@ function updateDiagrams() {
     addLine(topLayer, xA, yShaft, xA, yShaft + 92, "arrow");
     addText(topLayer, xA - 12, yShaft + 110, "FAy", "label-blue", "middle");
 
-    addRect(topLayer, xB - 44, yShaft - 82, 88, 164, "hinh");
+    // BIỂU DIỄN BÁNH RĂNG NGHIÊNG TẠI B
+    const rectBx = xB - 44;
+    const rectBy = yShaft - 82;
+    const rectBw = 88;
+    const rectBh = 164;
+    addRect(topLayer, rectBx, rectBy, rectBw, rectBh, "hinh");
     addText(topLayer, xB, yShaft - 94, "B", "", "middle");
+
+    // hai gạch xiên chạm vào hai cạnh hình chữ nhật (kí hiệu răng nghiêng)
+    addLine(topLayer, rectBx, rectBy + 28, rectBx + rectBw, rectBy + 8, "kyhieu");
+    addLine(topLayer, rectBx, rectBy + 44, rectBx + rectBw, rectBy + 24, "kyhieu");
 
     const yBbase = yShaft + 82;
     addLine(topLayer, xB, yBbase, xB, yBbase - 86, "arrow");
@@ -602,6 +629,10 @@ function updateDiagrams() {
 
     addLine(topLayer, xB, yBbase, xB + 52, yBbase - 40, "arrow");
     addText(topLayer, xB + 56, yBbase - 35, "Ft1", "label-blue");
+
+    // Mũi tên Fa1
+    addLine(topLayer, xB, yBbase, xB + 78, yBbase, "arrow");
+    addText(topLayer, xB + 82, yBbase + 5, "Fa1", "label-blue");
 
     addText(topLayer, xC - 6, yShaft - 18, "C");
     const bearingC_len = 52;
@@ -640,12 +671,16 @@ function updateDiagrams() {
     });
     drawCoordOXY_Yup(qyLayer, 1140, yQy0 + 8);
 
-    drawMomentDiagramStandard(mxLayer, {
+    drawMomentDiagramMx(mxLayer, {
         title: "Mx",
         unit: "N.mm",
         xA, xB, xC, xD, y0: yMx0,
         xAxisLeft,
-        moments: [MX_A, MX_B, MX_C, MX_D],
+        mA: MX_A,
+        mBLeft: MX_B_LEFT,
+        mBRight: MX_B_RIGHT,
+        mC: MX_C,
+        mD: MX_D,
         fillClass: "m-fill",
         lineClass: "m",
         positiveDown: true
@@ -738,11 +773,10 @@ function drawShearDiagramRect(layer, config) {
     addText(layer, (xC + xD) / 2, (vCD >= 0 ? yCD - 12 : yCD + 26), formatTickValueWithUnit(Math.abs(vCD), unit), "value-text", "middle");
 }
 
-function drawMomentDiagramStandard(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, moments, fillClass, lineClass, positiveDown } = config;
-    const [mA, mB, mC, mD] = moments;
+function drawMomentDiagramMx(layer, config) {
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, mA, mBLeft, mBRight, mC, mD, fillClass, lineClass, positiveDown } = config;
 
-    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1);
+    const maxM = Math.max(Math.abs(mA), Math.abs(mBLeft), Math.abs(mBRight), Math.abs(mC), Math.abs(mD), 1);
     const niceMax = Math.ceil(maxM / 1000) * 1000 || 1000;
 
     drawDiagramLabel(layer, 42, y0 - 8, title, unit);
@@ -756,14 +790,16 @@ function drawMomentDiagramStandard(layer, config) {
     const mapY = (m) => positiveDown ? y0 + m * scale : y0 - m * scale;
 
     const yA = mapY(mA);
-    const yB = mapY(mB);
+    const yBLeft = mapY(mBLeft);
+    const yBRight = mapY(mBRight);
     const yC = mapY(mC);
     const yD = mapY(mD);
 
     addPath(layer, `
         M ${xA} ${y0}
         L ${xA} ${yA}
-        L ${xB} ${yB}
+        L ${xB} ${yBLeft}
+        L ${xB} ${yBRight}
         L ${xC} ${yC}
         L ${xD} ${yD}
         L ${xD} ${y0}
@@ -772,7 +808,8 @@ function drawMomentDiagramStandard(layer, config) {
 
     addPath(layer, `
         M ${xA} ${yA}
-        L ${xB} ${yB}
+        L ${xB} ${yBLeft}
+        L ${xB} ${yBRight}
         L ${xC} ${yC}
         L ${xD} ${yD}
     `, lineClass);
@@ -782,8 +819,8 @@ function drawMomentDiagramStandard(layer, config) {
     addText(layer, xC, y0 + 24, "C", "", "middle");
     addText(layer, xD + 10, y0 + 24, "D");
 
-    if (mB !== 0) addText(layer, xB, (mB >= 0 ? yB + 26 : yB - 12), formatTickValueWithUnit(Math.abs(mB), unit), "value-text", "middle");
-    if (mC !== 0) addText(layer, xC, (mC >= 0 ? yC + 26 : yC - 12), formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
+    if (mBLeft !== 0) addText(layer, xB - 32, (mBLeft >= 0 ? yBLeft + 26 : yBLeft - 12), formatTickValueWithUnit(Math.abs(mBLeft), unit), "value-text", "end");
+    if (mBRight !== 0) addText(layer, xB + 32, (mBRight >= 0 ? yBRight + 26 : yBRight - 12), formatTickValueWithUnit(Math.abs(mBRight), unit), "value-text", "start");
 }
 
 function drawShearDiagramXOZ(layer, config) {

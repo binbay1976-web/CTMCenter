@@ -313,7 +313,7 @@ function triggerUpdate() {
 }
 
 /* =========================================================
-   GIỮ NGUYÊN 100% ĐOẠN CODE TOÁN HỌC VÀ VẼ SVG TỪ BẢN GỐC
+   HÀM VẼ SVG VÀ TÍNH TOÁN
    ========================================================= */
 function createSvgEl(tag, attrs = {}) {
     const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -360,17 +360,6 @@ function formatNumber(n) {
 }
 function formatTickValueWithUnit(n, unit) {
     return `${formatNumber(n)} ${unit}`;
-}
-function niceCeil(v){
-    if (v <= 0) return 1;
-    const p = Math.pow(10, Math.floor(Math.log10(v)));
-    const m = v / p;
-    let n;
-    if (m <= 1) n = 1;
-    else if (m <= 2) n = 2;
-    else if (m <= 5) n = 5;
-    else n = 10;
-    return n * p;
 }
 function drawCoordOXY_Yup(layer, x, y) {
     addLine(layer, x, y, x, y - 30, "coord");
@@ -426,9 +415,9 @@ function drawVerticalTicks(layer, xAxis, y0, maxAbsValue, unit, positiveDown = f
     addText(layer, xAxis - 12, yMid + 4, formatTickValueWithUnit(tickMidVal, unit), "tick-text", "end");
     addText(layer, xAxis - 12, yBot + 4, botText, "tick-text", "end");
 
-    addLine(layer, xAxis, yTop, xAxis + 820, yTop, "grid-line");
-    addLine(layer, xAxis, yMid, xAxis + 820, yMid, "grid-line");
-    addLine(layer, xAxis, yBot, xAxis + 820, yBot, "grid-line");
+    addLine(layer, xAxis, yTop, xAxis + 1150, yTop, "grid-line");
+    addLine(layer, xAxis, yMid, xAxis + 1150, yMid, "grid-line");
+    addLine(layer, xAxis, yBot, xAxis + 1150, yBot, "grid-line");
 }
 function drawDiagramLabel(layer, x, y, title, unit) {
     addText(layer, x, y, title, "diagram-title", "middle");
@@ -541,15 +530,10 @@ function updateDiagrams() {
     const QY_CD = QY_BC - Fr2;
 
     const MX_A = 0;
-    const MX_B_LEFT = QY_AB * AB;
-    let MX_B_RIGHT = MX_B_LEFT;
-    if (MX_B_LEFT > 0) {
-        MX_B_RIGHT = MX_B_LEFT + Mfa2;
-    } else if (MX_B_LEFT < 0) {
-        MX_B_RIGHT = MX_B_LEFT - Mfa2;
-    }
-    const MX_C = 0;
-    const MX_D = 0;
+    const MX_B = QY_AB * AB;
+    const MX_C_LEFT = QY_AB * AB + QY_BC * BC;
+    const MX_C_RIGHT = MX_C_LEFT - Mfa2;
+    const MX_D = MX_C_RIGHT + QY_CD * CD;
 
     const QX_A  = 0;
     const QX_AB = 0; 
@@ -561,7 +545,7 @@ function updateDiagrams() {
     const MY_C = QX_AB * AB + QX_BC * BC;
     const MY_D = QX_AB * AB + QX_BC * BC + QX_CD * CD;
 
-    // HIỂN THỊ BẢNG KẾT QUẢ ĐEN CHỮ TRẮNG
+    // HIỂN THỊ BẢNG KẾT QUẢ ĐEN CHỮ TRẮNG (CẬP NHẬT ĐOẠN A -> C CHO T2)
     document.getElementById("resultBox").innerHTML = `
         <table>
             <tr><th colspan="4" style="background-color: #173b6d; color: white; text-transform: uppercase; font-size: 16px;">BẢNG GIÁ TRỊ NỘI LỰC VÀ PHẢN LỰC</th></tr>
@@ -577,7 +561,7 @@ function updateDiagrams() {
             </tr>
             <tr>
                 <th>Mômen uốn Mx (N.mm)</th>
-                <td colspan="3">A = <b>${formatNumber(MX_A)}</b> | B(trái) = <b class="val-highlight">${formatNumber(MX_B_LEFT)}</b> | B(phải) = <b class="val-highlight">${formatNumber(MX_B_RIGHT)}</b> | C = <b>${formatNumber(MX_C)}</b></td>
+                <td colspan="3">A = <b>${formatNumber(MX_A)}</b> | B = <b>${formatNumber(MX_B)}</b> | C(trái) = <b class="val-highlight">${formatNumber(MX_C_LEFT)}</b> | C(phải) = <b class="val-highlight">${formatNumber(MX_C_RIGHT)}</b> | D = <b>${formatNumber(MX_D)}</b></td>
             </tr>
             <tr>
                 <th>Lực cắt Qx (N)</th>
@@ -589,7 +573,7 @@ function updateDiagrams() {
             </tr>
             <tr>
                 <th>Mômen xoắn T2 (N.mm)</th>
-                <td colspan="3"><b class="val-highlight" style="font-size: 1.2em;">${formatNumber(T2)}</b> (Đoạn B → D)</td>
+                <td colspan="3"><b class="val-highlight" style="font-size: 1.2em;">${formatNumber(T2)}</b> (Đoạn A → C)</td>
             </tr>
         </table>
     `;
@@ -613,36 +597,36 @@ function updateDiagrams() {
         xA, xB, xC, xD, y0: yQy0, xAxisLeft: 128, 
         values: [QY_AB, QY_BC, QY_CD], fillClass: "q-fill", lineClass: "q", positiveDown: false 
     });
-    drawCoordOXY_Yup(qyLayer, 1370, yQy0 + 8);
+    drawCoordOXY_Yup(qyLayer, 1420, yQy0 + 8);
 
     drawMomentDiagramMx(mxLayer, {
         title: "Mx", unit: "N.mm",
         xA, xB, xC, xD, y0: yMx0, xAxisLeft: 128,
-        mA: MX_A, mBLeft: MX_B_LEFT, mBRight: MX_B_RIGHT, mC: MX_C, mD: MX_D,
+        mA: MX_A, mB: MX_B, mCLeft: MX_C_LEFT, mCRight: MX_C_RIGHT, mD: MX_D,
         fillClass: "m-fill", lineClass: "m", positiveDown: true
     });
-    drawCoordOXY_Ydown(mxLayer, 1370, yMx0 + 8);
+    drawCoordOXY_Ydown(mxLayer, 1420, yMx0 + 8);
 
     drawShearDiagramXOZ(qxLayer, { 
         title: "Qx", unit: "N",
         xA, xB, xC, xD, y0: yQx0, xAxisLeft: 128, 
         values: [QX_AB, QX_BC, QX_CD], fillClass: "qx-fill", lineClass: "q" 
     });
-    drawCoordOXZ_Xout(qxLayer, 1370, yQx0 + 8);
+    drawCoordOXZ_Xout(qxLayer, 1420, yQx0 + 8);
 
     drawMomentDiagramXOZ(myLayer, { 
         title: "My", unit: "N.mm",
         xA, xB, xC, xD, y0: yMy0, xAxisLeft: 128, 
         moments: [MY_A, MY_B, MY_C, MY_D], fillClass: "my-fill", lineClass: "m" 
     });
-    drawCoordOXZ_Xin(myLayer, 1370, yMy0 + 8);
+    drawCoordOXZ_Xin(myLayer, 1420, yMy0 + 8);
 
     drawTorqueDiagramT2(t2Layer, { 
         title: "T₂", unit: "N.mm",
         xA, xB, xC, xD, y0: yT20, xAxisLeft: 128, 
         t2: T2, fillClass: "t-fill", lineClass: "t" 
     });
-    drawCoordOXY_Yup(t2Layer, 1370, yT20 + 8);
+    drawCoordOXY_Yup(t2Layer, 1420, yT20 + 8);
 }
 
 function drawShearDiagramQy(layer, config) {
@@ -698,9 +682,9 @@ function drawShearDiagramQy(layer, config) {
 }
 
 function drawMomentDiagramMx(layer, config) {
-    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, mA, mBLeft, mBRight, mC, mD, fillClass, lineClass, positiveDown } = config;
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, mA, mB, mCLeft, mCRight, mD, fillClass, lineClass, positiveDown } = config;
 
-    const maxM = Math.max(Math.abs(mA), Math.abs(mBLeft), Math.abs(mBRight), Math.abs(mC), Math.abs(mD), 1);
+    const maxM = Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mCLeft), Math.abs(mCRight), Math.abs(mD), 1);
     const niceMax = Math.ceil(maxM / 1000) * 1000 || 1000;
 
     drawDiagramLabel(layer, 42, y0 - 8, title, unit);
@@ -714,17 +698,17 @@ function drawMomentDiagramMx(layer, config) {
     const mapY = (m) => positiveDown ? y0 + m * scale : y0 - m * scale;
 
     const yA = mapY(mA);
-    const yBLeft = mapY(mBLeft);
-    const yBRight = mapY(mBRight);
-    const yC = mapY(mC);
+    const yB = mapY(mB);
+    const yCLeft = mapY(mCLeft);
+    const yCRight = mapY(mCRight);
     const yD = mapY(mD);
 
     addPath(layer, `
         M ${xA} ${y0}
         L ${xA} ${yA}
-        L ${xB} ${yBLeft}
-        L ${xB} ${yBRight}
-        L ${xC} ${yC}
+        L ${xB} ${yB}
+        L ${xC} ${yCLeft}
+        L ${xC} ${yCRight}
         L ${xD} ${yD}
         L ${xD} ${y0}
         Z
@@ -732,9 +716,9 @@ function drawMomentDiagramMx(layer, config) {
 
     addPath(layer, `
         M ${xA} ${yA}
-        L ${xB} ${yBLeft}
-        L ${xB} ${yBRight}
-        L ${xC} ${yC}
+        L ${xB} ${yB}
+        L ${xC} ${yCLeft}
+        L ${xC} ${yCRight}
         L ${xD} ${yD}
     `, lineClass);
 
@@ -743,8 +727,9 @@ function drawMomentDiagramMx(layer, config) {
     addText(layer, xC, y0 + 24, "C", "", "middle");
     addText(layer, xD + 10, y0 + 24, "D");
 
-    if (mBLeft !== 0) addText(layer, xB - 32, (mBLeft >= 0 ? yBLeft + 26 : yBLeft - 12), formatTickValueWithUnit(Math.abs(mBLeft), unit), "value-text", "end");
-    if (mBRight !== 0) addText(layer, xB + 32, (mBRight >= 0 ? yBRight + 26 : yBRight - 12), formatTickValueWithUnit(Math.abs(mBRight), unit), "value-text", "start");
+    if (mB !== 0) addText(layer, xB, (mB >= 0 ? yB + 26 : yB - 12), formatTickValueWithUnit(Math.abs(mB), unit), "value-text", "middle");
+    if (mCLeft !== 0) addText(layer, xC - 32, (mCLeft >= 0 ? yCLeft + 26 : yCLeft - 12), formatTickValueWithUnit(Math.abs(mCLeft), unit), "value-text", "end");
+    if (mCRight !== 0) addText(layer, xC + 32, (mCRight >= 0 ? yCRight + 26 : yCRight - 12), formatTickValueWithUnit(Math.abs(mCRight), unit), "value-text", "start");
 }
 
 function drawShearDiagramXOZ(layer, config) {
@@ -857,17 +842,18 @@ function drawTorqueDiagramT2(layer, config) {
     const scale = niceMax > 0 ? maxHeight / niceMax : 0;
     const yT = y0 - t2 * scale; 
 
+    // CHỈNH SỬA VẼ MÔMEN TỪ A ĐẾN C
     addPath(layer, `
-        M ${xB} ${y0}
-        L ${xB} ${yT}
-        L ${xD} ${yT}
-        L ${xD} ${y0}
+        M ${xA} ${y0}
+        L ${xA} ${yT}
+        L ${xC} ${yT}
+        L ${xC} ${y0}
         Z
     `, fillClass);
 
     addPath(layer, `
-        M ${xB} ${yT}
-        L ${xD} ${yT}
+        M ${xA} ${yT}
+        L ${xC} ${yT}
     `, lineClass);
 
     addText(layer, xA - 14, y0 - 8, "A");
@@ -876,7 +862,7 @@ function drawTorqueDiagramT2(layer, config) {
     addText(layer, xD + 10, y0 + 24, "D");
 
     if (t2 !== 0) {
-        addText(layer, (xB + xD) / 2, (t2 > 0 ? yT - 14 : yT + 28), formatTickValueWithUnit(Math.abs(t2), unit), "value-text", "middle");
+        addText(layer, (xA + xC) / 2, (t2 > 0 ? yT - 14 : yT + 28), formatTickValueWithUnit(Math.abs(t2), unit), "value-text", "middle");
     }
 }
 </script>
