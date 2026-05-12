@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Chọn và kiểm nghiệm 5 trường hợp then</title>
+<style>
+body{margin:0;padding:24px;font-family:Arial,sans-serif;background:#eef3f8;color:#1f2937}
+.main-container{max-width:1250px;margin:auto}
+h1{text-align:center;color:#0f172a;margin-bottom:6px}.subtitle{text-align:center;color:#475569;margin-bottom:22px}
+.card,.container{background:#fff;border-radius:18px;padding:22px;margin-bottom:22px;box-shadow:0 8px 24px rgba(15,23,42,.12)}
+.card h2{margin-top:0;color:#0f172a;border-bottom:2px solid #e2e8f0;padding-bottom:10px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.group{background:#f1f6ff;border:1px solid #d8e7ff;padding:14px;border-radius:12px}
+label{display:block;font-weight:bold;margin-bottom:6px;color:#334155}input,select{width:100%;padding:10px 11px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;box-sizing:border-box}input[readonly]{background:#f1f5f9;color:#475569}
+button{width:100%;padding:15px;border:none;border-radius:14px;background:#2563eb;color:white;font-size:18px;font-weight:bold;cursor:pointer;margin-top:10px}button:hover{background:#1d4ed8}.result{background:#f8fafc;border:1px solid #dbe4ee;border-radius:16px;padding:18px;line-height:1.8}.ok{color:#16a34a;font-weight:bold}.bad,.fail{color:#dc2626;font-weight:bold}.formula{background:#f8fafc;border-left:5px solid #2563eb;padding:14px 18px;border-radius:10px;line-height:1.8;margin-bottom:16px;font-family:Arial,sans-serif;font-size:16px}table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}th,td{border:1px solid #cbd5e1;padding:7px;text-align:center}th{background:#e2e8f0}.active{background:#dcfce7;font-weight:bold}.small{font-size:13px;color:#475569;margin-top:5px;line-height:1.45}.highlight{background:#ecfdf5;border:1px solid #bbf7d0;padding:10px;border-radius:10px}.hidden{display:none!important}.note{margin-top:14px;padding:12px;background:#fff8e1;border-left:5px solid #ffc107;border-radius:8px;line-height:1.55}.error{margin-top:20px;background:#ffecec;color:#b00020;padding:14px;border-radius:10px;font-weight:bold}.case-section{display:none}.case-section.show{display:block}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="main-container">
+<h1>CHỌN VÀ KIỂM NGHIỆM THEN</h1>
+<div class="subtitle">Gộp 5 trường hợp: then bằng, then bằng cao, then bán nguyệt, then hoa răng chữ nhật, then hoa răng thân khai</div>
+<div class="card">
+<h2>0. Chọn trường hợp then</h2>
+<div class="grid">
+<div><label>Trường hợp then</label><select id="globalType" onchange="globalSwitch()">
+<option value="thuong">Then bằng</option>
+<option value="cao">Then bằng cao</option>
+<option value="banNguyet">Then bán nguyệt</option>
+<option value="rect">Then hoa răng chữ nhật</option>
+<option value="inv">Then hoa răng thân khai</option>
+</select></div>
+</div>
+</div>
+<select id="mainType" class="hidden"><option value="rect">rect</option><option value="inv">inv</option></select>
+<div id="normalKeysSection" class="case-section show"><div class="card"><h2 id="normalTitle">1. Then bằng</h2>
+
+
+
+<div class="grid">
+
+    <div class="group hidden">
+        <label>Loại then</label>
+        <select id="loaiThen" onchange="key_capNhatForm()">
+            <option value="thuong">Then bằng thường</option>
+            <option value="cao">Then bằng cao</option>
+            <option value="banNguyet">Then bán nguyệt</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label>Đường kính trục d, mm</label>
+        <input type="number" id="d" value="45" step="0.01">
+    </div>
+
+    <div class="group" id="nhomLm">
+        <label>Chiều dài mayơ lm, mm</label>
+        <input type="number" id="lm" value="60" step="0.01">
+    </div>
+
+    <div class="group hidden" id="nhomCongDung">
+        <label>Công dụng then bán nguyệt</label>
+        <select id="congDungBanNguyet">
+            <option value="truyenMoment">Then để truyền mômen xoắn</option>
+            <option value="dinhVi">Then để định vị chi tiết</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label>Mômen xoắn T, N.mm</label>
+        <input type="number" id="T" value="200000" step="0.01">
+    </div>
+
+    <div class="group">
+        <label>Dạng lắp</label>
+        <select id="dangLap" onchange="key_capNhatVatLieuTheoDangLap()">
+            <option value="coDinh">Cố định</option>
+            <option value="diDong">Di động</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label>Vật liệu mayơ</label>
+        <select id="vatLieu">
+            <option value="thep">Thép</option>
+            <option value="gang">Gang</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label>Đặc tính tải trọng</label>
+        <select id="taiTrong">
+            <option value="tinh">Tĩnh</option>
+            <option value="vaDapNhe">Va đập nhẹ</option>
+            <option value="vaDapManh">Va đập mạnh</option>
+        </select>
+    </div>
+
+    <div class="group">
+        <label>[τc] cơ sở, MPa: 60...90</label>
+        <select id="tauCoSo">
+            <option value="60">60 MPa</option>
+            <option value="70">70 MPa</option>
+            <option value="80">80 MPa</option>
+            <option value="90" selected>90 MPa</option>
+        </select>
+    </div>
+
+</div>
+
+<button onclick="key_tinhThen()">TÍNH TOÁN</button>
+
+<div id="output"></div>
+
+</div></div>
+<div id="splineKeysSection" class="case-section"><div class="card">
+
+
+
+</div>
+
+<!-- ========================================================= -->
+<!-- THEN HOA RĂNG CHỮ NHẬT -->
+<!-- ========================================================= -->
+
+<div id="rectSection">
+
+<div class="card">
+<h2>1A. Công thức then hoa răng chữ nhật</h2>
+<div class="formula">
+<b>Ứng suất dập:</b><br>
+σ<sub>d</sub> = 2T / (d<sub>tb</sub> · l · h · z)
+<br><br>
+<b>Chiều dài làm việc:</b><br>
+l = 0,8 · l<sub>m</sub>
+<br><br>
+<b>Bánh răng trụ răng thẳng:</b><br>
+ε = e / l
+<br><br>
+<b>Bánh răng trụ răng nghiêng:</b><br>
+ε = e/l ± (0,5 · d<sub>w</sub> · tgβ · cosα<sub>w</sub>) / l
+<br><br>
+<b>Hệ số ψ:</b><br>
+ψ = d<sub>tb</sub> / (d<sub>w</sub> · cosα<sub>w</sub>)
+<br><br>
+<b>Trường hợp vành răng lắp trên đoạn trục bị xoắn:</b><br>
+K<sub>l</sub> = K<sub>x</sub> + K<sub>e</sub> − 1
+<br><br>
+<b>Ứng suất dập cho phép với mối ghép cố định:</b><br>
+[σ<sub>d</sub>] = σ<sub>ch</sub> / (s · K<sub>l</sub> · K<sub>s</sub> · K<sub>r</sub>)
+</div>
+</div>
+
+<div class="card">
+<h2>2A. Nhập dữ liệu then hoa răng chữ nhật</h2>
+
+<div class="grid">
+
+<div>
+<label>Loại cỡ then hoa</label>
+<select id="rect_sizeType" onchange="rectRenderSplineOptions()">
+<option value="light">Cỡ nhẹ</option>
+<option value="medium">Cỡ trung</option>
+<option value="heavy">Cỡ nặng</option>
+</select>
+</div>
+
+<div>
+<label>Kích thước Z × d × D</label>
+<select id="rect_splineSelect" onchange="rectFillSplineData()"></select>
+</div>
+
+<div><label>z</label><input id="rect_z" readonly></div>
+<div><label>D (mm)</label><input id="rect_Dval" readonly></div>
+<div><label>d<sub>tb</sub> (mm)</label><input id="rect_dtb" readonly></div>
+<div><label>h (mm)</label><input id="rect_h" readonly></div>
+<div><label>b (mm)</label><input id="rect_b" readonly></div>
+
+<div><label>Mômen xoắn T (N.mm)</label><input id="rect_T" value="210139.292"></div>
+<div><label>Chiều dài mayơ l<sub>m</sub> (mm)</label><input id="rect_lm" value="60" oninput="rectUpdateDefaultE()"></div>
+<div><label>l = 0,8l<sub>m</sub> (mm)</label><input id="rect_l" readonly></div>
+<div><label>l/D</label><input id="rect_ratioLDShow" readonly></div>
+
+<div>
+<label>e - độ lệch tải (mm)</label>
+<input id="rect_e">
+<div class="small">Mặc định e = l/2. Có thể nhập lại nếu biết chính xác.</div>
+</div>
+
+<div>
+<label>Loại bánh răng</label>
+<select id="rect_gearType" onchange="rectToggleGearType()">
+<option value="straight">Bánh răng trụ răng thẳng</option>
+<option value="helical">Bánh răng trụ răng nghiêng</option>
+</select>
+</div>
+
+<div class="rectHelicalField hidden">
+<label>β - góc nghiêng răng (độ)</label>
+<input id="rect_beta" value="15">
+</div>
+
+<div class="rectHelicalField hidden">
+<label>Quan hệ mômen F<sub>r</sub> và F<sub>a</sub></label>
+<select id="rect_betaSign">
+<option value="plus">Cùng chiều: dùng dấu +</option>
+<option value="minus">Ngược chiều: dùng dấu −</option>
+</select>
+</div>
+
+<div><label>d<sub>w</sub> (mm)</label><input id="rect_dw" value="86.9"></div>
+<div><label>α<sub>w</sub> (độ)</label><input id="rect_alpha" value="20"></div>
+<div><label>ε</label><input id="rect_eps" readonly></div>
+<div><label>ψ</label><input id="rect_psi" readonly></div>
+
+<div>
+<label>Dạng mối ghép</label>
+<select id="rect_fitType" onchange="rectToggleAllowInputs()">
+<option value="fixed">Mối ghép cố định</option>
+<option value="moving">Mối ghép di động</option>
+</select>
+</div>
+
+<div><label>σ<sub>ch</sub> (MPa)</label><input id="rect_sigmaCh" value="350"></div>
+<div><label>Hệ số an toàn s</label><input id="rect_s" value="1.5"></div>
+<div><label>K<sub>s</sub></label><input id="rect_Ks" value="1.2"></div>
+<div><label>K<sub>r</sub></label><input id="rect_Kr" value="1.0"></div>
+<div><label>[σ<sub>d</sub>] mối ghép di động (MPa)</label><input id="rect_sigmaAllowMoving" value="15"></div>
+
+<div>
+<label>Dạng lắp vành răng</label>
+<select id="rect_mountMode">
+<option value="torsion">Đoạn trục bị xoắn: Kl = Kx + Ke - 1</option>
+<option value="notorsion">Đoạn không bị xoắn: Kl = max(Kx, Ke)</option>
+<option value="puretorsion">Chỉ chịu mômen xoắn: Kl = Kx</option>
+</select>
+</div>
+
+<div>
+<label>Cách lấy K<sub>x</sub></label>
+<select id="rect_kxMode" onchange="rectToggleKxMode()">
+<option value="manual">Nhập Kx thủ công</option>
+<option value="table">Tra gần đúng bảng 9.7 tự động</option>
+</select>
+</div>
+
+<div><label>K<sub>x</sub> thủ công</label><input id="rect_kxManual" value="1.6"></div>
+
+<div class="rectKxTableField">
+<label>Trường hợp bảng 9.7</label>
+<select id="rect_kxCase">
+<option value="1">1 - Trước chạy mòn</option>
+<option value="2">2 - Sau chạy mòn</option>
+</select>
+</div>
+
+</div>
+
+<button onclick="rectCalculate()">Tính then hoa răng chữ nhật</button>
+</div>
+
+<div class="card">
+<h2>3A. Kết quả then hoa răng chữ nhật</h2>
+<div id="rect_result" class="result"></div>
+</div>
+
+<div class="card">
+<h2>4A. Bảng số hóa K<sub>e</sub></h2>
+<table>
+<thead>
+<tr>
+<th>ε</th><th>ψ=0,2</th><th>ψ=0,3</th><th>ψ=0,4</th><th>ψ=0,5</th><th>ψ=0,6</th><th>ψ=0,7</th>
+</tr>
+</thead>
+<tbody id="rect_keTable"></tbody>
+</table>
+</div>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- THEN HOA RĂNG THÂN KHAI -->
+<!-- ========================================================= -->
+
+<div id="invSection" class="hidden">
+
+<div class="card">
+<h2>1B. Công thức then hoa răng thân khai</h2>
+<div class="formula">
+<b>Ứng suất dập:</b><br>
+σ<sub>d</sub> = 2T / (d<sub>tb</sub> · l · h · z · φ) ≤ [σ<sub>d</sub>]
+<br><br>
+<b>Ứng suất mòn:</b><br>
+σ<sub>m</sub> = 2T / (d<sub>tb</sub> · l · h · z) ≤ [σ<sub>m</sub>]
+<br><br>
+<b>Trường hợp tổng quát về mòn:</b><br>
+[σ<sub>m</sub>] = [σ<sub>mq</sub>] / (K<sub>c</sub> · K<sub>N</sub> · K'<sub>r</sub> · K<sub>b</sub> · K<sub>g</sub>)
+<br><br>
+d<sub>tb</sub> = m · z ; h = 0,8m ; l = 0,8l<sub>m</sub>
+<br>
+ψ = d<sub>tb</sub> / (d<sub>w</sub>cosα<sub>w</sub>)
+</div>
+</div>
+
+<div class="card">
+<h2>2B. Tra bảng số răng Z</h2>
+<div class="grid">
+<div>
+<label>Dãy</label>
+<select id="inv_series" onchange="invChangeSeries()">
+<option value="day1">Dãy 1</option>
+<option value="day2">Dãy 2</option>
+</select>
+</div>
+
+<div>
+<label>Đường kính danh nghĩa D (mm)</label>
+<select id="inv_D" onchange="invUpdateAll()"></select>
+</div>
+
+<div>
+<label>Môđun m</label>
+<select id="inv_m" onchange="invUpdateAll()"></select>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>3B. Dữ liệu tính toán</h2>
+<div class="grid">
+<div><label>Mômen xoắn T (N.mm)</label><input id="inv_T" value="210139.292" oninput="invUpdateAll()"></div>
+<div><label>Chiều dài mayơ l<sub>m</sub> (mm)</label><input id="inv_lm" value="60" oninput="invUpdateAll()"></div>
+<div><label>l = 0,8l<sub>m</sub> (mm)</label><input id="inv_l" readonly></div>
+
+<div>
+<label>φ - hệ số phân bố tải khi tính dập</label>
+<select id="inv_phi" onchange="invUpdateAll()">
+<option value="0.7">0,7</option>
+<option value="0.75" selected>0,75</option>
+<option value="0.8">0,8</option>
+</select>
+</div>
+
+<div><label>z tra được</label><input id="inv_zOut" readonly></div>
+<div><label>d<sub>tb</sub> = m · z (mm)</label><input id="inv_dtbOut" readonly></div>
+<div><label>h = 0,8m (mm)</label><input id="inv_hOut" readonly></div>
+<div><label>l/D</label><input id="inv_ratioLD" readonly></div>
+<div><label>d<sub>w</sub> (mm)</label><input id="inv_dw" value="86.9" oninput="invUpdateAll()"></div>
+<div><label>α<sub>w</sub> (độ)</label><input id="inv_alpha" value="20" oninput="invUpdateAll()"></div>
+<div><label>ψ</label><input id="inv_psiKr" readonly></div>
+</div>
+</div>
+
+<div class="card">
+<h2>4B. [σ<sub>d</sub>] kiểm nghiệm dập - bảng 9.8</h2>
+<div class="grid">
+<div>
+<label>Loại mối ghép</label>
+<select id="inv_fitType" onchange="invUpdateAll()">
+<option value="fixed">Mối ghép cố định</option>
+<option value="movingNoLoad">Mối ghép di động không tải</option>
+<option value="movingLoad">Mối ghép di động có tải</option>
+</select>
+</div>
+
+<div>
+<label>Điều kiện sử dụng</label>
+<select id="inv_condition" onchange="invUpdateAll()">
+<option value="a">a - nặng</option>
+<option value="b" selected>b - trung bình</option>
+<option value="c">c - tốt</option>
+</select>
+</div>
+
+<div>
+<label>Bề mặt làm việc</label>
+<select id="inv_heat" onchange="invUpdateAll()">
+<option value="no">Không nhiệt luyện</option>
+<option value="yes">Được nhiệt luyện</option>
+</select>
+</div>
+
+<div>
+<label>Cách lấy [σ<sub>d</sub>]</label>
+<select id="inv_allowMode" onchange="invUpdateAll()">
+<option value="avg">Trung bình</option>
+<option value="min">Nhỏ nhất</option>
+<option value="max">Lớn nhất</option>
+</select>
+</div>
+
+<div><label>[σ<sub>d</sub>] MPa</label><input id="inv_sigmaAllowDap" readonly></div>
+</div>
+</div>
+
+<div class="card">
+<h2>5B. [σ<sub>m</sub>] kiểm nghiệm mòn</h2>
+<div class="grid">
+
+<div>
+<label>Cách tính [σ<sub>m</sub>]</label>
+<select id="inv_wearMode" onchange="invUpdateAll()">
+<option value="special">Tra bảng 9.9: tải trọng tĩnh, điều kiện trung bình, N = 10^8</option>
+<option value="general">Trường hợp tổng quát</option>
+</select>
+</div>
+
+<div>
+<label>d<sub>tb</sub>/d<sub>w</sub></label>
+<select id="inv_wearRatio" onchange="invUpdateAll()">
+<option value="0.59">0,59</option>
+<option value="0.50">0,50</option>
+<option value="0.42">0,42</option>
+<option value="0.35">0,35</option>
+</select>
+</div>
+
+<div>
+<label>e/l</label>
+<select id="inv_wearEOverL" onchange="invUpdateAll()">
+<option value="0">0</option>
+<option value="0.25">0,25</option>
+<option value="0.50" selected>0,50</option>
+</select>
+</div>
+
+<div>
+<label>Nhiệt luyện / độ rắn</label>
+<select id="inv_wearHeat" onchange="invUpdateAll()">
+<option value="none">Không nhiệt luyện HRC20</option>
+<option value="improve">Tôi cải thiện HRC28</option>
+<option value="quench40">Tôi HRC40</option>
+<option value="quench45">Tôi HRC45</option>
+<option value="quench52">Tôi HRC52</option>
+<option value="carburize60">Thấm cacbon/nitơ HRC60</option>
+</select>
+</div>
+
+<div><label>[σ<sub>m</sub>] bảng 9.9</label><input id="inv_sigmaWearSpecial" readonly></div>
+<div><label>[σ<sub>mq</sub>] bảng 9.10</label><input id="inv_sigmaMq" readonly></div>
+
+<div>
+<label>K<sub>c</sub></label>
+<select id="inv_Kc" onchange="invUpdateAll()">
+<option value="1">Tĩnh: 1</option>
+<option value="0.77">Nặng: 0,77</option>
+<option value="0.63">Trung bình đều: 0,63</option>
+<option value="0.57">Trung bình thường: 0,57</option>
+<option value="0.43">Nhẹ: 0,43</option>
+</select>
+</div>
+
+<div><label>n (vòng/phút)</label><input id="inv_nSpeed" value="300" oninput="invUpdateAll()"></div>
+<div><label>L<sub>h</sub> (giờ)</label><input id="inv_lifeHour" value="10000" oninput="invUpdateAll()"></div>
+<div><label>N = 60nL<sub>h</sub></label><input id="inv_cycleN" readonly></div>
+<div><label>K<sub>N</sub></label><input id="inv_KN" readonly></div>
+<div><label>K'<sub>r</sub> tra theo ψ</label><input id="inv_KrWear" readonly></div>
+
+<div>
+<label>K<sub>b</sub></label>
+<select id="inv_Kb" onchange="invUpdateAll()">
+<option value="0.7">Bôi trơn tốt: 0,7</option>
+<option value="1" selected>Trung bình: 1</option>
+<option value="1.4">Thiếu dầu/dầu bẩn: 1,4</option>
+</select>
+</div>
+
+<div>
+<label>K<sub>g</sub></label>
+<select id="inv_Kg" onchange="invUpdateAll()">
+<option value="1" selected>Ghép cố định: 1</option>
+<option value="1.25">Di động dọc trục nhỏ: 1,25</option>
+<option value="3">Di động có tải: 3</option>
+</select>
+</div>
+
+<div><label>[σ<sub>m</sub>] tổng quát</label><input id="inv_sigmaWearGeneral" readonly></div>
+
+</div>
+</div>
+
+<div class="card">
+<h2>6B. Kết quả then hoa răng thân khai</h2>
+<div id="inv_result" class="result"></div>
+</div>
+
+<div class="card">
+<h2>7B. Bảng Z đang dùng</h2>
+<div id="inv_tableView"></div>
+</div>
+
+</div>
+
+</div></div>
+</div>
+<script>
+function globalSwitch(){
+    const t=document.getElementById('globalType').value;
+    const normal=document.getElementById('normalKeysSection');
+    const spline=document.getElementById('splineKeysSection');
+    normal.classList.toggle('show', ['thuong','cao','banNguyet'].includes(t));
+    spline.classList.toggle('show', ['rect','inv'].includes(t));
+    if(['thuong','cao','banNguyet'].includes(t)){
+        if(window.key_setLoaiThen) window.key_setLoaiThen(t);
+        const title={thuong:'1. Then bằng', cao:'1. Then bằng cao', banNguyet:'1. Then bán nguyệt'}[t];
+        document.getElementById('normalTitle').textContent=title;
+    } else {
+        document.getElementById('mainType').value=t;
+        if(window.switchMainType) switchMainType();
+    }
+}
+</script>
+<script>
+(function(){
+
+const bangThenThuong = [
+{min:6,max:8,b:2,h:2,t1:1.2,t2:1,rmin:0.08,rmax:0.16},
+{min:8,max:10,b:3,h:3,t1:1.8,t2:1.4,rmin:0.08,rmax:0.16},
+{min:10,max:12,b:4,h:4,t1:2.5,t2:1.8,rmin:0.08,rmax:0.16},
+{min:12,max:17,b:5,h:5,t1:3,t2:2.3,rmin:0.16,rmax:0.25},
+{min:17,max:22,b:6,h:6,t1:3.5,t2:2.8,rmin:0.16,rmax:0.25},
+{min:22,max:30,b:8,h:7,t1:4,t2:2.8,rmin:0.25,rmax:0.4},
+{min:30,max:38,b:10,h:8,t1:5,t2:3.3,rmin:0.25,rmax:0.4},
+{min:38,max:44,b:12,h:8,t1:5,t2:3.3,rmin:0.25,rmax:0.4},
+{min:44,max:50,b:14,h:9,t1:5.5,t2:3.8,rmin:0.25,rmax:0.4},
+{min:50,max:58,b:16,h:10,t1:6,t2:4.3,rmin:0.25,rmax:0.4},
+{min:58,max:65,b:18,h:11,t1:7,t2:4.4,rmin:0.4,rmax:0.6},
+{min:65,max:75,b:20,h:12,t1:7.5,t2:4.9,rmin:0.4,rmax:0.6},
+{min:75,max:85,b:22,h:14,t1:9,t2:5.4,rmin:0.4,rmax:0.6},
+{min:85,max:95,b:25,h:14,t1:9,t2:5.4,rmin:0.4,rmax:0.6},
+{min:95,max:110,b:28,h:16,t1:10,t2:6.4,rmin:0.4,rmax:0.6},
+{min:110,max:130,b:32,h:18,t1:11,t2:7.4,rmin:0.7,rmax:1.0},
+{min:130,max:150,b:36,h:20,t1:12,t2:8.4,rmin:0.7,rmax:1.0},
+{min:150,max:170,b:40,h:22,t1:13,t2:9.4,rmin:0.7,rmax:1.0},
+{min:170,max:200,b:45,h:25,t1:15,t2:10.4,rmin:1.2,rmax:1.6},
+{min:200,max:230,b:50,h:28,t1:17,t2:11.4,rmin:1.2,rmax:1.6},
+{min:230,max:260,b:56,h:32,t1:20,t2:12.4,rmin:1.2,rmax:1.6},
+{min:260,max:290,b:63,h:32,t1:20,t2:12.4,rmin:1.2,rmax:1.6},
+{min:290,max:330,b:70,h:36,t1:22,t2:14.4,rmin:2.0,rmax:2.5},
+{min:330,max:380,b:80,h:40,t1:25,t2:15.4,rmin:2.0,rmax:2.5},
+{min:380,max:440,b:90,h:45,t1:28,t2:17.4,rmin:2.0,rmax:2.5},
+{min:440,max:500,b:100,h:50,t1:31,t2:19.5,rmin:2.0,rmax:2.5}
+];
+
+const bangThenCao = [
+{min:30,max:38,b:10,h:9,t1:5.5,t2:3.3,rmin:0.25,rmax:0.4},
+{min:38,max:44,b:12,h:11,t1:5.5,t2:4.4,rmin:0.25,rmax:0.4},
+{min:44,max:50,b:14,h:12,t1:7,t2:4.9,rmin:0.25,rmax:0.4},
+{min:50,max:58,b:16,h:14,t1:9,t2:5.4,rmin:0.25,rmax:0.4},
+{min:58,max:65,b:18,h:16,t1:10,t2:6.4,rmin:0.25,rmax:0.4},
+{min:65,max:75,b:20,h:18,t1:11,t2:7.4,rmin:0.4,rmax:0.6},
+{min:75,max:85,b:22,h:20,t1:12,t2:8.4,rmin:0.4,rmax:0.6},
+{min:85,max:95,b:25,h:22,t1:13,t2:9.4,rmin:0.4,rmax:0.6},
+{min:95,max:110,b:28,h:25,t1:15,t2:10.4,rmin:0.4,rmax:0.6},
+{min:110,max:130,b:32,h:28,t1:17,t2:11.4,rmin:0.7,rmax:1.0},
+{min:130,max:150,b:36,h:32,t1:20,t2:12.4,rmin:0.7,rmax:1.0},
+{min:150,max:170,b:40,h:36,t1:22,t2:12.4,rmin:0.7,rmax:1.0},
+{min:170,max:200,b:45,h:40,t1:25,t2:15.4,rmin:0.7,rmax:1.0},
+{min:200,max:230,b:50,h:45,t1:28,t2:17.4,rmin:0.7,rmax:1.0},
+{min:230,max:260,b:56,h:50,t1:31,t2:19.5,rmin:1.2,rmax:1.6},
+{min:260,max:290,b:63,h:60,t1:36,t2:24.5,rmin:1.2,rmax:1.6},
+{min:290,max:330,b:70,h:65,t1:39,t2:26.5,rmin:1.2,rmax:1.6},
+{min:330,max:380,b:80,h:75,t1:44,t2:31.5,rmin:2.0,rmax:2.5},
+{min:380,max:440,b:90,h:85,t1:49,t2:36.5,rmin:2.0,rmax:2.5},
+{min:440,max:500,b:100,h:95,t1:54,t2:41.5,rmin:2.0,rmax:2.5}
+];
+
+const bangThenBanNguyet = [
+{momentMin:3,momentMax:4,dinhViMin:3,dinhViMax:4,b:1,h:1.4,d1:4,l:3.8,t1:1,t2:0.6,rmin:0.1,rmax:0.16},
+{momentMin:4,momentMax:5,dinhViMin:4,dinhViMax:5,b:1.5,h:2.6,d1:7,l:6.8,t1:2,t2:0.8,rmin:0.1,rmax:0.16},
+{momentMin:5,momentMax:6,dinhViMin:6,dinhViMax:8,b:2,h:2.6,d1:7,l:6.8,t1:1.8,t2:1,rmin:0.1,rmax:0.16},
+{momentMin:6,momentMax:7,dinhViMin:8,dinhViMax:10,b:2,h:3.7,d1:10,l:9.7,t1:2.9,t2:1,rmin:0.1,rmax:0.16},
+{momentMin:7,momentMax:8,dinhViMin:10,dinhViMax:12,b:2.5,h:3.7,d1:10,l:9.7,t1:2.9,t2:1,rmin:0.1,rmax:0.16},
+{momentMin:8,momentMax:10,dinhViMin:12,dinhViMax:15,b:3,h:5,d1:13,l:12.6,t1:3.8,t2:1.4,rmin:0.1,rmax:0.16},
+
+{momentMin:10,momentMax:12,dinhViMin:15,dinhViMax:18,b:3,h:6.5,d1:16,l:15.7,t1:5.3,t2:1.4,rmin:0.16,rmax:0.25},
+{momentMin:12,momentMax:14,dinhViMin:18,dinhViMax:20,b:4,h:6.5,d1:16,l:15.7,t1:5,t2:1.8,rmin:0.16,rmax:0.25},
+{momentMin:14,momentMax:16,dinhViMin:20,dinhViMax:22,b:4,h:7.5,d1:19,l:18.6,t1:6,t2:1.8,rmin:0.16,rmax:0.25},
+{momentMin:16,momentMax:18,dinhViMin:22,dinhViMax:25,b:5,h:6.5,d1:16,l:15.7,t1:4.5,t2:2.3,rmin:0.16,rmax:0.25},
+{momentMin:18,momentMax:20,dinhViMin:25,dinhViMax:28,b:5,h:7.5,d1:19,l:18.6,t1:5.5,t2:2.3,rmin:0.16,rmax:0.25},
+{momentMin:20,momentMax:22,dinhViMin:28,dinhViMax:32,b:6,h:9,d1:22,l:21.6,t1:7,t2:2.3,rmin:0.16,rmax:0.25},
+{momentMin:22,momentMax:25,dinhViMin:32,dinhViMax:36,b:6,h:9,d1:22,l:21.6,t1:6.5,t2:2.8,rmin:0.16,rmax:0.25},
+{momentMin:25,momentMax:28,dinhViMin:36,dinhViMax:40,b:6,h:10,d1:25,l:24.5,t1:7.5,t2:2.8,rmin:0.16,rmax:0.25},
+
+{momentMin:28,momentMax:32,dinhViMin:40,dinhViMax:Infinity,b:8,h:11,d1:28,l:27.3,t1:8,t2:3.3,rmin:0.25,rmax:0.40},
+{momentMin:32,momentMax:38,dinhViMin:40,dinhViMax:Infinity,b:10,h:13,d1:32,l:31.4,t1:10,t2:3.3,rmin:0.25,rmax:0.40}
+];
+
+const dayChieuDai = [
+6,8,10,12,14,16,18,20,22,25,28,32,36,40,45,50,
+56,63,70,80,90,100,110,125,140,160,180,200,220,
+250,280,320,360,400,450,500
+];
+
+const bangSigmaD = {
+    coDinh: {
+        thep: {tinh:150, vaDapNhe:100, vaDapManh:50},
+        gang: {tinh:80, vaDapNhe:53, vaDapManh:27}
+    },
+    diDong: {
+        thep: {tinh:50, vaDapNhe:40, vaDapManh:30}
+    }
+};
+
+function capNhatForm(){
+    const loaiThen = document.getElementById("loaiThen").value;
+    const nhomLm = document.getElementById("nhomLm");
+    const nhomCongDung = document.getElementById("nhomCongDung");
+
+    if(loaiThen === "banNguyet"){
+        nhomLm.classList.add("hidden");
+        nhomCongDung.classList.remove("hidden");
+    }else{
+        nhomLm.classList.remove("hidden");
+        nhomCongDung.classList.add("hidden");
+    }
+}
+
+function capNhatVatLieuTheoDangLap(){
+    const dangLap = document.getElementById("dangLap").value;
+    const vatLieu = document.getElementById("vatLieu");
+
+    if(dangLap === "diDong"){
+        vatLieu.value = "thep";
+        vatLieu.querySelector('option[value="gang"]').disabled = true;
+    }else{
+        vatLieu.querySelector('option[value="gang"]').disabled = false;
+    }
+}
+
+function tenLoaiThen(x){
+    if(x === "cao") return "Then bằng cao";
+    if(x === "banNguyet") return "Then bán nguyệt";
+    return "Then bằng thường";
+}
+
+function tenCongDung(x){
+    return x === "dinhVi" ? "Then để định vị chi tiết" : "Then để truyền mômen xoắn";
+}
+
+function tenDangLap(x){
+    return x === "coDinh" ? "Cố định" : "Di động";
+}
+
+function tenVatLieu(x){
+    return x === "thep" ? "Thép" : "Gang";
+}
+
+function tenTaiTrong(x){
+    if(x === "tinh") return "Tĩnh";
+    if(x === "vaDapNhe") return "Va đập nhẹ";
+    return "Va đập mạnh";
+}
+
+function chonChieuDai(lTinh){
+    return dayChieuDai.find(x => x >= lTinh) || null;
+}
+
+function tinhTauChoPhep(tauCoSo, taiTrong){
+    if(taiTrong === "tinh") return tauCoSo;
+    if(taiTrong === "vaDapNhe") return tauCoSo * (2 / 3);
+    return tauCoSo * (1 / 3);
+}
+
+function fmt(x){
+    if(x === Infinity) return "∞";
+    return Number(x).toFixed(2).replace(".", ",");
+}
+
+function timThenBanNguyet(d, congDung){
+    return bangThenBanNguyet.find(x => {
+        if(congDung === "truyenMoment"){
+            return d > x.momentMin && d <= x.momentMax;
+        }else{
+            return d > x.dinhViMin && d <= x.dinhViMax;
+        }
+    });
+}
+
+function tinhThen(){
+    const loaiThen = document.getElementById("loaiThen").value;
+    const d = parseFloat(document.getElementById("d").value);
+    const lm = parseFloat(document.getElementById("lm").value);
+    const T = parseFloat(document.getElementById("T").value);
+    const dangLap = document.getElementById("dangLap").value;
+    const vatLieu = document.getElementById("vatLieu").value;
+    const taiTrong = document.getElementById("taiTrong").value;
+    const tauCoSo = parseFloat(document.getElementById("tauCoSo").value);
+    const congDungBanNguyet = document.getElementById("congDungBanNguyet").value;
+    const output = document.getElementById("output");
+
+    if(isNaN(d) || d <= 0 || isNaN(T) || T <= 0){
+        output.innerHTML = `<div class="error">Vui lòng nhập đầy đủ đường kính trục d và mômen xoắn T hợp lệ.</div>`;
+        return;
+    }
+
+    if(loaiThen !== "banNguyet" && (isNaN(lm) || lm <= 0)){
+        output.innerHTML = `<div class="error">Vui lòng nhập chiều dài mayơ lm hợp lệ.</div>`;
+        return;
+    }
+
+    if(dangLap === "diDong" && vatLieu === "gang"){
+        output.innerHTML = `<div class="error">Theo bảng 9.5, dạng lắp di động chỉ dùng vật liệu mayơ là thép.</div>`;
+        return;
+    }
+
+    let then;
+    let lTinh = null;
+    let l = null;
+    let ghiChuChieuDai = "";
+
+    if(loaiThen === "thuong"){
+        then = bangThenThuong.find(x => d > x.min && d <= x.max);
+        lTinh = 0.8 * lm;
+        l = chonChieuDai(lTinh);
+        ghiChuChieuDai = `Chiều dài then tính theo l = 0,8.lm, sau đó chọn theo dãy tiêu chuẩn.`;
+    }
+
+    if(loaiThen === "cao"){
+        then = bangThenCao.find(x => d > x.min && d <= x.max);
+        lTinh = 0.8 * lm;
+        l = chonChieuDai(lTinh);
+        ghiChuChieuDai = `Chiều dài then tính theo l = 0,8.lm, sau đó chọn theo dãy tiêu chuẩn.`;
+    }
+
+    if(loaiThen === "banNguyet"){
+        then = timThenBanNguyet(d, congDungBanNguyet);
+        if(then){
+            l = then.l;
+            ghiChuChieuDai = `Với then bán nguyệt, chiều dài l lấy trực tiếp theo bảng, không tính theo 0,8.lm.`;
+        }
+    }
+
+    if(!then){
+        output.innerHTML = `<div class="error">Không chọn được ${tenLoaiThen(loaiThen)} với d = ${fmt(d)} mm.</div>`;
+        return;
+    }
+
+    if(!l){
+        output.innerHTML = `<div class="error">Chiều dài then tính được vượt quá dãy chiều dài tiêu chuẩn.</div>`;
+        return;
+    }
+
+    const sigmaChoPhep = bangSigmaD[dangLap][vatLieu][taiTrong];
+    const tauChoPhep = tinhTauChoPhep(tauCoSo, taiTrong);
+
+    const sigmaD = (2 * T) / (d * l * (then.h - then.t1));
+    const tauC = (2 * T) / (d * l * then.b);
+
+    const datDap = sigmaD <= sigmaChoPhep;
+    const datCat = tauC <= tauChoPhep;
+
+    let dongBanNguyet = "";
+    if(loaiThen === "banNguyet"){
+        dongBanNguyet = `
+            <tr><td>Công dụng</td><td>-</td><td>${tenCongDung(congDungBanNguyet)}</td><td>-</td></tr>
+            <tr><td>Đường kính danh nghĩa của then</td><td>d₁</td><td>${fmt(then.d1)}</td><td>mm</td></tr>
+        `;
+    }
+
+    let dongLm = "";
+    if(loaiThen !== "banNguyet"){
+        dongLm = `
+            <tr><td>Chiều dài mayơ</td><td>lm</td><td>${fmt(lm)}</td><td>mm</td></tr>
+            <tr><td>Chiều dài then tính</td><td>l = 0,8.lm</td><td>${fmt(lTinh)}</td><td>mm</td></tr>
+        `;
+    }
+
+    output.innerHTML = `
+    <div class="result">
+        <h2>Kết quả chọn then và kiểm nghiệm</h2>
+
+        <table>
+            <tr>
+                <th>Thông số</th>
+                <th>Ký hiệu</th>
+                <th>Giá trị</th>
+                <th>Đơn vị</th>
+            </tr>
+            <tr><td>Loại then</td><td>-</td><td>${tenLoaiThen(loaiThen)}</td><td>-</td></tr>
+            ${dongBanNguyet}
+            <tr><td>Đường kính trục</td><td>d</td><td>${fmt(d)}</td><td>mm</td></tr>
+            ${dongLm}
+            <tr><td>Chiều dài then chọn</td><td>l</td><td>${fmt(l)}</td><td>mm</td></tr>
+            <tr><td>Bề rộng then</td><td>b</td><td>${fmt(then.b)}</td><td>mm</td></tr>
+            <tr><td>Chiều cao then</td><td>h</td><td>${fmt(then.h)}</td><td>mm</td></tr>
+            <tr><td>Chiều sâu rãnh trên trục</td><td>t₁</td><td>${fmt(then.t1)}</td><td>mm</td></tr>
+            <tr><td>Chiều sâu rãnh trên mayơ</td><td>t₂</td><td>${fmt(then.t2)}</td><td>mm</td></tr>
+            <tr><td>Bán kính góc lượn</td><td>r</td><td>${fmt(then.rmin)} ÷ ${fmt(then.rmax)}</td><td>mm</td></tr>
+        </table>
+
+        <div class="note">
+            Then chọn: <b>${fmt(then.b)} × ${fmt(then.h)} × ${fmt(l)} mm</b><br>
+            ${ghiChuChieuDai}<br>
+            Dạng lắp: <b>${tenDangLap(dangLap)}</b> |
+            Vật liệu mayơ: <b>${tenVatLieu(vatLieu)}</b> |
+            Tải trọng: <b>${tenTaiTrong(taiTrong)}</b><br>
+            [τc] cơ sở đã chọn: <b>${fmt(tauCoSo)} MPa</b> trong khoảng <b>60...90 MPa</b>.
+        </div>
+
+        <table>
+            <tr>
+                <th>Điều kiện kiểm nghiệm</th>
+                <th>Công thức</th>
+                <th>Giá trị tính</th>
+                <th>Cho phép</th>
+                <th>Kết luận</th>
+            </tr>
+
+            <tr>
+                <td>Bền dập</td>
+                <td class="formula">σd = 2T / [d.l.(h − t₁)]</td>
+                <td>${fmt(sigmaD)} MPa</td>
+                <td>[σd] = ${fmt(sigmaChoPhep)} MPa</td>
+                <td class="${datDap ? "ok" : "fail"}">${datDap ? "ĐẠT" : "KHÔNG ĐẠT"}</td>
+            </tr>
+
+            <tr>
+                <td>Bền cắt</td>
+                <td class="formula">τc = 2T / (d.l.b)</td>
+                <td>${fmt(tauC)} MPa</td>
+                <td>[τc] = ${fmt(tauChoPhep)} MPa</td>
+                <td class="${datCat ? "ok" : "fail"}">${datCat ? "ĐẠT" : "KHÔNG ĐẠT"}</td>
+            </tr>
+        </table>
+
+        <div class="note">
+            Quy ước kiểm nghiệm:<br>
+            Bền dập đạt khi <b>σd ≤ [σd]</b>.<br>
+            Bền cắt đạt khi <b>τc ≤ [τc]</b>.<br>
+            Với [τc] cơ sở = 60...90 MPa: tải tĩnh giữ nguyên, va đập nhẹ lấy giảm 1/3, va đập mạnh lấy giảm 2/3.
+        </div>
+    </div>
+    `;
+}
+
+capNhatVatLieuTheoDangLap();
+capNhatForm();
+
+window.key_tinhThen = tinhThen;
+window.key_capNhatForm = capNhatForm;
+window.key_capNhatVatLieuTheoDangLap = capNhatVatLieuTheoDangLap;
+window.key_setLoaiThen = function(v){ document.getElementById('loaiThen').value=v; capNhatForm(); };
+})();
+</script>
+<script>
+function parseVN(value){return typeof value==="number"?value:parseFloat(String(value).replace(",","."));}
+function fmt(x,n=4){if(isNaN(x))return"";return Number(x).toFixed(n).replace(".",",");}
+function fmtSimple(x){return String(x).replace(".",",");}
+
+function switchMainType(){
+    const type=document.getElementById("mainType").value;
+    document.getElementById("rectSection").classList.toggle("hidden",type!=="rect");
+    document.getElementById("invSection").classList.toggle("hidden",type!=="inv");
+}
+
+/* ================= RECT DATA ================= */
+
+const rectSplineData={
+light:[
+{name:"6 × 23 × 26",z:6,d:23,D:26,dtb:24.5,h:0.9,b:6},
+{name:"6 × 26 × 30",z:6,d:26,D:30,dtb:28,h:1.4,b:6},
+{name:"6 × 28 × 32",z:6,d:28,D:32,dtb:30,h:1.4,b:7},
+{name:"8 × 32 × 36",z:8,d:32,D:36,dtb:34,h:1.2,b:6},
+{name:"8 × 36 × 40",z:8,d:36,D:40,dtb:38,h:1.2,b:7},
+{name:"8 × 42 × 46",z:8,d:42,D:46,dtb:44,h:1.2,b:8},
+{name:"8 × 46 × 50",z:8,d:46,D:50,dtb:48,h:1.2,b:9},
+{name:"8 × 52 × 58",z:8,d:52,D:58,dtb:55,h:2,b:10},
+{name:"8 × 56 × 62",z:8,d:56,D:62,dtb:59,h:2,b:10},
+{name:"8 × 62 × 68",z:8,d:62,D:68,dtb:65,h:2,b:12},
+{name:"10 × 72 × 78",z:10,d:72,D:78,dtb:75,h:2,b:12},
+{name:"10 × 82 × 88",z:10,d:82,D:88,dtb:85,h:2,b:12},
+{name:"10 × 92 × 98",z:10,d:92,D:98,dtb:95,h:2,b:14},
+{name:"10 × 102 × 108",z:10,d:102,D:108,dtb:105,h:2,b:16},
+{name:"10 × 112 × 120",z:10,d:112,D:120,dtb:116,h:3,b:18}
+],
+medium:[
+{name:"6 × 11 × 14",z:6,d:11,D:14,dtb:12.5,h:0.9,b:3},
+{name:"6 × 13 × 16",z:6,d:13,D:16,dtb:14.5,h:0.9,b:3.5},
+{name:"6 × 16 × 20",z:6,d:16,D:20,dtb:18,h:1.4,b:4},
+{name:"6 × 18 × 22",z:6,d:18,D:22,dtb:20,h:1.4,b:5},
+{name:"6 × 21 × 25",z:6,d:21,D:25,dtb:23,h:1.4,b:5},
+{name:"6 × 23 × 28",z:6,d:23,D:28,dtb:25.5,h:1.9,b:6},
+{name:"6 × 26 × 32",z:6,d:26,D:32,dtb:29,h:2.2,b:6},
+{name:"6 × 28 × 34",z:6,d:28,D:34,dtb:31,h:2.2,b:7},
+{name:"8 × 32 × 38",z:8,d:32,D:38,dtb:35,h:2.2,b:6},
+{name:"8 × 36 × 42",z:8,d:36,D:42,dtb:39,h:2.2,b:7},
+{name:"8 × 42 × 48",z:8,d:42,D:48,dtb:45,h:2.2,b:8},
+{name:"8 × 46 × 54",z:8,d:46,D:54,dtb:50,h:3,b:9},
+{name:"8 × 52 × 60",z:8,d:52,D:60,dtb:56,h:3,b:10},
+{name:"8 × 56 × 65",z:8,d:56,D:65,dtb:61,h:3.5,b:10},
+{name:"8 × 62 × 72",z:8,d:62,D:72,dtb:67,h:4,b:12},
+{name:"10 × 72 × 82",z:10,d:72,D:82,dtb:77,h:4,b:12},
+{name:"10 × 82 × 92",z:10,d:82,D:92,dtb:87,h:4,b:12},
+{name:"10 × 92 × 102",z:10,d:92,D:102,dtb:97,h:4,b:14},
+{name:"10 × 102 × 112",z:10,d:102,D:112,dtb:107,h:4,b:16},
+{name:"10 × 112 × 125",z:10,d:112,D:125,dtb:119,h:5.5,b:18}
+],
+heavy:[
+{name:"10 × 16 × 20",z:10,d:16,D:20,dtb:18,h:1.4,b:2.5},
+{name:"10 × 18 × 23",z:10,d:18,D:23,dtb:20.5,h:1.9,b:3},
+{name:"10 × 21 × 26",z:10,d:21,D:26,dtb:23.5,h:1.9,b:3},
+{name:"10 × 23 × 29",z:10,d:23,D:29,dtb:26,h:2.4,b:4},
+{name:"10 × 28 × 35",z:10,d:28,D:35,dtb:31.5,h:2.7,b:4},
+{name:"10 × 32 × 40",z:10,d:32,D:40,dtb:36,h:3.2,b:5},
+{name:"10 × 36 × 45",z:10,d:36,D:45,dtb:40.5,h:3.7,b:5},
+{name:"10 × 42 × 52",z:10,d:42,D:52,dtb:47,h:4.2,b:6},
+{name:"10 × 46 × 56",z:10,d:46,D:56,dtb:51,h:4,b:7},
+{name:"10 × 52 × 60",z:10,d:52,D:60,dtb:56,h:3,b:5},
+{name:"10 × 56 × 65",z:10,d:56,D:65,dtb:60.5,h:3.5,b:5},
+{name:"16 × 62 × 72",z:16,d:62,D:72,dtb:67,h:4,b:6},
+{name:"16 × 72 × 82",z:16,d:72,D:82,dtb:77,h:4,b:7},
+{name:"20 × 82 × 92",z:20,d:82,D:92,dtb:87,h:4,b:6},
+{name:"20 × 92 × 102",z:20,d:92,D:102,dtb:97,h:4,b:7},
+{name:"20 × 102 × 115",z:20,d:102,D:115,dtb:109,h:5.5,b:8},
+{name:"20 × 112 × 125",z:20,d:112,D:125,dtb:119,h:5.5,b:9}
+]
+};
+
+const rectKeData={
+0.0:{0.2:1,0.3:1,0.4:1,0.5:1,0.6:1,0.7:1},
+0.1:{0.2:1.12,0.3:1.15,0.4:1.18,0.5:1.21,0.6:1.24,0.7:1.28},
+0.2:{0.2:1.22,0.3:1.28,0.4:1.34,0.5:1.40,0.6:1.46,0.7:1.52},
+0.3:{0.2:1.33,0.3:1.42,0.4:1.50,0.5:1.60,0.6:1.70,0.7:1.80},
+0.4:{0.2:1.48,0.3:1.62,0.4:1.78,0.5:1.95,0.6:2.10,0.7:2.30},
+0.5:{0.2:1.79,0.3:1.95,0.4:2.19,0.5:2.38,0.6:2.58,0.7:2.75},
+0.6:{0.2:1.95,0.3:2.15,0.4:2.40,0.5:2.65,0.6:2.95,0.7:3.25}
+};
+const rectEpsValues=[0,0.1,0.2,0.3,0.4,0.5,0.6];
+const rectPsiValues=[0.2,0.3,0.4,0.5,0.6,0.7];
+
+const rectKxTable=[
+{type:"light",dMin:0,dMax:26,name:"nhẹ đến 26",values:{"1":{1:1.3,2:1.1},"1.5":{1:1.7,2:1.2},"2":{1:2.2,2:1.4},"2.5":{1:2.6,2:1.5},"3":{1:2.2,2:1.7}}},
+{type:"light",dMin:26,dMax:50,name:"30...50",values:{"1":{1:1.5,2:1.2},"1.5":{1:2.0,2:1.3},"2":{1:2.6,2:1.5},"2.5":{1:3.3,2:1.8},"3":{1:3.9,2:1.9}}},
+{type:"light",dMin:50,dMax:120,name:"58...120",values:{"1":{1:1.8,2:1.3},"1.5":{1:2.6,2:1.4},"2":{1:3.4,2:1.7},"2.5":{1:4.2,2:2.0},"3":{1:5.1,2:2.2}}},
+{type:"medium",dMin:0,dMax:19,name:"trung đến 19",values:{"1":{1:1.6,2:1.2},"1.5":{1:2.1,2:1.3},"2":{1:2.8,2:1.5},"2.5":{1:3.5,2:1.7},"3":{1:4.1,2:1.9}}},
+{type:"medium",dMin:19,dMax:30,name:"20...30",values:{"1":{1:1.7,2:1.2},"1.5":{1:2.3,2:1.4},"2":{1:3.0,2:1.6},"2.5":{1:3.8,2:1.9},"3":{1:4.5,2:2.1}}},
+{type:"medium",dMin:30,dMax:50,name:"32...50",values:{"1":{1:1.9,2:1.3},"1.5":{1:2.8,2:1.5},"2":{1:3.7,2:1.8},"2.5":{1:4.6,2:2.1},"3":{1:5.5,2:2.3}}},
+{type:"medium",dMin:50,dMax:112,name:"54...112",values:{"1":{1:2.4,2:1.4},"1.5":{1:3.5,2:1.7},"2":{1:4.8,2:2.1},"2.5":{1:5.8,2:2.4},"3":{1:7.0,2:2.8}}},
+{type:"medium",dMin:112,dMax:9999,name:"trên 112",values:{"1":{1:2.8,2:1.5},"1.5":{1:4.1,2:1.9},"2":{1:5.5,2:2.5},"2.5":{1:6.8,2:2.7},"3":{1:8.2,2:3.1}}},
+{type:"heavy",dMin:0,dMax:23,name:"nặng đến 23",values:{"1":{1:2.0,2:1.3},"1.5":{1:3.0,2:1.6},"2":{1:4.0,2:1.9},"2.5":{1:5.0,2:2.2},"3":{1:6.0,2:2.5}}},
+{type:"heavy",dMin:23,dMax:32,name:"23...32",values:{"1":{1:2.4,2:1.4},"1.5":{1:3.5,2:1.8},"2":{1:4.7,2:2.1},"2.5":{1:5.7,2:2.4},"3":{1:7.0,2:2.8}}},
+{type:"heavy",dMin:32,dMax:65,name:"35...65",values:{"1":{1:2.7,2:1.5},"1.5":{1:4.1,2:1.9},"2":{1:5.3,2:2.2},"2.5":{1:6.8,2:2.7},"3":{1:8.0,2:3.1}}},
+{type:"heavy",dMin:65,dMax:102,name:"72...102",values:{"1":{1:2.9,2:1.6},"1.5":{1:4.3,2:2.0},"2":{1:5.6,2:2.4},"2.5":{1:7.0,2:2.8},"3":{1:8.5,2:3.3}}},
+{type:"heavy",dMin:102,dMax:9999,name:"trên 102",values:{"1":{1:3.1,2:1.7},"1.5":{1:4.7,2:2.1},"2":{1:6.2,2:2.5},"2.5":{1:7.8,2:3.0},"3":{1:9.3,2:3.5}}}
+];
+
+function rectLinearInterpolate(x,x1,x2,y1,y2){if(x1===x2)return y1;return y1+(x-x1)*(y2-y1)/(x2-x1);}
+function rectFindBounds(value,arr){if(value<=arr[0])return[arr[0],arr[0]];if(value>=arr[arr.length-1])return[arr[arr.length-1],arr[arr.length-1]];for(let i=0;i<arr.length-1;i++){if(value>=arr[i]&&value<=arr[i+1])return[arr[i],arr[i+1]];}}
+function rectInterpolateKe(eps,psi){
+const [eps1,eps2]=rectFindBounds(eps,rectEpsValues);
+const [psi1,psi2]=rectFindBounds(psi,rectPsiValues);
+const Ke11=rectKeData[eps1][psi1],Ke12=rectKeData[eps1][psi2],Ke21=rectKeData[eps2][psi1],Ke22=rectKeData[eps2][psi2];
+const Ke_eps1=rectLinearInterpolate(psi,psi1,psi2,Ke11,Ke12);
+const Ke_eps2=rectLinearInterpolate(psi,psi1,psi2,Ke21,Ke22);
+const Ke=rectLinearInterpolate(eps,eps1,eps2,Ke_eps1,Ke_eps2);
+return{Ke,eps1,eps2,psi1,psi2};
+}
+function rectGetNearestRatioLD(l,D){
+const ratio=l/D,cols=[1,1.5,2,2.5,3];let nearest=cols[0],minDiff=Math.abs(ratio-cols[0]);
+for(let i=1;i<cols.length;i++){const diff=Math.abs(ratio-cols[i]);if(diff<minDiff){minDiff=diff;nearest=cols[i];}}
+return{ratioReal:ratio,ratioCol:String(nearest)};
+}
+function rectRenderSplineOptions(){
+const type=document.getElementById("rect_sizeType").value,select=document.getElementById("rect_splineSelect");
+select.innerHTML="";
+rectSplineData[type].forEach((item,index)=>{const op=document.createElement("option");op.value=index;op.textContent=item.name;select.appendChild(op);});
+rectFillSplineData();
+}
+function rectFillSplineData(){
+const type=document.getElementById("rect_sizeType").value,index=parseInt(document.getElementById("rect_splineSelect").value),item=rectSplineData[type][index];
+document.getElementById("rect_z").value=item.z;
+document.getElementById("rect_Dval").value=item.D;
+document.getElementById("rect_dtb").value=item.dtb;
+document.getElementById("rect_h").value=item.h;
+document.getElementById("rect_b").value=item.b;
+rectUpdateDefaultE();
+}
+function rectUpdateDefaultE(){
+const type=document.getElementById("rect_sizeType").value,index=parseInt(document.getElementById("rect_splineSelect").value||0),item=rectSplineData[type][index];
+const lm=parseVN(document.getElementById("rect_lm").value),l=0.8*lm;
+document.getElementById("rect_l").value=fmt(l,3);
+if(item)document.getElementById("rect_ratioLDShow").value=fmt(l/item.D,4);
+const eInput=document.getElementById("rect_e");
+if(eInput.value===""||eInput.dataset.auto==="1"||eInput.dataset.auto===undefined){eInput.value=fmt(l/2,3);eInput.dataset.auto="1";}
+}
+document.addEventListener("input",function(e){if(e.target&&e.target.id==="rect_e")e.target.dataset.auto="0";});
+function rectToggleGearType(){const gearType=document.getElementById("rect_gearType").value;document.querySelectorAll(".rectHelicalField").forEach(el=>el.classList.toggle("hidden",gearType!=="helical"));}
+function rectToggleAllowInputs(){
+const fitType=document.getElementById("rect_fitType").value;
+document.getElementById("rect_sigmaAllowMoving").disabled=fitType!=="moving";
+document.getElementById("rect_sigmaCh").disabled=fitType==="moving";
+document.getElementById("rect_s").disabled=fitType==="moving";
+document.getElementById("rect_Ks").disabled=fitType==="moving";
+document.getElementById("rect_Kr").disabled=fitType==="moving";
+}
+function rectToggleKxMode(){
+const mode=document.getElementById("rect_kxMode").value;
+document.getElementById("rect_kxManual").disabled=mode!=="manual";
+document.querySelectorAll(".rectKxTableField").forEach(el=>el.style.opacity=mode==="table"?"1":"0.45");
+}
+function rectGetKxFromTable(D,l){
+const sizeType=document.getElementById("rect_sizeType").value,kcase=parseInt(document.getElementById("rect_kxCase").value);
+const rows=rectKxTable.filter(r=>r.type===sizeType);
+const row=rows.find(r=>D>r.dMin&&D<=r.dMax)||rows[rows.length-1];
+const ratioData=rectGetNearestRatioLD(l,D);
+return{kx:row.values[ratioData.ratioCol][kcase],rowName:row.name,ratioReal:ratioData.ratioReal,ratioCol:ratioData.ratioCol};
+}
+function rectCalculate(){
+const type=document.getElementById("rect_sizeType").value,index=parseInt(document.getElementById("rect_splineSelect").value),item=rectSplineData[type][index];
+const T=parseVN(document.getElementById("rect_T").value),lm=parseVN(document.getElementById("rect_lm").value),l=0.8*lm;
+const z=item.z,dtb=item.dtb,h=item.h,D=item.D;
+const e=parseVN(document.getElementById("rect_e").value),dw=parseVN(document.getElementById("rect_dw").value),alpha=parseVN(document.getElementById("rect_alpha").value),beta=parseVN(document.getElementById("rect_beta").value);
+const alphaRad=alpha*Math.PI/180,betaRad=beta*Math.PI/180;
+const gearType=document.getElementById("rect_gearType").value,betaSign=document.getElementById("rect_betaSign").value;
+let epsBase=e/l,epsAdd=0,epsFormulaText="";
+if(gearType==="straight"){
+epsFormulaText=`Bánh răng trụ răng thẳng:<br>ε = e/l = ${fmt(e,3)} / ${fmt(l,3)} = <b>${fmt(epsBase,4)}</b>`;
+}else{
+epsAdd=(0.5*dw*Math.tan(betaRad)*Math.cos(alphaRad))/l;
+epsAdd=betaSign==="plus"?epsAdd:-epsAdd;
+epsFormulaText=`Bánh răng trụ răng nghiêng:<br>ε = e/l ${betaSign==="plus"?"+":"−"} (0,5·d<sub>w</sub>·tgβ·cosα<sub>w</sub>)/l<br>
+e/l = ${fmt(epsBase,4)}<br>Phần cộng/trừ = ${fmt(Math.abs(epsAdd),4)}<br>ε = <b>${fmt(epsBase+epsAdd,4)}</b>`;
+}
+const eps=epsBase+epsAdd,psi=dtb/(dw*Math.cos(alphaRad));
+const keR=rectInterpolateKe(eps,psi),Ke=keR.Ke;
+let Kx,kxNote="";
+if(document.getElementById("rect_kxMode").value==="manual"){
+Kx=parseVN(document.getElementById("rect_kxManual").value);
+kxNote="Kx được nhập thủ công.";
+}else{
+const r=rectGetKxFromTable(D,l);Kx=r.kx;
+kxNote=`Kx tra bảng 9.7 tự động.<br>D = ${fmt(D,2)} mm, l = ${fmt(l,2)} mm<br>l/D = ${fmt(r.ratioReal,4)} → chọn cột gần nhất l/D = ${r.ratioCol.replace(".",",")}<br>Nhóm: ${r.rowName}<br>Kx = <b>${fmt(Kx,4)}</b>`;
+}
+const mountMode=document.getElementById("rect_mountMode").value;
+let Kl,klFormula="";
+if(mountMode==="torsion"){Kl=Kx+Ke-1;klFormula=`K<sub>l</sub> = K<sub>x</sub> + K<sub>e</sub> − 1 = <b>${fmt(Kl,4)}</b>`;}
+else if(mountMode==="notorsion"){Kl=Math.max(Kx,Ke);klFormula=`K<sub>l</sub> = max(K<sub>x</sub>, K<sub>e</sub>) = <b>${fmt(Kl,4)}</b>`;}
+else{Kl=Kx;klFormula=`K<sub>l</sub> = K<sub>x</sub> = <b>${fmt(Kl,4)}</b>`;}
+const sigmaD=2*T/(dtb*l*h*z);
+const fitType=document.getElementById("rect_fitType").value;
+let sigmaAllow,sigmaAllowText="";
+if(fitType==="moving"){
+sigmaAllow=parseVN(document.getElementById("rect_sigmaAllowMoving").value);
+sigmaAllowText=`[σ<sub>d</sub>] = ${fmt(sigmaAllow,4)} MPa, lấy theo mối ghép di động.`;
+}else{
+const sigmaCh=parseVN(document.getElementById("rect_sigmaCh").value),s=parseVN(document.getElementById("rect_s").value),Ks=parseVN(document.getElementById("rect_Ks").value),Kr=parseVN(document.getElementById("rect_Kr").value);
+sigmaAllow=sigmaCh/(s*Kl*Ks*Kr);
+sigmaAllowText=`[σ<sub>d</sub>] = σ<sub>ch</sub>/(s·K<sub>l</sub>·K<sub>s</sub>·K<sub>r</sub>) = ${fmt(sigmaCh,3)} / (${fmt(s,3)} · ${fmt(Kl,4)} · ${fmt(Ks,3)} · ${fmt(Kr,3)}) = <b>${fmt(sigmaAllow,4)} MPa</b>`;
+}
+const pass=sigmaD<=sigmaAllow;
+document.getElementById("rect_l").value=fmt(l,3);
+document.getElementById("rect_ratioLDShow").value=fmt(l/D,4);
+document.getElementById("rect_eps").value=fmt(eps,4);
+document.getElementById("rect_psi").value=fmt(psi,4);
+document.getElementById("rect_result").innerHTML=`
+<div class="highlight"><b>Kích thước:</b><br>${item.name}<br>z=${z}; D=${fmt(D,2)} mm; d<sub>tb</sub>=${fmt(dtb,2)} mm; h=${fmt(h,2)} mm; b=${fmt(item.b,2)} mm</div><br>
+<b>1. Chiều dài:</b><br>l = 0,8·l<sub>m</sub> = <b>${fmt(l,3)} mm</b><br>l/D = <b>${fmt(l/D,4)}</b><br>e đang dùng = <b>${fmt(e,3)} mm</b><br><br>
+<b>2. Tính ε:</b><br>${epsFormulaText}<br><br>
+<b>3. Tính ψ và K<sub>e</sub>:</b><br>ψ = <b>${fmt(psi,4)}</b><br>K<sub>e</sub> = <b>${fmt(Ke,4)}</b><br><br>
+<b>4. K<sub>x</sub>, K<sub>l</sub>:</b><br>${kxNote}<br>${klFormula}<br><br>
+<b>5. Ứng suất dập:</b><br>σ<sub>d</sub> = 2T/(d<sub>tb</sub>·l·h·z) = <b>${fmt(sigmaD,4)} MPa</b><br><br>
+<b>6. Ứng suất cho phép:</b><br>${sigmaAllowText}<br><br>
+<b>7. So sánh:</b><br>σ<sub>d</sub> = ${fmt(sigmaD,4)} MPa ${pass?"≤":">"} [σ<sub>d</sub>] = ${fmt(sigmaAllow,4)} MPa<br>
+<span class="${pass?"ok":"bad"}">${pass?"Kết luận: ĐẠT bền dập.":"Kết luận: KHÔNG ĐẠT bền dập."}</span>`;
+}
+function rectRenderKeTable(){
+const tbody=document.getElementById("rect_keTable");let html="";
+rectEpsValues.forEach(eps=>{html+=`<tr><td>${fmt(eps,1)}</td>`;rectPsiValues.forEach(psi=>html+=`<td>${fmt(rectKeData[eps][psi],2)}</td>`);html+=`</tr>`;});
+tbody.innerHTML=html;
+}
+
+/* ================= INVOLUTE DATA ================= */
+
+const invBangThanKhai={
+day1:{name:"Dãy 1",modules:[0.5,0.8,1.25,2,3,5,8],rows:{
+15:{0.5:28,0.8:17,1.25:10,2:6},17:{0.5:30,0.8:18,1.25:11},20:{0.5:34,0.8:21,1.25:13,2:8},25:{0.5:42,0.8:26,1.25:16,2:9,3:6},30:{0.5:54,0.8:34,1.25:21,2:13,3:8},35:{0.8:57,1.25:36,2:16,3:10},40:{0.8:64,1.25:38,2:18,3:12,5:6},45:{0.8:78,1.25:46,2:22,3:15,5:8},50:{0.8:60,1.25:48,2:24,3:16,5:11},55:{0.8:66,1.25:54,2:26,3:18,5:12},60:{0.8:74,1.25:58,2:28,3:23,5:14},65:{1.25:50,2:31,3:20,5:15},70:{1.25:53,2:34,3:22,5:16,8:10},75:{1.25:56,2:36,3:24,5:17,8:13},80:{1.25:60,2:38,3:25,5:18,8:14},85:{1.25:62,2:40,3:26,5:19,8:15},90:{2:42,3:34,5:20,8:16},95:{2:44,3:36,5:22,8:18},100:{2:48,3:38,5:24,8:18}}},
+day2:{name:"Dãy 2",modules:[0.6,1,1.5,2.5,3.5,4,6,10],rows:{
+16:{0.6:23,1:13,1.5:8},18:{0.6:25,1:14,1.5:9},22:{0.6:32,1:18,1.5:12,2.5:7},28:{0.6:45,1:28,1.5:17,2.5:10,3.5:8},32:{1:30,1.5:18,2.5:11,3.5:9},38:{1:36,1.5:22,2.5:14,3.5:11},42:{1:40,1.5:25,2.5:16,3.5:12,4:10},48:{1:37,1.5:28,2.5:18,3.5:14,4:12,6:8},52:{1:40,1.5:33,2.5:19,3.5:16,4:12,6:9},58:{1:45,1.5:37,2.5:22,3.5:18,4:14,6:10},62:{1:48,1.5:40,2.5:23,3.5:19,4:16,6:11},68:{1:50,1.5:42,2.5:24,3.5:20,4:18,6:12},72:{1:54,1.5:45,2.5:26,3.5:22,4:20,6:13,10:7},78:{1:60,1.5:50,2.5:30,3.5:24,4:21,6:14,10:8},82:{1.5:53,2.5:31,3.5:25,4:22,6:15,10:9},88:{1.5:57,2.5:34,3.5:28,4:24,6:16,10:10},92:{1.5:58,2.5:35,3.5:29,4:25,6:17,10:10},98:{1.5:62,2.5:38,3.5:31,4:26,6:18,10:11}}}
+};
+
+const invAllowDapTable={
+fixed:{a:{no:[35,50],yes:[40,70]},b:{no:[60,100],yes:[100,140]},c:{no:[80,120],yes:[120,200]}},
+movingNoLoad:{a:{no:[15,20],yes:[20,35]},b:{no:[20,30],yes:[30,60]},c:{no:[25,40],yes:[40,70]}},
+movingLoad:{a:{no:null,yes:[3,10]},b:{no:null,yes:[5,15]},c:{no:null,yes:[10,20]}}
+};
+const invWearSpecialTable={
+"0.59":{"0":{none:38,improve:42,quench40:55,quench45:69,quench52:75,carburize60:83},"0.25":{none:21,improve:23,quench40:29,quench45:36,quench52:39,carburize60:44},"0.50":{none:18,improve:21,quench40:25,quench45:32,quench52:35,carburize60:39}},
+"0.50":{"0":{none:47,improve:55,quench40:67,quench45:85,quench52:92,carburize60:100},"0.25":{none:32,improve:37,quench40:47,quench45:60,quench52:66,carburize60:72},"0.50":{none:22,improve:26,quench40:34,quench45:42,quench52:45,carburize60:50}},
+"0.42":{"0":{none:65,improve:76,quench40:92,quench45:116,quench52:127,carburize60:141},"0.25":{none:42,improve:49,quench40:60,quench45:75,quench52:82,carburize60:91},"0.50":{none:35,improve:41,quench40:50,quench45:63,quench52:68,carburize60:76}},
+"0.35":{"0":{none:73,improve:85,quench40:105,quench45:130,quench52:142,carburize60:158},"0.25":{none:52,improve:60,quench40:77,quench45:97,quench52:105,carburize60:117},"0.50":{none:38,improve:45,quench40:60,quench45:75,quench52:80,carburize60:90}}
+};
+const invWearMqTable={none:95,improve:110,quench40:135,quench45:170,quench52:185,carburize60:205};
+const invKrPrimeTable={psi:[0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75],kr:[1.1,1.2,1.4,1.6,1.9,2.2,2.5,3.0,3.7,4.5]};
+
+function invInterpKrPrime(psi){
+const xs=invKrPrimeTable.psi,ys=invKrPrimeTable.kr;
+if(psi<=xs[0])return{value:ys[0],x1:xs[0],x2:xs[0],note:"ψ nhỏ hơn bảng, lấy biên nhỏ nhất"};
+if(psi>=xs[xs.length-1])return{value:ys[ys.length-1],x1:xs[xs.length-1],x2:xs[xs.length-1],note:"ψ lớn hơn bảng, lấy biên lớn nhất"};
+for(let i=0;i<xs.length-1;i++){if(psi>=xs[i]&&psi<=xs[i+1]){const value=ys[i]+(psi-xs[i])*(ys[i+1]-ys[i])/(xs[i+1]-xs[i]);return{value,x1:xs[i],x2:xs[i+1],note:"Nội suy tuyến tính"};}}
+}
+function invChangeSeries(){invUpdateModuleOptions();invUpdateDOptions();invUpdateAll();}
+function invUpdateModuleOptions(){
+const series=document.getElementById("inv_series").value,mSelect=document.getElementById("inv_m");mSelect.innerHTML="";
+invBangThanKhai[series].modules.forEach(m=>{const op=document.createElement("option");op.value=String(m);op.textContent=fmtSimple(m);mSelect.appendChild(op);});
+}
+function invUpdateDOptions(){
+const series=document.getElementById("inv_series").value,dSelect=document.getElementById("inv_D");dSelect.innerHTML="";
+Object.keys(invBangThanKhai[series].rows).forEach(D=>{const op=document.createElement("option");op.value=D;op.textContent=D;dSelect.appendChild(op);});
+}
+function invGetZData(){
+const series=document.getElementById("inv_series").value,Dstr=document.getElementById("inv_D").value,mstr=document.getElementById("inv_m").value;
+const group=invBangThanKhai[series],row=group.rows[Dstr],z=row?row[mstr]:undefined;
+return{series,group,D:parseVN(Dstr),m:parseVN(mstr),Dstr,mstr,z};
+}
+function invGetDapAllow(){
+const fit=document.getElementById("inv_fitType").value,cond=document.getElementById("inv_condition").value,heat=document.getElementById("inv_heat").value,mode=document.getElementById("inv_allowMode").value;
+const range=invAllowDapTable[fit][cond][heat];if(!range)return{range:null,value:NaN};
+let value=(range[0]+range[1])/2;if(mode==="min")value=range[0];if(mode==="max")value=range[1];return{range,value};
+}
+function invGetWearAllow(krPrime){
+const wearMode=document.getElementById("inv_wearMode").value,ratio=document.getElementById("inv_wearRatio").value,eol=document.getElementById("inv_wearEOverL").value,heat=document.getElementById("inv_wearHeat").value;
+const special=invWearSpecialTable[ratio][eol][heat],sigmaMq=invWearMqTable[heat];
+document.getElementById("inv_sigmaWearSpecial").value=fmt(special,2);
+document.getElementById("inv_sigmaMq").value=fmt(sigmaMq,2);
+const Kc=parseVN(document.getElementById("inv_Kc").value),n=parseVN(document.getElementById("inv_nSpeed").value),Lh=parseVN(document.getElementById("inv_lifeHour").value);
+const N=60*n*Lh,KN=Math.cbrt(N/1e8),Kb=parseVN(document.getElementById("inv_Kb").value),Kg=parseVN(document.getElementById("inv_Kg").value);
+const general=sigmaMq/(Kc*KN*krPrime*Kb*Kg);
+document.getElementById("inv_cycleN").value=N.toExponential(4);
+document.getElementById("inv_KN").value=fmt(KN,4);
+document.getElementById("inv_sigmaWearGeneral").value=fmt(general,4);
+if(wearMode==="special")return{value:special,text:`[σ<sub>m</sub>] tra bảng 9.9 = <b>${fmt(special,4)} MPa</b>`};
+return{value:general,text:`[σ<sub>m</sub>] = [σ<sub>mq</sub>]/(K<sub>c</sub>K<sub>N</sub>K'<sub>r</sub>K<sub>b</sub>K<sub>g</sub>)<br>
+[σ<sub>mq</sub>] = ${fmt(sigmaMq,3)} MPa<br>N = 60nL<sub>h</sub> = ${N.toExponential(4)}<br>K<sub>N</sub> = ${fmt(KN,4)}<br>K'<sub>r</sub> = ${fmt(krPrime,4)}<br>
+[σ<sub>m</sub>] = ${fmt(sigmaMq,3)} / (${fmt(Kc,3)} · ${fmt(KN,4)} · ${fmt(krPrime,4)} · ${fmt(Kb,3)} · ${fmt(Kg,3)}) = <b>${fmt(general,4)} MPa</b>`};
+}
+function invUpdateAll(){
+const data=invGetZData(),T=parseVN(document.getElementById("inv_T").value),lm=parseVN(document.getElementById("inv_lm").value),phi=parseVN(document.getElementById("inv_phi").value),l=0.8*lm;
+document.getElementById("inv_l").value=fmt(l,3);
+const dapAllow=invGetDapAllow();
+document.getElementById("inv_sigmaAllowDap").value=dapAllow.range?fmt(dapAllow.value,2):"Không dùng";
+let html=`<b>Dữ liệu tra bảng:</b><br>Dãy: <b>${data.group.name}</b><br>D = <b>${fmt(data.D,2)} mm</b><br>m = <b>${fmt(data.m,3)}</b><br><br>`;
+if(data.z===undefined){
+["inv_zOut","inv_dtbOut","inv_hOut","inv_ratioLD","inv_psiKr","inv_KrWear"].forEach(id=>document.getElementById(id).value="");
+document.getElementById("inv_result").innerHTML=html+`<span class="bad">Không có z tại giao điểm D và m đã chọn.</span>`;
+invRenderTable();return;
+}
+const z=data.z,dtb=data.m*z,h=0.8*data.m,ratioLD=l/data.D;
+const dw=parseVN(document.getElementById("inv_dw").value),alpha=parseVN(document.getElementById("inv_alpha").value);
+const psi=dtb/(dw*Math.cos(alpha*Math.PI/180)),krData=invInterpKrPrime(psi),krPrime=krData.value;
+const sigmaD=2*T/(dtb*l*h*z*phi),sigmaM=2*T/(dtb*l*h*z);
+const wearAllow=invGetWearAllow(krPrime),passDap=dapAllow.range&&sigmaD<=dapAllow.value,passWear=sigmaM<=wearAllow.value;
+document.getElementById("inv_zOut").value=z;
+document.getElementById("inv_dtbOut").value=fmt(dtb,3);
+document.getElementById("inv_hOut").value=fmt(h,3);
+document.getElementById("inv_ratioLD").value=fmt(ratioLD,4);
+document.getElementById("inv_psiKr").value=fmt(psi,4);
+document.getElementById("inv_KrWear").value=fmt(krPrime,4);
+html+=`<span class="ok">Kết quả tra bảng:</span><br>z = <b style="font-size:22px">${z}</b><br><br>
+<b>Thông số:</b><br>l = 0,8l<sub>m</sub> = <b>${fmt(l,3)} mm</b><br>d<sub>tb</sub> = m·z = <b>${fmt(dtb,3)} mm</b><br>h = 0,8m = <b>${fmt(h,3)} mm</b><br>l/D = <b>${fmt(ratioLD,4)}</b><br>
+ψ = <b>${fmt(psi,4)}</b><br>K'<sub>r</sub> = <b>${fmt(krPrime,4)}</b> (${krData.note})<br><br><hr>
+<b>A. Kiểm nghiệm ứng suất dập</b><br>
+σ<sub>d</sub> = 2T/(d<sub>tb</sub>·l·h·z·φ) = <b>${fmt(sigmaD,4)} MPa</b><br><br>`;
+if(dapAllow.range){
+html+=`[σ<sub>d</sub>] = <b>${fmt(dapAllow.value,4)} MPa</b><br>σ<sub>d</sub> = ${fmt(sigmaD,4)} ${passDap?"≤":">"} [σ<sub>d</sub>] = ${fmt(dapAllow.value,4)}<br>
+<span class="${passDap?"ok":"bad"}">${passDap?"Kết luận dập: ĐẠT.":"Kết luận dập: KHÔNG ĐẠT."}</span><br><br>`;
+}else html+=`<span class="bad">Bảng 9.8 không có [σd] cho trường hợp này.</span><br><br>`;
+html+=`<hr><b>B. Kiểm nghiệm độ bền mòn</b><br>
+σ<sub>m</sub> = 2T/(d<sub>tb</sub>·l·h·z) = <b>${fmt(sigmaM,4)} MPa</b><br><br>
+${wearAllow.text}<br><br>
+σ<sub>m</sub> = ${fmt(sigmaM,4)} ${passWear?"≤":">"} [σ<sub>m</sub>] = ${fmt(wearAllow.value,4)}<br>
+<span class="${passWear?"ok":"bad"}">${passWear?"Kết luận mòn: ĐẠT.":"Kết luận mòn: KHÔNG ĐẠT."}</span>`;
+document.getElementById("inv_result").innerHTML=html;
+invRenderTable();
+}
+function invRenderTable(){
+const data=invGetZData(),rows=data.group.rows,modules=data.group.modules;
+let html=`<h3>${data.group.name}</h3><table><thead><tr><th>D (mm)</th>`;
+modules.forEach(m=>html+=`<th>m = ${fmtSimple(m)}</th>`);
+html+=`</tr></thead><tbody>`;
+Object.keys(rows).forEach(D=>{
+html+=`<tr><td class="${D===data.Dstr?"active":""}">${D}</td>`;
+modules.forEach(m=>{const val=rows[D][String(m)],cls=(D===data.Dstr&&String(m)===data.mstr)?"active":"";html+=`<td class="${cls}">${val!==undefined?val:"–"}</td>`;});
+html+=`</tr>`;
+});
+html+=`</tbody></table>`;
+document.getElementById("inv_tableView").innerHTML=html;
+}
+
+/* INIT */
+rectRenderSplineOptions();
+rectRenderKeTable();
+rectToggleAllowInputs();
+rectToggleKxMode();
+rectToggleGearType();
+rectCalculate();
+
+invUpdateModuleOptions();
+invUpdateDOptions();
+invUpdateAll();
+
+switchMainType();
+
+// ghi đè điều khiển hiển thị theo combobox 5 trường hợp
+if(window.switchMainType) switchMainType();
+globalSwitch();
+</script>
+</body>
+</html>

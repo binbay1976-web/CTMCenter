@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -45,13 +45,22 @@
         .report-card h3 { margin-top: 0; color: #1e3a8a; border-bottom: 2px solid #bfdbfe; padding-bottom: 10px;}
         .status-pass { background-color: #dcfce7; color: #166534; padding: 15px; border-radius: 6px; font-weight: bold; border: 1px solid #bbf7d0;}
         .status-fail { background-color: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; font-weight: bold; border: 1px solid #fecaca;}
+        .hidden{display:none!important;}
+        .xy-box{grid-column:1/-1;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:14px;}
+        .xy-result{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:10px;}
+        .xy-pill{background:#fff;border:1px solid #dbeafe;border-radius:8px;padding:10px;text-align:center;}
+        .xy-pill b{font-size:1.25em;color:#1d4ed8;}
+        .mini{font-size:.86em;color:#475569;line-height:1.45;}
+        .xy-step2{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px;text-align:left;min-width:170px;}
+        .xy-step2 b{color:#1d4ed8;}
+
     </style>
 <link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>HỆ THỐNG TÍNH TOÁN, TRUY XUẤT VÀ KIỂM NGHIỆM Ổ LĂN</h1>
+            <h1>HỆ THỐNG TÍNH TOÁN VÀ KIỂM NGHIỆM Ổ LĂN</h1>
         </div>
 
         <div class="tab">
@@ -61,10 +70,37 @@
         </div>
 
         <div id="TabNhap" class="tabcontent" style="display: block;">
+            <div class="report-card" style="background:#eff6ff; border-color:#bfdbfe;">
+                <h3 style="margin-bottom:12px;">Tính tải trọng hướng tâm tại các vị trí ổ lăn</h3>
+                <p style="margin:0; color:#475569;">Nhập hai thành phần lực theo phương X, Y tại từng vị trí. Chương trình tự tính: <b>Fr = √(Fx² + Fy²)</b>. Giá trị Fr được đổi từ N sang kN để kiểm nghiệm ổ lăn.</p>
+            </div>
+
             <div class="form-grid">
-                <div class="form-group"><label>Lực hướng tâm Ổ 1 - Fr1 (kN)</label><input type="number" step="any" id="Fr1" value="10.1"></div>
-                <div class="form-group"><label>Lực hướng tâm Ổ 2 - Fr2 (kN)</label><input type="number" step="any" id="Fr2" value="9.88"></div>
-                <div class="form-group"><label>Lực dọc trục ngoài - Fa (kN)</label><input type="number" step="any" id="Fa" value="0.9"></div>
+                <div class="form-group" style="background:#dbeafe; padding:10px; border-radius:6px;">
+                    <label>Vị trí của ổ i trên trục</label><input type="text" id="pos_i" value="A" oninput="updateRadialPreview()">
+                </div>
+                <div class="form-group"><label>Fx tại i - Fx<span id="lblFxI">A</span> (N)</label><input type="number" step="any" id="Fx_i" value="2923.216" oninput="updateRadialPreview()"></div>
+                <div class="form-group"><label>Fy tại i - Fy<span id="lblFyI">A</span> (N)</label><input type="number" step="any" id="Fy_i" value="65.6" oninput="updateRadialPreview()"></div>
+
+                <div class="form-group" style="background:#dcfce7; padding:10px; border-radius:6px;">
+                    <label>Vị trí của ổ j trên trục</label><input type="text" id="pos_j" value="D" oninput="updateRadialPreview()">
+                </div>
+                <div class="form-group"><label>Fx tại j - Fx<span id="lblFxJ">D</span> (N)</label><input type="number" step="any" id="Fx_j" value="3757.657" oninput="updateRadialPreview()"></div>
+                <div class="form-group"><label>Fy tại j - Fy<span id="lblFyJ">D</span> (N)</label><input type="number" step="any" id="Fy_j" value="1233.513" oninput="updateRadialPreview()"></div>
+
+                <div class="form-group" style="grid-column:1 / -1; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <label>Kết quả tải hướng tâm tổng hợp</label>
+                    <div id="radialPreview" style="font-size:1.02em; line-height:1.8; color:#0f172a;"></div>
+                </div>
+
+                <div class="form-group"><label>Lực dọc trục ngoài - F<sub>at</sub> / Fa (kN)</label><input type="number" step="any" id="Fa" value="0.9" oninput="updateXYPreview()"></div>
+                <div class="form-group" style="background:#ecfeff; padding:10px; border-radius:6px;">
+                    <label>Hệ số vòng quay V</label>
+                    <select id="V" onchange="updateXYPreview()">
+                        <option value="1">V = 1 - vòng trong quay</option>
+                        <option value="1.2">V = 1,2 - vòng ngoài quay</option>
+                    </select>
+                </div>
                 
                 <div class="form-group" style="background:#fef3c7; padding:10px; border-radius:6px;">
                     <label>Tốc độ quay n (v/ph)</label><input type="number" step="any" id="n" value="200">
@@ -79,29 +115,61 @@
                 <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px;">
                     <label>Hệ số tải trọng động (kd)</label><input type="number" step="any" id="kd" value="1.3">
                 </div>
-                <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px;">
-                    <label>Hệ số tĩnh X0 (VD: 0.6)</label><input type="number" step="any" id="X0" value="0.6">
-                </div>
-                <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px;">
-                    <label>Hệ số tĩnh Y0 (VD: 0.5)</label><input type="number" step="any" id="Y0" value="0.5">
+                <div class="form-group" style="background:#e0e7ff; padding:10px; border-radius:6px; grid-column: span 2;">
+                    <label>Hệ số tải tĩnh X₀, Y₀</label>
+                    <div style="line-height:1.55;color:#334155;">
+                        X₀ và Y₀ sẽ được <b>tra tự động ở Bước 2</b> theo loại ổ, dãy ổ và góc tiếp xúc α để kiểm nghiệm tải tĩnh.
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label>Loại ổ dự kiến</label>
-                    <select id="loai_o">
+                    <select id="loai_o" onchange="refreshXYForm()">
                         <option value="bi_do">Ổ bi đỡ (m=3)</option>
                         <option value="bi_do_chan">Ổ bi đỡ chặn (m=3)</option>
+                        <option value="bi_do_long_cau">Ổ bi đỡ lòng cầu (m=3)</option>
                         <option value="dua_con">Ổ đũa côn (m=10/3)</option>
+                        <option value="bi_chan_do">Ổ bi chặn - đỡ (m=3)</option>
+                        <option value="dua_chan_do">Ổ đũa chặn - đỡ (m=10/3)</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Tham số e (Tra sơ bộ theo α)</label><input type="number" step="any" id="e_param" value="0.2"></div>
-                <div class="form-group"><label>Hệ số Y</label><input type="number" step="any" id="Y_param" value="0.0"></div>
+                <div class="form-group">
+                    <label>Dãy ổ</label>
+                    <select id="rowType" onchange="updateXYPreview()">
+                        <option value="single">Ổ lăn một dãy</option>
+                        <option value="double">Ổ lăn hai dãy</option>
+                    </select>
+                </div>
+                <div class="form-group" id="alphaBox">
+                    <label id="alphaLabel">Góc tiếp xúc α (độ)</label>
+                    <div id="alphaControl">
+                        <select id="alpha" onchange="updateXYPreview()">
+                            <option value="0">0°</option>
+                        </select>
+                    </div>
+                    <small id="alphaHint" style="margin-top:6px;color:#64748b;line-height:1.35;">Góc α lấy theo bảng tra.</small>
+                </div>
+                <div class="form-group" id="faDirectionBox">
+                    <label>Chiều lực dọc trục ngoài F<sub>at</sub></label>
+                    <select id="faDirection" onchange="updateXYPreview()">
+                        <option value="plus">Trường hợp 1: F_at cùng chiều F_sj, ngược chiều F_si</option>
+                        <option value="minus">Trường hợp 2: F_at cùng chiều F_si, ngược chiều F_sj</option>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column:1 / -1; background:#ecfdf5; padding:12px; border-radius:8px; border:1px solid #bbf7d0; color:#14532d;">
+                    <label>Ghi chú</label>
+                    <div>Bước 1 chỉ nhập tải trọng và thông tin làm việc. Hệ số X, Y, e sẽ được tra ở Bước 2 sau khi chọn mã ổ, vì lúc đó mới có C<sub>0</sub> để tính F<sub>a</sub>/C<sub>0</sub>.</div>
+                </div>
             </div>
             <button class="btn-primary" onclick="goToStep2()">LƯU THÔNG SỐ & MỞ KHO Ổ LĂN ➔</button>
         </div>
 
         <div id="TabTraCuu" class="tabcontent">
             <div style="margin-bottom: 15px; color: #0369a1; font-weight: bold;">💡 Gợi ý: Hãy nhập đường kính ngõng trục d để tìm kiếm nhanh. Nếu C báo đỏ, hãy tăng bộ lọc C lên.</div>
+            <div class="report-card" style="background:#f0f9ff;border-color:#bae6fd;margin-bottom:15px;">
+                <h3 style="margin-bottom:8px;">Tra X, Y, e theo từng mã ổ trong kho</h3>
+                <div class="mini">Ở bước này, chương trình đã có C<sub>0</sub> của từng mã ổ nên tính được F<sub>a</sub>/C<sub>0</sub>, sau đó tra e, X, Y. Với ổ i/j, bảng hiển thị hệ số tại từng ổ trước khi bấm “Chọn ổ này”.</div>
+            </div>
             <div class="filter-bar">
                 <div class="form-group">
                     <label>Lọc Loại Ổ</label>
@@ -109,7 +177,10 @@
                         <option value="all">-- Tất cả --</option>
                         <option value="bi_do">Ổ Bi đỡ</option>
                         <option value="bi_do_chan">Ổ Bi đỡ chặn</option>
+                        <option value="bi_do_long_cau">Ổ Bi đỡ lòng cầu</option>
                         <option value="dua_con">Ổ Đũa côn</option>
+                        <option value="bi_chan_do">Ổ Bi chặn - đỡ</option>
+                        <option value="dua_chan_do">Ổ Đũa chặn - đỡ</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -140,6 +211,7 @@
                             <th>Kích thước (d x D x B)</th>
                             <th>C (kN)</th>
                             <th>C0 (kN)</th>
+                            <th>Tra X,Y,e và X₀,Y₀</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -357,7 +429,57 @@
             {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66409", "d": 45, "D": 120, "B": 29, "C": 64.00, "C0": 48.20},
             {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66410", "d": 50, "D": 130, "B": 31, "C": 77.60, "C0": 61.20},
             {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66412", "d": 60, "D": 150, "B": 35, "C": 98.00, "C0": 81.00},
-            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66414", "d": 70, "D": 180, "B": 42, "C": 119.00, "C0": 111.00}
+            {"loai": "bi_do_chan", "ten_loai": "Bi đỡ chặn", "co": "nang_hep", "ten_co": "Nặng hẹp (664xx)", "kyhieu": "66414", "d": 70, "D": 180, "B": 42, "C": 119.00, "C0": 111.00},
+
+            // --- Ổ BI ĐỠ LÒNG CẦU (BẢNG P2.9 & P2.10) ---
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1304 / 111304", "d": 20, "D": 52, "B": 15, "r": 2.0, "alpha": 10.98, "C": 9.76, "C0": 4.09},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1305 / 111305", "d": 25, "D": 62, "B": 17, "r": 2.0, "alpha": 10.59, "C": 14.1, "C0": 6.12},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1306 / 111306", "d": 30, "D": 72, "B": 19, "r": 2.0, "alpha": 9.68, "C": 16.8, "C0": 7.9},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1307 / 111307", "d": 35, "D": 80, "B": 21, "r": 2.5, "alpha": 9.27, "C": 20.0, "C0": 10.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1308 / 111308", "d": 40, "D": 90, "B": 23, "r": 2.5, "alpha": 9.12, "C": 23.3, "C0": 12.4},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1309 / 111309", "d": 45, "D": 100, "B": 25, "r": 2.5, "alpha": 9.38, "C": 30.1, "C0": 16.2},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1310 / 111310", "d": 50, "D": 110, "B": 27, "r": 3.0, "alpha": 8.9, "C": 34.1, "C0": 17.8},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1311 / 111311", "d": 55, "D": 120, "B": 29, "r": 3.0, "alpha": 8.87, "C": 40.6, "C0": 22.9},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1312 / 111312", "d": 60, "D": 130, "B": 31, "r": 3.5, "alpha": 8.53, "C": 45.8, "C0": 27.1},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1313 / 111313", "d": 65, "D": 140, "B": 33, "r": 3.5, "alpha": 8.57, "C": 49.2, "C0": 29.9},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1314 / 111314", "d": 70, "D": 150, "B": 35, "r": 3.5, "alpha": 8.49, "C": 58.6, "C0": 35.9},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1315 / 111315", "d": 75, "D": 160, "B": 37, "r": 3.5, "alpha": 8.42, "C": 62.4, "C0": 39.1},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1316 / 111316", "d": 80, "D": 170, "B": 39, "r": 3.5, "alpha": 8.2, "C": 69.9, "C0": 43.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1317 / 111317", "d": 85, "D": 180, "B": 41, "r": 4.0, "alpha": 8.24, "C": 77.2, "C0": 49.5},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1318 / 111318", "d": 90, "D": 190, "B": 43, "r": 4.0, "alpha": 8.48, "C": 91.8, "C0": 57.2},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung", "ten_co": "Cỡ trung (1000/111000)", "kyhieu": "1320 / 111320", "d": 100, "D": 215, "B": 47, "r": 4.0, "alpha": 8.93, "C": 113.0, "C0": 73.4},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1605 / 111605", "d": 25, "D": 62, "B": 24, "r": 2.0, "alpha": 17.43, "C": 18.9, "C0": 7.6},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1606 / 111606", "d": 30, "D": 72, "B": 27, "r": 2.0, "alpha": 16.35, "C": 14.4, "C0": 10.2},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1607 / 111607", "d": 35, "D": 80, "B": 31, "r": 2.5, "alpha": 17.11, "C": 30.5, "C0": 13.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1608 / 111608", "d": 40, "D": 90, "B": 33, "r": 2.5, "alpha": 16.1, "C": 34.9, "C0": 16.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1609 / 111609", "d": 45, "D": 100, "B": 36, "r": 2.5, "alpha": 15.57, "C": 42.3, "C0": 19.8},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1610 / 111610", "d": 50, "D": 110, "B": 40, "r": 3.0, "alpha": 15.82, "C": 50.0, "C0": 23.9},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1611 / 111611", "d": 55, "D": 120, "B": 43, "r": 3.0, "alpha": 15.36, "C": 58.6, "C0": 28.6},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1612 / 111612", "d": 60, "D": 130, "B": 46, "r": 3.5, "alpha": 15.1, "C": 67.7, "C0": 33.6},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1613 / 111613", "d": 65, "D": 140, "B": 48, "r": 3.5, "alpha": 14.32, "C": 75.3, "C0": 39.3},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1614 / 111614", "d": 70, "D": 150, "B": 51, "r": 3.5, "alpha": 14.07, "C": 85.7, "C0": 45.4},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "trung_rong", "ten_co": "Cỡ trung rộng (1000/111000)", "kyhieu": "1616 / 111616", "d": 80, "D": 170, "B": 58, "r": 3.5, "alpha": 14.0, "C": 107.0, "C0": 58.8},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3508 / 113508", "d": 40, "D": 80, "B": 23, "r": 2.0, "alpha": 0, "C": 25.4, "C0": 33.9},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3509 / 113509", "d": 45, "D": 85, "B": 23, "r": 2.0, "alpha": 0, "C": 26.5, "C0": 35.7},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3514 / 113514", "d": 70, "D": 125, "B": 31, "r": 2.5, "alpha": 0, "C": 68.1, "C0": 95.6},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3516 / 113516", "d": 80, "D": 140, "B": 33, "r": 3.0, "alpha": 0, "C": 102.0, "C0": 120.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3518 / 113518", "d": 90, "D": 160, "B": 40, "r": 3.0, "alpha": 0, "C": 130.0, "C0": 162.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3520 / 113520", "d": 100, "D": 180, "B": 46, "r": 3.5, "alpha": 0, "C": 184.0, "C0": 216.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3522 / 113522", "d": 110, "D": 200, "B": 53, "r": 3.5, "alpha": 0, "C": 227.0, "C0": 281.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_nhe", "ten_co": "Hai dãy - Cỡ nhẹ (3000/113000)", "kyhieu": "3524 / 113524", "d": 120, "D": 215, "B": 58, "r": 3.5, "alpha": 0, "C": 281.0, "C0": 231.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3608 / 113608", "d": 40, "D": 90, "B": 33, "r": 2.5, "alpha": 0, "C": 64.9, "C0": 66.2},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3609 / 113609", "d": 45, "D": 100, "B": 36, "r": 2.5, "alpha": 0, "C": 80.0, "C0": 76.2},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3610 / 113610", "d": 50, "D": 110, "B": 40, "r": 3.0, "alpha": 0, "C": 98.4, "C0": 103.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3611 / 113611", "d": 55, "D": 120, "B": 43, "r": 3.0, "alpha": 0, "C": 113.0, "C0": 120.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3612 / 113612", "d": 60, "D": 130, "B": 46, "r": 3.5, "alpha": 0, "C": 130.0, "C0": 130.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3613 / 113613", "d": 65, "D": 140, "B": 48, "r": 3.5, "alpha": 0, "C": 140.0, "C0": 145.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3614 / 113614", "d": 70, "D": 150, "B": 51, "r": 3.5, "alpha": 0, "C": 178.0, "C0": 184.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3615 / 113615", "d": 75, "D": 160, "B": 55, "r": 3.5, "alpha": 0, "C": 200.0, "C0": 211.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3616 / 113616", "d": 80, "D": 170, "B": 58, "r": 3.5, "alpha": 0, "C": 227.0, "C0": 231.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3617 / 113617", "d": 85, "D": 180, "B": 60, "r": 4.0, "alpha": 0, "C": 249.0, "C0": 274.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3618 / 113618", "d": 90, "D": 190, "B": 64, "r": 4.0, "alpha": 0, "C": 270.0, "C0": 307.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3620 / 113620", "d": 100, "D": 215, "B": 73, "r": 4.0, "alpha": 0, "C": 363.0, "C0": 417.0},
+            {"loai": "bi_do_long_cau", "ten_loai": "Bi đỡ lòng cầu", "co": "hai_day_trung_binh", "ten_co": "Hai dãy - Cỡ trung bình (3000/113000)", "kyhieu": "3622 / 113622", "d": 110, "D": 240, "B": 80, "r": 4.0, "alpha": 0, "C": 459.0, "C0": 479.0}
         ];
 
         let inputData = {};
@@ -371,20 +493,240 @@
             if(evt) evt.currentTarget.className += " active";
         }
 
+        function fmtVN(x, digits = 3) {
+            if (!isFinite(x)) return '0';
+            return x.toLocaleString('vi-VN', { maximumFractionDigits: digits });
+        }
+
+        function getPos(id, fallback) {
+            const v = (document.getElementById(id)?.value || '').trim();
+            return v || fallback;
+        }
+
+        function calcRadialInputs() {
+            const posI = getPos('pos_i', 'i');
+            const posJ = getPos('pos_j', 'j');
+            const FxI = parseFloat(document.getElementById('Fx_i').value) || 0;
+            const FyI = parseFloat(document.getElementById('Fy_i').value) || 0;
+            const FxJ = parseFloat(document.getElementById('Fx_j').value) || 0;
+            const FyJ = parseFloat(document.getElementById('Fy_j').value) || 0;
+            const FrI = Math.sqrt(FxI * FxI + FyI * FyI);
+            const FrJ = Math.sqrt(FxJ * FxJ + FyJ * FyJ);
+            return { posI, posJ, FxI, FyI, FxJ, FyJ, FrI, FrJ };
+        }
+
+        function updateRadialPreview() {
+            const r = calcRadialInputs();
+            document.getElementById('lblFxI').textContent = r.posI;
+            document.getElementById('lblFyI').textContent = r.posI;
+            document.getElementById('lblFxJ').textContent = r.posJ;
+            document.getElementById('lblFyJ').textContent = r.posJ;
+            const box = document.getElementById('radialPreview');
+            if (box) {
+                box.innerHTML = `
+                    <div>Ổ tại <b>${r.posI}</b>: F<sub>r${r.posI}</sub> = √(F<sub>x${r.posI}</sub><sup>2</sup> + F<sub>y${r.posI}</sub><sup>2</sup>) = √(${fmtVN(r.FxI)}² + ${fmtVN(r.FyI)}²) = <b class="success">${fmtVN(r.FrI)} N</b> = <b>${fmtVN(r.FrI/1000, 4)} kN</b></div>
+                    <div>Ổ tại <b>${r.posJ}</b>: F<sub>r${r.posJ}</sub> = √(F<sub>x${r.posJ}</sub><sup>2</sup> + F<sub>y${r.posJ}</sub><sup>2</sup>) = √(${fmtVN(r.FxJ)}² + ${fmtVN(r.FyJ)}²) = <b class="success">${fmtVN(r.FrJ)} N</b> = <b>${fmtVN(r.FrJ/1000, 4)} kN</b></div>
+                `;
+            }
+        }
+
+
+        function cot(deg){ return 1 / Math.tan(deg * Math.PI / 180); }
+        function tg(deg){ return Math.tan(deg * Math.PI / 180); }
+        function interp(x,x1,y1,x2,y2){ return y1 + (x - x1) * (y2 - y1) / (x2 - x1); }
+        function interpTable(x, arr, key){
+            if(!isFinite(x)) x = 0;
+            if(x <= arr[0].faC0) return arr[0][key];
+            if(x >= arr[arr.length-1].faC0) return arr[arr.length-1][key];
+            for(let i=0;i<arr.length-1;i++){
+                let a=arr[i], b=arr[i+1];
+                if(x >= a.faC0 && x <= b.faC0) return interp(x,a.faC0,a[key],b.faC0,b[key]);
+            }
+            return arr[arr.length-1][key];
+        }
+        const deepData=[{faC0:0.014,Y:2.30,e:0.19},{faC0:0.028,Y:1.99,e:0.22},{faC0:0.056,Y:1.71,e:0.26},{faC0:0.084,Y:1.55,e:0.28},{faC0:0.110,Y:1.45,e:0.30},{faC0:0.170,Y:1.31,e:0.34},{faC0:0.280,Y:1.15,e:0.38},{faC0:0.420,Y:1.04,e:0.42},{faC0:0.560,Y:1.00,e:0.44}];
+        const angular12Data=[{faC0:0.014,Y_single:1.81,Y_double_le:2.08,Y_double_gt:2.94,e:0.30},{faC0:0.028,Y_single:1.62,Y_double_le:1.84,Y_double_gt:2.63,e:0.34},{faC0:0.057,Y_single:1.46,Y_double_le:1.69,Y_double_gt:2.37,e:0.37},{faC0:0.085,Y_single:1.34,Y_double_le:1.52,Y_double_gt:2.18,e:0.41},{faC0:0.110,Y_single:1.22,Y_double_le:1.39,Y_double_gt:1.98,e:0.45},{faC0:0.170,Y_single:1.13,Y_double_le:1.30,Y_double_gt:1.84,e:0.48},{faC0:0.290,Y_single:1.04,Y_double_le:1.20,Y_double_gt:1.69,e:0.52},{faC0:0.430,Y_single:1.01,Y_double_le:1.16,Y_double_gt:1.64,e:0.54},{faC0:0.570,Y_single:1.00,Y_double_le:1.16,Y_double_gt:1.62,e:0.54}];
+        const angularConst={18:{Xs_gt:0.43,Ys_gt:1.00,Xd_le:1,Yd_le:1.09,Xd_gt:0.70,Yd_gt:1.63,e:0.57},24:{Xs_gt:0.41,Ys_gt:0.87,Xd_le:1,Yd_le:0.92,Xd_gt:0.67,Yd_gt:1.41,e:0.68},30:{Xs_gt:0.39,Ys_gt:0.76,Xd_le:1,Yd_le:0.78,Xd_gt:0.63,Yd_gt:1.24,e:0.80},35:{Xs_gt:0.37,Ys_gt:0.66,Xd_le:1,Yd_le:0.66,Xd_gt:0.60,Yd_gt:1.07,e:0.95},40:{Xs_gt:0.35,Ys_gt:0.57,Xd_le:1,Yd_le:0.55,Xd_gt:0.57,Yd_gt:0.93,e:1.14}};
+        const thrustBallData={45:{Xs_gt:0.66,Ys_gt:1.00,Xd_le:1.18,Yd_le:0.59,Xd_gt:0.66,Yd_gt:1.00,e:1.25},60:{Xs_gt:0.92,Ys_gt:1.00,Xd_le:1.90,Yd_le:0.54,Xd_gt:0.92,Yd_gt:1.00,e:2.17},75:{Xs_gt:1.66,Ys_gt:1.00,Xd_le:3.89,Yd_le:0.52,Xd_gt:1.66,Yd_gt:1.00,e:4.67}};
+        function setAlphaOptions(options, locked=false){
+            const box = document.getElementById('alphaControl');
+            const hint = document.getElementById('alphaHint');
+            if(!box || !options || !options.length) return;
+            box.innerHTML = `<select id="alpha" onchange="updateXYPreview()" ${locked ? 'disabled' : ''}></select>`;
+            const alpha = document.getElementById('alpha');
+            options.forEach(o=>{
+                const op = document.createElement('option');
+                op.value = o.value;
+                op.textContent = o.text || (o.value + '°');
+                alpha.appendChild(op);
+            });
+            alpha.value = options[0].value;
+            if(hint) hint.textContent = locked ? 'Góc α cố định theo bảng, không cần nhập.' : 'Chọn góc α theo các giá trị có sẵn trong bảng tra.';
+        }
+        function setAlphaManual(defaultValue){
+            const box = document.getElementById('alphaControl');
+            const hint = document.getElementById('alphaHint');
+            box.innerHTML = `<input type="number" step="any" id="alpha" value="${defaultValue}" oninput="updateXYPreview()">`;
+            if(hint) hint.textContent = 'Loại ổ này cho phép tự nhập góc tiếp xúc α.';
+        }
+        function refreshXYForm(){
+            const type=document.getElementById('loai_o').value;
+            const rowType=document.getElementById('rowType');
+            const faDirectionBox=document.getElementById('faDirectionBox');
+            rowType.disabled=false; faDirectionBox.classList.add('hidden');
+
+            if(type==='bi_do'){
+                setAlphaOptions([{value:'0',text:'0°'}], true);
+            }
+            if(type==='bi_do_chan'){
+                faDirectionBox.classList.remove('hidden');
+                setAlphaOptions([{value:'12',text:'12°'},{value:'18',text:'18° ; 19° ; 20°'},{value:'24',text:'24° ; 25° ; 26°'},{value:'30',text:'30°'},{value:'35',text:'35° ; 36°'},{value:'40',text:'40°'}], false);
+            }
+            if(type==='bi_do_long_cau'){
+                rowType.value='double'; rowType.disabled=true;
+                setAlphaManual(12);
+            }
+            if(type==='dua_con'){
+                faDirectionBox.classList.remove('hidden'); rowType.value='single'; rowType.disabled=true;
+                setAlphaManual(12);
+            }
+            if(type==='bi_chan_do'){
+                setAlphaOptions([{value:'45',text:'45°'},{value:'60',text:'60°'},{value:'75',text:'75°'}], false);
+            }
+            if(type==='dua_chan_do'){
+                rowType.disabled=false;
+                setAlphaManual(45);
+            }
+            updateXYPreview();
+        }
+        function lookupXY(type,row,alpha,faC0,fa,V,fr){
+            let ratio=(V*fr>0)? fa/(V*fr) : 0;
+            let e=0,X=1,Y=0,explain='';
+            if(type==='bi_do'){
+                e=interpTable(faC0, deepData, 'e'); const yGT=interpTable(faC0, deepData, 'Y');
+                if(ratio<=e){X=1;Y=0;}else{X=0.56;Y=yGT;}
+                explain='Ổ bi đỡ: tra e và Y theo Fa/C0, sau đó so sánh Fa/(VFr) với e.';
+            } else if(type==='bi_do_chan'){
+                if(Number(alpha)===12){ e=interpTable(faC0, angular12Data, 'e');
+                    if(row==='single'){ if(ratio<=e){X=1;Y=0;}else{X=0.45;Y=interpTable(faC0, angular12Data, 'Y_single');} }
+                    else { if(ratio<=e){X=1;Y=interpTable(faC0, angular12Data, 'Y_double_le');}else{X=0.74;Y=interpTable(faC0, angular12Data, 'Y_double_gt');} }
+                    explain='Ổ bi đỡ-chặn α=12°: nội suy e, Y theo Fa/C0.';
+                } else { const dd=angularConst[Number(alpha)] || angularConst[18]; e=dd.e;
+                    if(row==='single'){ if(ratio<=e){X=1;Y=0;}else{X=dd.Xs_gt;Y=dd.Ys_gt;} }
+                    else { if(ratio<=e){X=dd.Xd_le;Y=dd.Yd_le;}else{X=dd.Xd_gt;Y=dd.Yd_gt;} }
+                    explain='Ổ bi đỡ-chặn α>12°: tra trực tiếp theo góc tiếp xúc, không cần Fa/C0.';
+                }
+            } else if(type==='bi_do_long_cau'){
+                const a=Number(alpha)||12; e=1.5*tg(a); if(ratio<=e){X=1;Y=0.42*cot(a);}else{X=0.65;Y=0.65*cot(a);} explain='Ổ bi đỡ lòng cầu: α do người dùng nhập; e=1,5tgα; X,Y theo điều kiện Fa/(VFr) so với e.';
+            } else if(type==='dua_con'){
+                const a=Number(alpha)||12; e=1.5*tg(a); if(ratio<=e){X=1;Y=0.40*cot(a);}else{X=0.67;Y=0.67*cot(a);} explain='Ổ đũa côn / ổ đũa đỡ-chặn: α do người dùng nhập; F_s=0,83.e.F_r; e=1,5tgα; X,Y theo điều kiện Fa/(VFr) so với e.';
+            } else if(type==='bi_chan_do'){
+                const dd=thrustBallData[Number(alpha)] || thrustBallData[45]; e=dd.e;
+                if(row==='single'){ if(ratio<=e){X=1;Y=0;}else{X=dd.Xs_gt;Y=dd.Ys_gt;} }
+                else { if(ratio<=e){X=dd.Xd_le;Y=dd.Yd_le;}else{X=dd.Xd_gt;Y=dd.Yd_gt;} }
+                explain='Ổ bi chặn - đỡ: tra trực tiếp X, Y, e theo góc tiếp xúc α = 45°, 60° hoặc 75°.';
+            } else if(type==='dua_chan_do'){
+                const a=Number(alpha)||45; e=1.5*tg(a);
+                if(row==='single'){ if(ratio<=e){X=1;Y=0;}else{X=tg(a);Y=1;} }
+                else { if(ratio<=e){X=1.5*tg(a);Y=0.67;}else{X=tg(a);Y=1;} }
+                explain='Ổ đũa chặn - đỡ: α do người dùng nhập; dùng e=1,5tgα và tra X,Y theo dãy ổ.';
+            }
+            return {ratio,e,X,Y,explain};
+        }
+
+        function lookupX0Y0(type, row, alpha){
+            const a = Number(alpha) || 12;
+            let X0 = 0.6, Y0 = 0.50, explain = '';
+
+            if(type === 'bi_do'){
+                X0 = 0.6; Y0 = 0.50;
+                explain = 'Ổ bi đỡ: X₀ = 0,6; Y₀ = 0,50.';
+            }
+            else if(type === 'bi_do_long_cau'){
+                if(row === 'single'){
+                    X0 = 0.5; Y0 = 0.22 * cot(a);
+                    explain = `Ổ bi đỡ lòng cầu một dãy: X₀ = 0,5; Y₀ = 0,22cotgα = 0,22cotg(${fmtVN(a,3)}°).`;
+                }else{
+                    X0 = 1.0; Y0 = 0.44 * cot(a);
+                    explain = `Ổ bi đỡ lòng cầu hai dãy: X₀ = 1,0; Y₀ = 0,44cotgα = 0,44cotg(${fmtVN(a,3)}°).`;
+                }
+            }
+            else if(type === 'bi_do_chan'){
+                let group = 12;
+                if(a <= 12) group = 12;
+                else if(a <= 26) group = 26;
+                else group = 36;
+
+                if(group === 12){
+                    X0 = (row === 'single') ? 0.5 : 1.0;
+                    Y0 = (row === 'single') ? 0.47 : 0.94;
+                    explain = 'Ổ bi đỡ-chặn α ≈ 12°: một dãy X₀=0,5 Y₀=0,47; hai dãy X₀=1,0 Y₀=0,94.';
+                }else if(group === 26){
+                    X0 = (row === 'single') ? 0.5 : 1.0;
+                    Y0 = (row === 'single') ? 0.37 : 0.74;
+                    explain = 'Ổ bi đỡ-chặn α ≈ 26°: một dãy X₀=0,5 Y₀=0,37; hai dãy X₀=1,0 Y₀=0,74.';
+                }else{
+                    X0 = (row === 'single') ? 0.5 : 1.0;
+                    Y0 = (row === 'single') ? 0.28 : 0.56;
+                    explain = 'Ổ bi đỡ-chặn α ≈ 36°: một dãy X₀=0,5 Y₀=0,28; hai dãy X₀=1,0 Y₀=0,56.';
+                }
+            }
+            else if(type === 'dua_con'){
+                if(row === 'single'){
+                    X0 = 0.5; Y0 = 0.22 * cot(a);
+                    explain = `Ổ đũa côn một dãy: X₀ = 0,5; Y₀ = 0,22cotgα = 0,22cotg(${fmtVN(a,3)}°).`;
+                }else{
+                    X0 = 1.0; Y0 = 0.44 * cot(a);
+                    explain = `Ổ đũa côn hai dãy: X₀ = 1,0; Y₀ = 0,44cotgα = 0,44cotg(${fmtVN(a,3)}°).`;
+                }
+            }
+            else if(type === 'bi_chan_do'){
+                // Không có trong bảng X₀-Y₀ người dùng gửi; dùng mặc định ổ bi đỡ để không làm lỗi phép tính.
+                X0 = 0.6; Y0 = 0.50;
+                explain = 'Ổ bi chặn-đỡ chưa có dòng X₀-Y₀ riêng trong bảng gửi, chương trình tạm dùng X₀=0,6; Y₀=0,50.';
+            }
+            else if(type === 'dua_chan_do'){
+                // Không có trong bảng X₀-Y₀ người dùng gửi; dùng công thức cùng nhóm đũa côn theo α.
+                if(row === 'single'){
+                    X0 = 0.5; Y0 = 0.22 * cot(a);
+                    explain = `Ổ đũa chặn-đỡ một dãy: tạm tra theo nhóm đũa côn, X₀ = 0,5; Y₀ = 0,22cotgα.`;
+                }else{
+                    X0 = 1.0; Y0 = 0.44 * cot(a);
+                    explain = `Ổ đũa chặn-đỡ hai dãy: tạm tra theo nhóm đũa côn, X₀ = 1,0; Y₀ = 0,44cotgα.`;
+                }
+            }
+            return {X0, Y0, explain};
+        }
+        function updateXYPreview(){
+            // Bước 1 không tra X, Y, e nữa.
+            // Việc tra hệ số được thực hiện ở Bước 2 sau khi có C0 của mã ổ.
+        }
+
         // --- BƯỚC 1 chuyển BƯỚC 2 ---
         function goToStep2() {
+            updateRadialPreview();
+        refreshXYForm();
+            const r = calcRadialInputs();
             inputData = {
-                Fr1: parseFloat(document.getElementById('Fr1').value) || 0,
-                Fr2: parseFloat(document.getElementById('Fr2').value) || 0,
+                posI: r.posI,
+                posJ: r.posJ,
+                FxI: r.FxI,
+                FyI: r.FyI,
+                FxJ: r.FxJ,
+                FyJ: r.FyJ,
+                FrIN: r.FrI,
+                FrJN: r.FrJ,
+                Fr1: r.FrI / 1000,
+                Fr2: r.FrJ / 1000,
                 Fa: parseFloat(document.getElementById('Fa').value) || 0,
+                V: parseFloat(document.getElementById('V')?.value) || 1,
                 n: parseFloat(document.getElementById('n').value) || 0,
                 Lh: parseFloat(document.getElementById('Lh').value) || 0,
                 K_HE: parseFloat(document.getElementById('K_HE').value) || 1,
                 kd: parseFloat(document.getElementById('kd').value) || 1,
-                X0: parseFloat(document.getElementById('X0').value) || 0,
-                Y0: parseFloat(document.getElementById('Y0').value) || 0,
-                e: parseFloat(document.getElementById('e_param').value) || 0,
-                Y: parseFloat(document.getElementById('Y_param').value) || 0,
+                rowType: document.getElementById('rowType').value,
+                alpha: (Number.isFinite(parseFloat(document.getElementById('alpha').value)) ? parseFloat(document.getElementById('alpha').value) : 12),
+                faDirection: document.getElementById('faDirection').value,
                 loai_o: document.getElementById('loai_o').value
             };
 
@@ -394,6 +736,84 @@
             document.getElementById('btnTabTraCuu').disabled = false;
             document.getElementById('btnTabTraCuu').click();
             filterDB();
+        }
+
+        function computeBearingCalc(bearing) {
+            const d = inputData && inputData.Fr1 !== undefined ? inputData : (() => {
+                const r = calcRadialInputs();
+                return {
+                    posI: r.posI, posJ: r.posJ,
+                    Fr1: r.FrI / 1000, Fr2: r.FrJ / 1000,
+                    Fa: parseFloat(document.getElementById('Fa').value) || 0,
+                    V: parseFloat(document.getElementById('V')?.value) || 1,
+                    kd: parseFloat(document.getElementById('kd').value) || 1,
+                    rowType: document.getElementById('rowType').value,
+                    alpha: Number.isFinite(parseFloat(document.getElementById('alpha')?.value)) ? parseFloat(document.getElementById('alpha').value) : 12,
+                    faDirection: document.getElementById('faDirection')?.value || 'plus'
+                };
+            })();
+            const V = d.V || 1;
+            const alpha = d.alpha || 12;
+            const rowType = d.rowType || 'single';
+            const FaNgoai = d.Fa || 0;
+
+            let eForS = lookupXY(bearing.loai, rowType, alpha, (bearing.C0 > 0 ? FaNgoai / bearing.C0 : 0), FaNgoai, V, Math.max(d.Fr1, d.Fr2)).e;
+            let Si = 0, Sj = 0;
+            if (bearing.loai === 'dua_con') {
+                Si = 0.83 * eForS * d.Fr1;
+                Sj = 0.83 * eForS * d.Fr2;
+            } else if (bearing.loai === 'bi_do_chan') {
+                Si = eForS * d.Fr1;
+                Sj = eForS * d.Fr2;
+            }
+
+            let sumFai = 0, sumFaj = 0, Fai = 0, Faj = 0;
+            if (bearing.loai === 'dua_con' || bearing.loai === 'bi_do_chan') {
+                if (d.faDirection === 'plus') {
+                    sumFai = Sj + FaNgoai;
+                    sumFaj = Si - FaNgoai;
+                } else {
+                    sumFai = Sj - FaNgoai;
+                    sumFaj = Si + FaNgoai;
+                }
+                Fai = (sumFai <= Si) ? Si : sumFai;
+                Faj = (sumFaj <= Sj) ? Sj : sumFaj;
+            } else {
+                Fai = FaNgoai;
+                Faj = 0;
+            }
+            Fai = Math.max(0, Fai);
+            Faj = Math.max(0, Faj);
+
+            const xyI = lookupXY(bearing.loai, rowType, alpha, (bearing.C0 > 0 ? Fai / bearing.C0 : 0), Fai, V, d.Fr1);
+            const xyJ = lookupXY(bearing.loai, rowType, alpha, (bearing.C0 > 0 ? Faj / bearing.C0 : 0), Faj, V, d.Fr2);
+            const x0y0 = lookupX0Y0(bearing.loai, rowType, alpha);
+            return {d, V, Si, Sj, sumFai, sumFaj, Fai, Faj, xyI, xyJ, x0y0};
+        }
+
+        function xyStep2Html(bearing) {
+            const c = computeBearingCalc(bearing);
+            const pi = c.d.posI || 'i';
+            const pj = c.d.posJ || 'j';
+            const faC0i = bearing.C0 > 0 ? c.Fai / bearing.C0 : 0;
+            const faC0j = bearing.C0 > 0 ? c.Faj / bearing.C0 : 0;
+            const dkI = (c.xyI.ratio <= c.xyI.e);
+            const dkJ = (c.xyJ.ratio <= c.xyJ.e);
+            const branchI = dkI ? 'Nhánh: Fₐ/(VFᵣ) ≤ e' : 'Nhánh: Fₐ/(VFᵣ) > e';
+            const branchJ = dkJ ? 'Nhánh: Fₐ/(VFᵣ) ≤ e' : 'Nhánh: Fₐ/(VFᵣ) > e';
+            return `<div class="xy-step2">
+                <div><b>Ổ ${pi}</b>: F<sub>a${pi}</sub>/C<sub>0</sub> = ${fmtVN(faC0i,4)}</div>
+                <div>F<sub>a${pi}</sub>/(V.F<sub>r${pi}</sub>) = <b>${fmtVN(c.xyI.ratio,4)}</b>; e = <b>${fmtVN(c.xyI.e,4)}</b></div>
+                <div class="mini"><b>${branchI}</b> ⇒ X = ${fmtVN(c.xyI.X,3)}; Y = ${fmtVN(c.xyI.Y,3)}</div>
+                <hr style="border:none;border-top:1px solid #bfdbfe;margin:7px 0;">
+                <div><b>Ổ ${pj}</b>: F<sub>a${pj}</sub>/C<sub>0</sub> = ${fmtVN(faC0j,4)}</div>
+                <div>F<sub>a${pj}</sub>/(V.F<sub>r${pj}</sub>) = <b>${fmtVN(c.xyJ.ratio,4)}</b>; e = <b>${fmtVN(c.xyJ.e,4)}</b></div>
+                <div class="mini"><b>${branchJ}</b> ⇒ X = ${fmtVN(c.xyJ.X,3)}; Y = ${fmtVN(c.xyJ.Y,3)}</div>
+                <hr style="border:none;border-top:1px solid #bfdbfe;margin:7px 0;">
+                <div><b>Tra tải tĩnh:</b> X₀ = <b>${fmtVN(c.x0y0.X0,3)}</b>; Y₀ = <b>${fmtVN(c.x0y0.Y0,3)}</b></div>
+                <div class="mini">${c.x0y0.explain}</div>
+                <div class="mini" style="margin-top:6px;">V = ${fmtVN(c.V,2)} (${c.V === 1 ? 'vòng trong quay' : 'vòng ngoài quay'})</div>
+            </div>`;
         }
 
         // --- BƯỚC 2: BỘ LỌC KHO ---
@@ -422,6 +842,7 @@
                         <td><b class="highlight">${row.d}</b> x ${row.D} x ${row.B}</td>
                         <td class="success">${row.C.toFixed(2)}</td>
                         <td>${row.C0.toFixed(2)}</td>
+                        <td>${xyStep2Html(row)}</td>
                         <td>
                             <button class="btn-select" onclick='calculateAndVerify(${JSON.stringify(row)})'>Chọn Ổ Này</button>
                         </td>
@@ -434,35 +855,60 @@
         function calculateAndVerify(bearing) {
             let d = inputData;
             
-            let m_mu = 3; let hs_S = 0;
-            if (bearing.loai === 'dua_con') { m_mu = 10.0 / 3.0; hs_S = 0.83; }
-            else if (bearing.loai === 'bi_do_chan') { m_mu = 3; hs_S = 1.0; }
-            
-            let S1 = hs_S * d.e * d.Fr1;
-            let S2 = hs_S * d.e * d.Fr2;
+            let m_mu = 3;
+            if (bearing.loai === 'dua_con' || bearing.loai === 'dua_chan_do') m_mu = 10.0 / 3.0;
 
-            let tong_S = S2 + d.Fa;
-            let Fa1, Fa2;
-            if (tong_S >= S1) { Fa1 = tong_S; Fa2 = S2; }
-            else { Fa1 = S1; Fa2 = S1 - d.Fa; }
+            let V = d.V || 1.0; let kt = 1.0;
+            let eForS = lookupXY(bearing.loai, d.rowType, d.alpha, (d.Fa / bearing.C0), d.Fa, V, Math.max(d.Fr1, d.Fr2)).e;
+            let Si = 0, Sj = 0;
+            if (bearing.loai === 'dua_con') {
+                // Ổ đũa côn: F_si = 0,83.e.F_ri ; F_sj = 0,83.e.F_rj
+                Si = 0.83 * eForS * d.Fr1;
+                Sj = 0.83 * eForS * d.Fr2;
+            } else if (bearing.loai === 'bi_do_chan') {
+                // Ổ bi đỡ-chặn: F_s = e.F_r
+                Si = eForS * d.Fr1;
+                Sj = eForS * d.Fr2;
+            }
+            let S1 = Si, S2 = Sj;
 
-            let V = 1.0; let kt = 1.0;
-            let ts1 = (d.Fr1 > 0) ? (Fa1 / (V * d.Fr1)) : 0;
-            let ts2 = (d.Fr2 > 0) ? (Fa2 / (V * d.Fr2)) : 0;
-            
-            let X_lon = (bearing.loai === 'bi_do') ? 0.56 : 0.4;
-            
-            let X1 = (ts1 <= d.e) ? 1.0 : X_lon;
-            let Y1 = (ts1 <= d.e) ? 0.0 : d.Y;
-            let X2 = (ts2 <= d.e) ? 1.0 : X_lon;
-            let Y2 = (ts2 <= d.e) ? 0.0 : d.Y;
+            let sumFai = 0, sumFaj = 0, Fa1 = 0, Fa2 = 0, axialCaseText = '';
+            if (bearing.loai === 'dua_con' || bearing.loai === 'bi_do_chan') {
+                if (d.faDirection === 'plus') {
+                    // Trường hợp 1: F_at cùng chiều F_sj, ngược chiều F_si
+                    sumFai = Sj + d.Fa;
+                    sumFaj = Si - d.Fa;
+                    axialCaseText = `Trường hợp 1: F<sub>at</sub> cùng chiều F<sub>s${d.posJ}</sub>, ngược chiều F<sub>s${d.posI}</sub>`;
+                } else {
+                    // Trường hợp 2: F_at cùng chiều F_si, ngược chiều F_sj
+                    sumFai = Sj - d.Fa;
+                    sumFaj = Si + d.Fa;
+                    axialCaseText = `Trường hợp 2: F<sub>at</sub> cùng chiều F<sub>s${d.posI}</sub>, ngược chiều F<sub>s${d.posJ}</sub>`;
+                }
+                Fa1 = (sumFai <= Si) ? Si : sumFai;
+                Fa2 = (sumFaj <= Sj) ? Sj : sumFaj;
+            } else {
+                // Với ổ không có lực dọc trục phụ Fs, quy ước đặt tải dọc trục ngoài vào ổ i hoặc j theo lựa chọn chiều.
+                Fa1 = (d.faDirection === 'plus') ? d.Fa : 0;
+                Fa2 = (d.faDirection === 'plus') ? 0 : d.Fa;
+                axialCaseText = 'Loại ổ này không dùng công thức lực dọc trục phụ F_s.';
+            }
+
+            let xy1 = lookupXY(bearing.loai, d.rowType, d.alpha, (bearing.C0 > 0 ? Fa1 / bearing.C0 : 0), Fa1, V, d.Fr1);
+            let xy2 = lookupXY(bearing.loai, d.rowType, d.alpha, (bearing.C0 > 0 ? Fa2 / bearing.C0 : 0), Fa2, V, d.Fr2);
+            let ts1 = xy1.ratio;
+            let ts2 = xy2.ratio;
+            let X1 = xy1.X, Y1 = xy1.Y, X2 = xy2.X, Y2 = xy2.Y;
+            let x0y0 = lookupX0Y0(bearing.loai, d.rowType, d.alpha);
+            let X0 = x0y0.X0;
+            let Y0 = x0y0.Y0;
 
             let Q1 = (X1 * V * d.Fr1 + Y1 * Fa1) * kt * d.kd;
             let Q2 = (X2 * V * d.Fr2 + Y2 * Fa2) * kt * d.kd;
             let Q_max = Math.max(Q1, Q2);
 
-            let Qo1 = Math.max(d.Fr1, d.X0 * d.Fr1 + d.Y0 * Fa1);
-            let Qo2 = Math.max(d.Fr2, d.X0 * d.Fr2 + d.Y0 * Fa2);
+            let Qo1 = Math.max(d.Fr1, X0 * d.Fr1 + Y0 * Fa1);
+            let Qo2 = Math.max(d.Fr2, X0 * d.Fr2 + Y0 * Fa2);
             let Qo_max = Math.max(Qo1, Qo2);
 
             let LhE = d.Lh * d.K_HE;
@@ -486,12 +932,37 @@
                 <h3>BÁO CÁO KIỂM NGHIỆM Ổ LĂN: MÃ ${bearing.kyhieu} (${bearing.ten_loai})</h3>
                 <p><b>Kích thước ổ đã chọn:</b> d = ${bearing.d}mm, D = ${bearing.D}mm, B/T = ${bearing.B}mm</p>
                 <p><b>Thông số tải của ổ (Bảng P2.x):</b> C = <b class="success">${bearing.C} kN</b>, C0 = <b>${bearing.C0} kN</b></p>
+                <p><b>Lực dọc trục ngoài:</b> F<sub>at</sub> = ${fmtVN(d.Fa,4)} kN; <b>hệ số vòng quay:</b> V = ${fmtVN(V,2)} (${V === 1 ? 'vòng trong quay' : 'vòng ngoài quay'})</p>
+                <div style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; margin:12px 0;">
+                    <b>Tải trọng hướng tâm đã tổng hợp từ Fx, Fy:</b><br>
+                    F<sub>r${d.posI}</sub> = √(F<sub>x${d.posI}</sub><sup>2</sup> + F<sub>y${d.posI}</sub><sup>2</sup>) = √(${fmtVN(d.FxI)}² + ${fmtVN(d.FyI)}²) = <b>${fmtVN(d.FrIN)} N</b> = <b>${fmtVN(d.Fr1, 4)} kN</b><br>
+                    F<sub>r${d.posJ}</sub> = √(F<sub>x${d.posJ}</sub><sup>2</sup> + F<sub>y${d.posJ}</sub><sup>2</sup>) = √(${fmtVN(d.FxJ)}² + ${fmtVN(d.FyJ)}²) = <b>${fmtVN(d.FrJN)} N</b> = <b>${fmtVN(d.Fr2, 4)} kN</b>
+                </div>
                 <hr>
+                <div style="background:#fff7ed; padding:12px; border-radius:8px; border:1px solid #fed7aa; margin:12px 0; line-height:1.7;">
+                    <b>Tra hệ số X, Y, e và lực dọc trục phụ:</b><br>
+                    ${bearing.loai === 'dua_con' ? 'Ổ đũa côn: F<sub>s</sub> = 0,83.e.F<sub>r</sub>.' : bearing.loai === 'bi_do_chan' ? 'Ổ bi đỡ-chặn: F<sub>s</sub> = eF<sub>r</sub>.' : 'Loại ổ này không cần tính lực dọc trục phụ Fs trong chương trình.'}<br>
+                    <b>${axialCaseText}</b><br>
+                    F<sub>s${d.posI}</sub> = <b>${fmtVN(S1,4)} kN</b>; F<sub>s${d.posJ}</sub> = <b>${fmtVN(S2,4)} kN</b><br>
+                    ∑F<sub>a${d.posI}</sub> = <b>${fmtVN(sumFai,4)} kN</b> ⇒ F<sub>a${d.posI}</sub> = ${fmtVN(sumFai,4)} ≤ ${fmtVN(S1,4)} ? F<sub>s${d.posI}</sub> : ∑F<sub>a${d.posI}</sub> = <b>${fmtVN(Fa1,4)} kN</b><br>
+                    ∑F<sub>a${d.posJ}</sub> = <b>${fmtVN(sumFaj,4)} kN</b> ⇒ F<sub>a${d.posJ}</sub> = ${fmtVN(sumFaj,4)} ≤ ${fmtVN(S2,4)} ? F<sub>s${d.posJ}</sub> : ∑F<sub>a${d.posJ}</sub> = <b>${fmtVN(Fa2,4)} kN</b><br>
+                    Tại ${d.posI}: F<sub>a</sub>/C<sub>0</sub> = ${fmtVN(Fa1/bearing.C0,4)}, F<sub>a</sub>/(VF<sub>r</sub>) = ${fmtVN(ts1,4)} ⇒ e = <b>${fmtVN(xy1.e,3)}</b>, X = <b>${fmtVN(X1,3)}</b>, Y = <b>${fmtVN(Y1,3)}</b><br>
+                    Tại ${d.posJ}: F<sub>a</sub>/C<sub>0</sub> = ${fmtVN(Fa2/bearing.C0,4)}, F<sub>a</sub>/(VF<sub>r</sub>) = ${fmtVN(ts2,4)} ⇒ e = <b>${fmtVN(xy2.e,3)}</b>, X = <b>${fmtVN(X2,3)}</b>, Y = <b>${fmtVN(Y2,3)}</b><br>
+                    <span style="color:#475569;">${xy1.explain}</span>
+                </div>
+                <div style="background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0; margin:12px 0; line-height:1.7;">
+                    <b>Tra hệ số tải tĩnh X₀, Y₀:</b><br>
+                    ${x0y0.explain}<br>
+                    X₀ = <b>${fmtVN(X0,3)}</b>; Y₀ = <b>${fmtVN(Y0,3)}</b><br>
+                    Q<sub>0${d.posI}</sub> = max(F<sub>r${d.posI}</sub>; X₀F<sub>r${d.posI}</sub> + Y₀F<sub>a${d.posI}</sub>) = <b>${fmtVN(Qo1,3)} kN</b><br>
+                    Q<sub>0${d.posJ}</sub> = max(F<sub>r${d.posJ}</sub>; X₀F<sub>r${d.posJ}</sub> + Y₀F<sub>a${d.posJ}</sub>) = <b>${fmtVN(Qo2,3)} kN</b>
+                </div>
                 
                 <div style="display:flex; gap: 20px; flex-wrap:wrap;">
                     <div style="flex:1; min-width:300px;">
                         <h4>1. KIỂM NGHIỆM TẢI TĨNH</h4>
                         <ul>
+                            <li>Hệ số tự tra: X₀ = <b>${fmtVN(X0,3)}</b>; Y₀ = <b>${fmtVN(Y0,3)}</b></li>
                             <li>Tải tĩnh quy ước Max (Q0): <b>${Qo_max.toFixed(2)} kN</b></li>
                             <li>Điều kiện: Q0 ≤ C0 bảng (${Qo_max.toFixed(2)} ≤ ${bearing.C0})</li>
                             <li>Trạng thái: <b style="color:${statusTinh==='ĐẠT'?'#16a34a':'#dc2626'}">${statusTinh}</b></li>
@@ -524,6 +995,9 @@
             document.getElementById('btnTabKetQua').disabled = false;
             document.getElementById('btnTabKetQua').click();
         }
+
+        updateRadialPreview();
+        refreshXYForm();
     </script>
 <script>
     // Bắt tín hiệu từ index.html để tự động chuyển sang nền Sáng

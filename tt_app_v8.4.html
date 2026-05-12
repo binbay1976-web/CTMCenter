@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phần Mềm Thiết Kế Dẫn Động Cơ Khí - V22 (Giao Diện Đồng Nhất)</title>
+    <title>Phần Mềm Thiết Kế Dẫn Động Cơ Khí - V20 (Nội Suy Tỉ Số Truyền)</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }
-        .container { max-width: 1150px; margin: auto; background: transparent; padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        h2 { text-align: center; color: #3b82f6; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 25px; text-transform: uppercase;}
-        h3 { color: #3b82f6; margin-top: 25px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 5px; font-size: 1.15em; display: flex; justify-content: space-between; align-items: center;}
+        .container { max-width: 1150px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: #1e3a8a; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 25px; text-transform: uppercase;}
+        h3 { color: #2980b9; margin-top: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; font-size: 1.15em; display: flex; justify-content: space-between; align-items: center;}
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; align-items: end; }
-        label { font-weight: 600; display: block; margin-top: 10px; font-size: 0.85em; opacity: 0.9; }
-        
-        /* ĐÃ SỬA LỖI MÀU NỀN TẠI ĐÂY */
-        input, select { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95em; background-color: #ffffff; color: inherit;}
-        input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-        select option { background-color: #ffffff; color: #1e293b; } /* Ép danh sách xổ xuống luôn có nền trắng chữ đen */
+        label { font-weight: 600; display: block; margin-top: 10px; font-size: 0.85em; color: #334155; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95em;}
+        input:focus, select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         
         .btn-primary { width: 100%; background-color: #2563eb; color: white; padding: 15px; margin-top: 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; text-transform: uppercase;}
         .btn-primary:hover { background-color: #1d4ed8; }
@@ -26,33 +23,33 @@
         .btn-success:hover { background-color: #059669; }
         .btn-danger { background-color: #ef4444; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
         
-        .builder-area { background: rgba(148, 163, 184, 0.05); padding: 20px; border-radius: 8px; border: 2px dashed #94a3b8; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;}
-        .block-card { background: transparent; border: 1px solid rgba(148, 163, 184, 0.3); padding: 15px; border-radius: 6px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #3b82f6;}
-        .block-static { background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.3); padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; border-left: 5px solid #0ea5e9; color: #0ea5e9;}
-        .block-header { font-weight: bold; color: #3b82f6; margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 5px;}
+        .builder-area { background: #f8fafc; padding: 20px; border-radius: 8px; border: 2px dashed #94a3b8; margin-top: 15px; display: flex; flex-direction: column; gap: 15px;}
+        .block-card { background: #fff; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #3b82f6;}
+        .block-static { background: #e0f2fe; border: 1px solid #bae6fd; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; color: #0369a1; border-left: 5px solid #0ea5e9;}
+        .block-header { font-weight: bold; color: #1e40af; margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px;}
         .arrow-down { text-align: center; font-size: 24px; color: #94a3b8; font-weight: bold; line-height: 10px; }
         
-        .result-box { margin-top: 30px; padding: 20px; background-color: rgba(34, 197, 94, 0.05); border-left: 6px solid #2ecc71; border-radius: 8px; display: none; }
+        .result-box { margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-left: 6px solid #2ecc71; border-radius: 8px; display: none; }
         .table-container { overflow-x: auto; margin-top: 15px;}
         table { width: 100%; border-collapse: collapse; font-size: 0.95em; min-width: 800px;}
-        th, td { padding: 12px; text-align: center; border: 1px solid rgba(148, 163, 184, 0.3); }
-        th { background-color: rgba(226, 232, 240, 0.1); }
+        th, td { padding: 12px; text-align: center; border: 1px solid #e2e8f0; }
+        th { background-color: #e2e8f0; color: #1e293b; }
         tr:nth-child(even) td, tr:nth-child(odd) td { background-color: transparent !important; }
-        .highlight { color: #ef4444; font-weight: bold; }
-        .success { color: #22c55e; font-weight: bold; }
+        .highlight { color: #dc2626; font-weight: bold; }
+        .success { color: #16a34a; font-weight: bold; }
         
         #motorSearchArea { display: none; margin-top: 30px; border: 2px solid #3498db; padding: 20px; border-radius: 8px; background-color: transparent;}
         #step2Area { display: none; margin-top: 30px; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; background-color: transparent;}
         .step-badge { background: #3498db; color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; margin-bottom: 15px;}
-        .target-tracker { background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: bold; text-align: center; margin-bottom: 15px; color: #f59e0b;}
-        .note { font-size: 0.85em; color: #f59e0b; font-style: italic; display: block; margin-top: 5px;}
+        .target-tracker { background: #fef3c7; padding: 10px; border-radius: 6px; border: 1px solid #fcd34d; font-weight: bold; text-align: center; margin-bottom: 15px;}
+        .note { font-size: 0.85em; color: #e67e22; font-style: italic; display: block; margin-top: 5px;}
     </style>
 <link rel="stylesheet" href="shared-dark.css">
 </head>
 <body>
 
 <div class="container">
-    <h2>HỆ THỐNG THIẾT KẾ ĐỘNG HỌC TÙY BIẾN (V22)</h2>
+    <h2>HỆ THỐNG THIẾT KẾ ĐỘNG HỌC TÙY BIẾN (V20)</h2>
     
     <h3>I. TẢI TRỌNG & BỘ PHẬN CÔNG TÁC</h3>
     <div class="grid-3">
@@ -92,7 +89,7 @@
     </div>
 
     <div id="load_cycle_inputs" class="builder-area" style="display: none; border-color: #fcd34d;">
-        <b style="color: #f59e0b;">Chu kỳ tải trọng (M_i/M_max và Thời gian t_i)</b>
+        <b>Chu kỳ tải trọng (M_i/M_max và Thời gian t_i)</b>
         <div class="grid-3">
             <div><label>Giai đoạn 1:</label><input type="number" id="p1" value="1.0"> <input type="number" id="t1" value="3"></div>
             <div><label>Giai đoạn 2:</label><input type="number" id="p2" value="0.714"> <input type="number" id="t2" value="4"></div>
@@ -113,7 +110,7 @@
             <button class="btn-success" style="margin:0;" onclick="addBlock()">+ CHÈN CHI TIẾT</button>
         </div>
     </h3>
-    <p style="font-size:0.9em; opacity:0.8; margin-top:0;">* Sơ đồ dòng công suất chảy từ Động Cơ đến Bộ Phận Công Tác.</p>
+    <p style="font-size:0.9em; color:#64748b; margin-top:0;">* Sơ đồ dòng công suất chảy từ Động Cơ đến Bộ Phận Công Tác.</p>
     
     <div class="builder-area">
         <div class="block-static" id="block_motor">🗲 ĐỘNG CƠ (Nguồn dẫn động)</div>
@@ -123,9 +120,9 @@
             </div>
         
         <div class="arrow-down">↓</div>
-        <div class="block-static" id="block_machine">
+        <div class="block-static" id="block_machine" style="background:#dcfce7; border-color:#86efac; color:#166534; border-left-color:#22c55e;">
             <div style="font-weight:bold; margin-bottom:10px;">⚙ BỘ PHẬN CÔNG TÁC: <span id="machine_name_disp">BĂNG TẢI</span></div>
-            <div class="grid-2" style="text-align:left; font-weight:normal; color: inherit;">
+            <div class="grid-2" style="text-align:left; font-weight:normal;">
                 <div><label>Hiệu suất 1 cặp ổ lăn (η_ol):</label><input type="number" id="machine_eta_ol" value="0.99" step="0.01"></div>
                 <div><label>Số cặp ổ lăn (k_ol):</label><input type="number" id="machine_k_ol" value="1" min="0"></div>
             </div>
@@ -136,9 +133,9 @@
 
     <div id="motorSearchArea">
         <div class="step-badge">BƯỚC 2: TRA BẢNG VÀ CHỌN ĐỘNG CƠ</div>
-        <div id="step1_summary" style="margin-bottom: 15px; font-size: 1.05em; font-weight:bold; color: #3b82f6;"></div>
+        <div id="step1_summary" style="margin-bottom: 15px; font-size: 1.05em;"></div>
         
-        <div class="grid-3" style="margin-bottom: 15px; background: rgba(148, 163, 184, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(148, 163, 184, 0.2);">
+        <div class="grid-3" style="margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
             <div><label>Lọc Công suất P</label>
                 <select id="filterP" onchange="filterMotors()">
                     <option value="all">Tất cả P</option>
@@ -182,14 +179,14 @@
 
     <div id="resultBox" class="result-box">
         <div class="step-badge" style="background:#2ecc71;">KẾT QUẢ ĐỘNG HỌC TOÀN HỆ THỐNG</div>
-        <h3 style="text-align:center; margin-top: 0; color:#2ecc71; border:none;">1. THÔNG SỐ TẢI TRỌNG VÀ ĐỘNG CƠ CHỌN</h3>
+        <h3 style="text-align:center; margin-top: 0; color:#27ae60;">1. THÔNG SỐ TẢI TRỌNG VÀ ĐỘNG CƠ CHỌN</h3>
         <div class="grid-2">
             <div id="res_col1"></div>
             <div id="res_col2"></div>
         </div>
-        <h3 style="text-align:center; color:#2ecc71; border:none;">2. PHÂN PHỐI TỈ SỐ TRUYỀN THỰC TẾ</h3>
-        <div id="res_ts_truyen" style="text-align:center;"></div>
-        <h3 style="text-align:center; color:#2ecc71; border:none;">3. BẢNG THỐNG KÊ THÔNG SỐ ĐỘNG HỌC</h3>
+        <h3 style="text-align:center;">2. PHÂN PHỐI TỈ SỐ TRUYỀN THỰC TẾ</h3>
+        <div id="res_ts_truyen"></div>
+        <h3 style="text-align:center;">3. BẢNG THỐNG KÊ THÔNG SỐ ĐỘNG HỌC</h3>
         <div class="table-container">
             <table id="kinematicTable">
                 <thead id="k_thead"></thead>
@@ -200,7 +197,7 @@
 </div>
 
 <script>
-    // DỮ LIỆU ĐỘNG CƠ FULL 100%
+    // DỮ LIỆU ĐỘNG CƠ (FULL 100%)
     const motorDatabase = [
         { model: "DK.31-2", P: 0.6, n: 2860, ns: 3000, tk: 2.0 }, { model: "DK.32-2", P: 1.0, n: 2850, ns: 3000, tk: 2.0 },
         { model: "DK.41-2", P: 1.7, n: 2880, ns: 3000, tk: 1.8 }, { model: "DK.42-2", P: 2.8, n: 2880, ns: 3000, tk: 1.9 },
@@ -297,6 +294,7 @@
         }
     };
 
+    // Hàm Nội suy tuyến tính (Linear Interpolation)
     function interpolate(x, xArr, yArr) {
         if (x <= xArr[0]) return yArr[0];
         if (x >= xArr[xArr.length - 1]) return yArr[yArr.length - 1];
@@ -322,6 +320,7 @@
     let gl_Pt = 0, gl_Pct = 0, gl_nsb = 0, gl_nlv = 0, gl_etatot = 1, gl_utot = 1, gl_load_text = "", gl_Lh = 0, gl_Plv = 0;
     let selectedMotor = null;
 
+    // --- UI ĐỘNG ---
     function toggleMachineType() {
         let type = document.getElementById('load_machine').value;
         document.getElementById('inp_D').style.display = type === 'bang_tai' ? 'block' : 'none';
@@ -338,6 +337,7 @@
         document.getElementById("load_cycle_inputs").style.display = (document.getElementById("load_type").value === "variable") ? "block" : "none";
     }
 
+    // TẠO MẶC ĐỊNH 1 SƠ ĐỒ KHI LOAD
     window.onload = () => {
         document.getElementById('newBlockType').value = 'dai'; addBlock();
         document.getElementById('newBlockType').value = 'hgt2'; addBlock();
@@ -352,6 +352,7 @@
             u_act: Array(def.stages).fill(1), subtype: 'khai_trien', noU: def.noU
         };
         
+        // Cấu hình các biến số lượng (k) và tên nhãn rõ ràng
         if(type === 'dai') { b.u_sb = 3; b.eta = 0.95; b.k_qty = 1; b.eta_name = 'η_đai'; b.k_name = 'k_đai'; }
         else if(type === 'xich') { b.u_sb = 3; b.eta = 0.97; b.k_qty = 1; b.eta_name = 'η_xích'; b.k_name = 'k_xích'; }
         else if(type === 'kn') { b.u_sb = 1; b.eta = 0.99; b.k_qty = 1; b.eta_name = 'η_kn'; b.k_name = 'k_kn'; }
@@ -413,6 +414,7 @@
         document.getElementById('blocksContainer').innerHTML = html;
     }
 
+    // --- BƯỚC 1: TÍNH Pct, nsb ---
     function calculateStep1() {
         if(blocks.length === 0) return alert("Vui lòng chèn thêm ít nhất 1 chi tiết vào sơ đồ truyền động!");
         
@@ -448,6 +450,7 @@
             gl_load_text = `Thay đổi, K_eq = ${K_eq.toFixed(3)}`;
         }
 
+        // Tính hiệu suất riêng của Bộ phận công tác
         let m_k_ol = parseInt(document.getElementById('machine_k_ol').value) || 0;
         let m_eta_ol = parseFloat(document.getElementById('machine_eta_ol').value) || 1;
         let machine_eta = Math.pow(m_eta_ol, m_k_ol);
@@ -467,7 +470,7 @@
         gl_Pct = gl_Pt / gl_etatot;
         gl_nsb = gl_nlv * gl_utot;
 
-        document.getElementById('step1_summary').innerHTML = `Đã tính toán: P_ct = <span style="color:#ef4444;">${gl_Pct.toFixed(3)} kW</span> | n_sb = <span style="color:#3b82f6;">${gl_nsb.toFixed(3)} vg/ph</span>. Hãy chọn động cơ:`;
+        document.getElementById('step1_summary').innerHTML = `Đã tính toán: <b>P_ct = <span style="color:red;">${gl_Pct.toFixed(3)} kW</span></b> và <b>n_sb = <span style="color:#2980b9;">${gl_nsb.toFixed(3)} vg/ph</span></b>. Hãy chọn động cơ phù hợp dưới đây:`;
         document.getElementById('motorSearchArea').style.display = 'block';
         document.getElementById('step2Area').style.display = 'none';
         document.getElementById('resultBox').style.display = 'none';
@@ -476,6 +479,7 @@
         document.getElementById('motorSearchArea').scrollIntoView({ behavior: 'smooth' });
     }
 
+    // --- BƯỚC 2: CHỌN ĐỘNG CƠ ---
     function filterMotors() {
         let filterP = document.getElementById('filterP').value;
         let filterNs = document.getElementById('filterNs').value;
@@ -490,9 +494,9 @@
             
             let isOpt = (r.P >= gl_Pct && r.P <= gl_Pct*1.5) ? 'success' : '';
             html += `<tr>
-                <td style="font-weight:bold; color:#3b82f6;">${r.model}</td>
+                <td style="font-weight:bold; color:#1e3a8a;">${r.model}</td>
                 <td class="${isOpt}">${r.P.toFixed(2)}</td><td>${r.n}</td><td>${r.ns}</td><td>${r.tk.toFixed(1)}</td>
-                <td><button class="btn-success" onclick="selectMotor(${r.P}, ${r.n}, '${r.model}')">Chọn Động Cơ</button></td>
+                <td><button class="btn-success" onclick="selectMotor(${r.P}, ${r.n}, '${r.model}')">Chọn Động Cơ Này</button></td>
             </tr>`;
         });
         document.getElementById('motorTableBody').innerHTML = html;
@@ -517,7 +521,7 @@
                 html += `<div><label>u thực tế:</label><input type="number" id="u_${i}_0" value="${b.u_act[0]}" onchange="updateUTracker()"></div>`;
             } else if(b.stages === 2) {
                 html += `<div><label>u chung HGT (uh):</label><input type="number" id="uh_${i}" value="${b.u_sb}">
-                         <button class="btn-success" style="padding:5px; margin-top:5px; width:100%;" onclick="autoSplitHGT(${i})">Nội Suy Bảng Tra ⬇</button></div>
+                         <button class="btn-success" style="padding:5px; margin-top:5px; width:100%;" onclick="autoSplitHGT(${i})">Nội Suy Phân Bổ Tự Động ⬇</button></div>
                          <div><label>u1 (Cấp nhanh):</label><input type="number" id="u_${i}_0" value="0" step="0.001" onchange="updateUTracker()"></div>
                          <div><label>u2 (Cấp chậm):</label><input type="number" id="u_${i}_1" value="0" step="0.001" onchange="updateUTracker()"></div>`;
             } else if(b.stages === 3) {
@@ -566,10 +570,11 @@
                 u_cur *= val;
             }
         });
-        let color = Math.abs(u_cur - u_ht)/u_ht < 0.05 ? '#22c55e' : '#ef4444';
+        let color = Math.abs(u_cur - u_ht)/u_ht < 0.05 ? '#16a34a' : '#dc2626';
         document.getElementById('u_tracker').innerHTML = `Mục tiêu u_ht: <b>${u_ht.toFixed(3)}</b> | Tổng u_đang_nhập: <b style="color:${color}">${u_cur.toFixed(3)}</b>`;
     }
 
+    // --- BƯỚC 3: TÍNH TOÁN KINEMATICS MATRIX ĐẦY ĐỦ ---
     function calculateFinal() {
         blocks.forEach((b, i) => {
             if(b.noU) { b.u_act = [1]; return; }
@@ -580,6 +585,7 @@
 
         let shafts = [{ name: 'Động Cơ', n: selectedMotor.n, P: 0, T: 0 }];
         
+        // 1. FORWARD PASS (Tính Vận tốc n)
         let curr_n = selectedMotor.n;
         let s_idx = 1;
         
@@ -595,6 +601,7 @@
         shafts.push({ name: 'Trục C.Tác', n: curr_n, P: 0, T: 0 });
         gl_nlv = curr_n; 
 
+        // 2. BACKWARD PASS (Tính Công suất P)
         let m_k_ol = parseInt(document.getElementById('machine_k_ol').value) || 0;
         let m_eta_ol = parseFloat(document.getElementById('machine_eta_ol').value) || 1;
         let machine_eta = Math.pow(m_eta_ol, m_k_ol);
@@ -621,10 +628,12 @@
             }
         }
 
+        // 3. TÍNH MOMEN XOẮN (T)
         shafts.forEach(sh => {
             sh.T = 9.55e6 * (sh.P / sh.n);
         });
 
+        // 4. HIỂN THỊ KẾT QUẢ ĐẦY ĐỦ 
         document.getElementById('res_col1').innerHTML = `
             <p><b>- Model Động Cơ:</b> ${selectedMotor.model}</p>
             <p><b>- Thời gian LV (Lh):</b> ${gl_Lh.toLocaleString()} h</p>
@@ -634,7 +643,7 @@
             
         document.getElementById('res_col2').innerHTML = `
             <p><b>- Hiệu suất tổng (η):</b> ${gl_etatot.toFixed(3)}</p>
-            <p><b>- Công suất cần thiết (Pct):</b> <span style="color:#ef4444; font-weight:bold;">${gl_Pct.toFixed(3)} kW</span></p>
+            <p><b>- Công suất cần thiết (Pct):</b> <span style="color:red; font-weight:bold;">${gl_Pct.toFixed(3)} kW</span></p>
             <p><b>- Vận tốc ĐC (n_đc):</b> ${selectedMotor.n.toFixed(3)} vg/ph</p>
             <p><b>- Vận tốc sơ bộ (n_sb):</b> ${gl_nsb.toFixed(3)} vg/ph</p>
             <p><b>- Vận tốc Công Tác thực (n_ct):</b> ${gl_nlv.toFixed(3)} vg/ph</p>`;
@@ -666,21 +675,6 @@
         
         document.getElementById('resultBox').style.display = 'block';
         document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
-    }
-</script>
-<script>
-    // Nhận tín hiệu đổi màu từ trang chủ index.html gửi vào
-    window.addEventListener('message', function(event) {
-        if (event.data && event.data.theme === 'light') {
-            document.body.classList.add('light-theme');
-        } else if (event.data && event.data.theme === 'dark') {
-            document.body.classList.remove('light-theme');
-        }
-    });
-
-    // Khi load lại trang con, giữ nguyên chế độ màu đang cài đặt ở trang chủ
-    if (localStorage.getItem('ctmc_theme') === 'light') { 
-        document.body.classList.add('light-theme'); 
     }
 </script>
 </body>
