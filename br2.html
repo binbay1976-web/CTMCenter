@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chương Trình 2: Bánh Răng Trụ Nghiêng</title>
+<title>Chương Trình 2: Bánh Răng Trụ Nghiêng (Ultimate Edition)</title>
 <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #1e293b; }
     .container { max-width: 1250px; margin: auto; background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
@@ -20,26 +20,23 @@
     
     .result-box { margin-top: 20px; padding: 25px; border: 2px solid #10b981; border-radius: 8px; background-color: #f8fafc; display: none;}
     
-    /* ĐÃ CHỈNH SỬA PHẦN CSS CỦA BẢNG TẠI ĐÂY */
     table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-    th, td { padding: 10px; border: 1px solid var(--dm-border); text-align: left; }
+    th, td { padding: 10px; border: 1px solid #cbd5e1; text-align: left; }
     th { font-weight: 600; text-align: center;}
     td { text-align: center; }
     
-    /* Tắt hoàn toàn tính năng xen kẽ màu theo yêu cầu, tạo màu đồng nhất */
     tr:nth-child(even) td, tr:nth-child(odd) td, tr:nth-child(even), tr:nth-child(odd) { 
         background-color: transparent !important; 
     }
     
-    /* ĐÃ SỬA: Chuyển thành chữ thường (nhạt) thay vì in đậm */
-    .highlight { color: #ff4d4d !important; font-weight: normal; } 
-    .success { color: #10b981 !important; font-weight: normal; } 
-    /* KẾT THÚC PHẦN CHỈNH SỬA CSS BẢNG */
+    .highlight { color: #ff4d4d !important; font-weight: bold; } 
+    .success { color: #10b981 !important; font-weight: bold; } 
+    .warning { color: #d97706 !important; font-weight: bold; }
     
     .step-title { background-color: #2563eb !important; color: white !important; font-weight: bold; text-align: center; font-size: 16px;}
     .material-panel { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 15px;}
+    .advanced-panel { background: #e2e8f0; border: 1px solid #94a3b8; padding: 15px; border-radius: 8px; margin-bottom: 20px;}
     
-    /* Chỉnh lại canvas cho đẹp và rộng hơn */
     .canvas-container { text-align: center; margin: 20px auto; border: 2px solid #cbd5e1; border-radius: 8px; background: #fff; padding: 15px; max-width: 800px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
     canvas { max-width: 100%; height: auto; }
 </style>
@@ -47,16 +44,16 @@
 </head>
 <body>
 <div class="container">
-    <h1>THIẾT KẾ BÁNH RĂNG TRỤ NGHIÊNG</h1>
+    <h1>THIẾT KẾ BÁNH RĂNG TRỤ NGHIÊNG </h1>
     
     <form id="main_form">
-        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">I.CÁC THÔNG SỐ ĐẦU VÀO</h3>
+        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">I. CÁC THÔNG SỐ ĐẦU VÀO</h3>
         <div class="grid-5">
-            <div><label>Công suất P1 (kW):</label><input type="number" step="any" id="P1" value="15.7" required></div>
-            <div><label>Vòng quay n1 (vg/ph):</label><input type="number" step="any" id="n1" value="187.5" required></div>
-            <div><label>Tỉ số truyền u:</label><input type="number" step="any" id="ud" value="5" required></div>
-            <div><label>T.gian phục vụ Lh (h):</label><input type="number" step="any" id="Lh" value="5000" required></div>
-            <div><label>Góc nghiêng sơ bộ β°:</label><input type="number" step="any" id="beta_sb" value="10" min="8" max="20" required></div>
+            <div><label>Công suất P1 (kW):</label><input type="number" step="any" id="P1" value="4.14" required></div>
+            <div><label>Vòng quay n1 (vg/ph):</label><input type="number" step="any" id="n1" value="475" required></div>
+            <div><label>Tỉ số truyền u:</label><input type="number" step="any" id="ud" value="4" required></div>
+            <div><label>T.gian phục vụ Lh (h):</label><input type="number" step="any" id="Lh" value="18000" required></div>
+            <div><label>Góc nghiêng sơ bộ β°:</label><input type="number" step="any" id="beta_sb" value="14" min="8" max="20" required></div>
         </div>
         <div class="grid-3">
             <div><label>Chiều tải trọng (KFC):</label>
@@ -65,33 +62,50 @@
                     <option value="0.75">Quay 2 chiều (KFC = 0.75)</option>
                 </select>
             </div>
-            <div><label>Hệ số quá tải Kqt:</label><input type="number" step="any" id="Kqt" value="2.0"></div>
-            <div><label>Hệ số nhám ZR:</label><input type="number" step="any" id="ZR" value="0.95"></div>
+            <div><label>Hệ số quá tải Kqt:</label><input type="number" step="any" id="Kqt" value="1.0"></div>
+            <div><label>Hệ số độ nhám (ZR):</label><input type="number" step="any" id="ZR" value="0.95"></div>
         </div>
 
-        <div style="background:#e0f2fe; padding:15px; border:1px solid #38bdf8; border-radius:8px; margin-bottom: 20px;">
-            <h4 style="margin-top:0; color:#0369a1; border-bottom: 1px solid #7dd3fc; padding-bottom: 5px;">QUYỀN ĐIỀU KHIỂN HỆ SỐ & TRA BẢNG</h4>
-            <div class="grid-4" style="margin-bottom:0;">
-                <div><label>Chế độ KHβ, KFβ:</label>
-                    <select id="k_mode" onchange="toggleKMode()">
-                        <option value="auto">Tự động tra Bảng 6.7</option>
-                        <option value="manual">Nhập tay</option>
-                    </select>
-                </div>
-                <div class="manual-k" style="display:none;"><label>Nhập KHβ:</label><input type="number" step="any" id="KHb_user" value="1.0"></div>
-                <div class="manual-k" style="display:none;"><label>Nhập KFβ:</label><input type="number" step="any" id="KFb_user" value="1.14"></div>
-                <div><label>Hệ số Mô-đun (0.015-0.02):</label><input type="number" step="0.001" id="m_coef" value="0.015"></div>
+        <div class="advanced-panel">
+            <h4 style="margin-top:0; color:#334155; border-bottom: 1px solid #94a3b8; padding-bottom: 5px;">THÔNG SỐ BỀ MẶT, KÍCH THƯỚC & NÂNG CAO </h4>
+            <div class="grid-5" style="margin-bottom:0;">
+                <div><label>Hệ số vận tốc (Zv):</label><input type="number" step="any" id="Zv" value="1.0" title="Thường bằng 1 nếu v<5 m/s"></div>
+                <div><label>Độ nhám chân (YR):</label><input type="number" step="any" id="YR" value="1.0" title="Phay tiêu chuẩn bằng 1.0, Mài bằng 1.2"></div>
+                <div><label>Kích thước TX (KxH):</label><input type="number" step="any" id="KxH" value="1.0" title="Thường = 1 nếu D < 700mm"></div>
+                <div><label>Kích thước Uốn (KxF):</label><input type="number" step="any" id="KxF" value="1.0" title="Thường = 1 nếu D < 400mm"></div>
+                <div><label>Độ dôi bề rộng (Δb):</label><input type="number" step="any" id="delta_b" value="4" title="bw1 = bw2 + Δb (Khuyên dùng 2-5mm)"></div>
             </div>
         </div>
 
-        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">II.VẬT LIỆU, ỨNG SUẤT VÀ SƠ ĐỒ BỐ TRÍ</h3>
+        <div style="background:#e0f2fe; padding:15px; border:1px solid #38bdf8; border-radius:8px; margin-bottom: 20px;">
+            <h4 style="margin-top:0; color:#0369a1; border-bottom: 1px solid #7dd3fc; padding-bottom: 5px;">QUYỀN ĐIỀU KHIỂN HỆ SỐ ĐỘNG LỰC HỌC</h4>
+            <div class="grid-2" style="margin-bottom:0;">
+                <div><label>Chế độ tính toán hệ số tải trọng & dạng răng:</label>
+                    <select id="k_mode" onchange="toggleKMode()">
+                        <option value="auto">Tự động tra bảng hoàn toàn </option>
+                        <option value="manual">Nhập tay thủ công</option>
+                    </select>
+                </div>
+                <div><label>Hệ số Mô-đun (0.01-0.02):</label><input type="number" step="0.001" id="m_coef" value="0.015"></div>
+            </div>
+            
+            <div class="manual-k grid-4" style="display:none; margin-top:10px; padding-top:10px; border-top: 1px dashed #7dd3fc;">
+                <div><label>KHβ, KFβ:</label><input type="text" id="Kb_user" value="1.05, 1.02" placeholder="VD: 1.05, 1.02"></div>
+                <div><label>KHα, KFα:</label><input type="text" id="Ka_user" value="1.13, 1.37" placeholder="VD: 1.13, 1.37"></div>
+                <div><label>KHv, KFv:</label><input type="text" id="Kv_user" value="1.015, 1.041" placeholder="VD: 1.015, 1.041"></div>
+                <div><label>YF1, YF2:</label><input type="text" id="YF_user" value="3.80, 3.55" placeholder="VD: 3.8, 3.55"></div>
+            </div>
+            <span class="manual-k" style="display:none; color:#0369a1; font-size: 13px; font-style:italic;">*Lưu ý: Nhập 2 giá trị cách nhau bằng dấu phẩy (Của Tiếp xúc trước, Uốn sau / Hoặc Bánh 1 trước, Bánh 2 sau)</span>
+        </div>
+
+        <h3 style="background-color: #3b82f6; color: white; padding: 12px 15px; border-radius: 6px;">II. VẬT LIỆU & SƠ ĐỒ BỐ TRÍ</h3>
         <div class="grid-2">
             <div class="material-panel">
                 <h4 style="margin-top:0; color:#1d4ed8;">VẬT LIỆU BÁNH 1 (CHỦ ĐỘNG)</h4>
                 <label>Mác thép:</label>
                 <select id="b1_mat" onchange="updateGenMaterial('b1')"></select>
                 <label id="b1_hard_label">Nhập độ cứng:</label>
-                <input type="number" step="1" id="b1_hard_val" value="52" oninput="updateGenPsiBa()">
+                <input type="number" step="1" id="b1_hard_val" value="250" oninput="updateGenPsiBa()">
                 <label>Lựa chọn phôi (σb & σch):</label><select id="b1_opt"></select>
                 <label>Công thức σHlim:</label><select id="b1_sH_form"></select>
                 <label>Công thức σFlim:</label><select id="b1_sF_form"></select>
@@ -101,7 +115,7 @@
                 <label>Mác thép:</label>
                 <select id="b2_mat" onchange="updateGenMaterial('b2')"></select>
                 <label id="b2_hard_label">Nhập độ cứng:</label>
-                <input type="number" step="1" id="b2_hard_val" value="230" oninput="updateGenPsiBa()">
+                <input type="number" step="1" id="b2_hard_val" value="220" oninput="updateGenPsiBa()">
                 <label>Lựa chọn phôi (σb & σch):</label><select id="b2_opt"></select>
                 <label>Công thức σHlim:</label><select id="b2_sH_form"></select>
                 <label>Công thức σFlim:</label><select id="b2_sF_form"></select>
@@ -120,7 +134,7 @@
                 </div>
                 <div>
                     <label>Hệ số chiều rộng vành răng (ψba): <span id="psi_ba_hint" style="color:#d97706; font-size:12px;"></span></label>
-                    <input type="number" step="0.001" id="psi_ba" value="0.4">
+                    <input type="number" step="0.001" id="psi_ba" value="0.3">
                 </div>
             </div>
         </div>
@@ -133,7 +147,7 @@
 <script>
     const GENERAL_MATERIAL_DB = {
         'C45_TH': {name: 'Thép 45 (Thường hóa)', type: 'mem', hard_type: 'HB', hard_min: 170, hard_max: 217, options: [{label: 'S ≤ 100mm', sch: 340, sb: 600}]},
-        'C45_TC': {name: 'Thép 45 (Tôi cải thiện)', type: 'mem', hard_type: 'HB', hard_min: 192, hard_max: 285, options: [{label: 'S > 60mm', sch: 450, sb: 750}, {label: 'S ≤ 60mm', sch: 580, sb: 850}]},
+        'C45_TC': {name: 'Thép 45 (Tôi cải thiện)', type: 'mem', hard_type: 'HB', hard_min: 192, hard_max: 285, options: [{label: 'S ≤ 60mm', sch: 580, sb: 850}, {label: 'S > 60mm', sch: 450, sb: 750}]},
         '40X_TC': {name: 'Thép 40X (Tôi cải thiện)', type: 'mem', hard_type: 'HB', hard_min: 230, hard_max: 280, options: [{label: 'S ≤ 100mm', sch: 550, sb: 850}, {label: 'S ≤ 60mm', sch: 700, sb: 950}]},
         '40XH_TBM': {name: 'Thép 40XH (Tôi bề mặt)', type: 'cung', hard_type: 'HRC', hard_min: 45, hard_max: 55, options: [{label: 'Lõi tôi cải thiện', sch: 1400, sb: 1600}]},
         '20X_ThC': {name: 'Thép 20X (Thấm C, Tôi)', type: 'cung', hard_type: 'HRC', hard_min: 56, hard_max: 63, options: [{label: 'S ≤ 60mm', sch: 400, sb: 650}]},
@@ -159,6 +173,21 @@
     const TABLE_HARD_KHB = [[0.2,1.22,1.10,1.05,1.04,1.02,1.01,1.00],[0.4,1.44,1.25,1.12,1.08,1.05,1.02,1.01],[0.6,null,1.45,1.20,1.14,1.08,1.04,1.02],[0.8,null,1.65,1.28,1.20,1.14,1.07,1.03],[1.0,null,null,1.37,1.27,1.19,1.12,1.06],[1.2,null,null,1.47,1.35,1.25,1.16,1.08]];
     const TABLE_HARD_KFB = [[0.2,1.30,1.20,1.08,1.04,1.03,1.02,1.00],[0.4,1.69,1.42,1.18,1.06,1.10,1.04,1.01],[0.6,null,1.71,1.30,1.17,1.12,1.08,1.03],[0.8,null,1.95,1.43,1.27,1.20,1.14,1.06],[1.0,null,null,1.57,1.39,1.28,1.20,1.11],[1.2,null,null,1.72,1.53,1.41,1.30,1.15]];
 
+    const TABLE_6_14 = [
+        {v: 2.5, k6h: 1.01, k6f: 1.05, k7h: 1.03, k7f: 1.12, k8h: 1.05, k8f: 1.22, k9h: 1.13, k9f: 1.375},
+        {v: 10,  k6h: 1.03, k6f: 1.10, k7h: 1.07, k7f: 1.22, k8h: 1.13, k8f: 1.37, k9h: null, k9f: null},
+        {v: 15,  k6h: 1.04, k6f: 1.13, k7h: 1.09, k7f: 1.25, k8h: 1.17, k8f: 1.45, k9h: null, k9f: null},
+        {v: 20,  k6h: 1.05, k6f: 1.17, k7h: 1.12, k7f: 1.35, k8h: null, k8f: null, k9h: null, k9f: null},
+        {v: 25,  k6h: 1.06, k6f: 1.20, k7h: null, k7f: null, k8h: null, k8f: null, k9h: null, k9f: null}
+    ];
+
+    const TABLE_6_18_YF = [
+        {zv: 17, yf: 4.26}, {zv: 20, yf: 4.08}, {zv: 22, yf: 4.00},
+        {zv: 25, yf: 3.90}, {zv: 30, yf: 3.80}, {zv: 40, yf: 3.70},
+        {zv: 50, yf: 3.65}, {zv: 60, yf: 3.62}, {zv: 80, yf: 3.61},
+        {zv: 100, yf: 3.60}, {zv: 150, yf: 3.60}
+    ];
+
     function initUI() {
         const b1Select = document.getElementById('b1_mat');
         const b2Select = document.getElementById('b2_mat');
@@ -166,8 +195,8 @@
             b1Select.add(new Option(GENERAL_MATERIAL_DB[key].name, key));
             b2Select.add(new Option(GENERAL_MATERIAL_DB[key].name, key));
         }
-        b1Select.value = '40XH_TBM';
-        b2Select.value = '40X_TC';
+        b1Select.value = 'C45_TC';
+        b2Select.value = 'C45_TC';
         updateGenMaterial('b1');
         updateGenMaterial('b2');
         document.getElementById('psi_ba').addEventListener('input', function() { this.setAttribute('data-touched', 'true'); });
@@ -175,7 +204,7 @@
 
     function toggleKMode() {
         const mode = document.getElementById('k_mode').value;
-        document.querySelectorAll('.manual-k').forEach(el => el.style.display = mode === 'manual' ? 'block' : 'none');
+        document.querySelectorAll('.manual-k').forEach(el => el.style.display = mode === 'manual' ? 'flex' : 'none');
     }
 
     function updateGenMaterial(prefix) {
@@ -244,6 +273,33 @@
         return 1.0;
     }
 
+    function get_K_alpha(v, cx, isH) {
+        let key = `k${cx}${isH ? 'h' : 'f'}`;
+        let validRows = TABLE_6_14.filter(r => r[key] !== null);
+        if (validRows.length === 0) return 1.0;
+        if (v <= validRows[0].v) return validRows[0][key];
+        if (v >= validRows[validRows.length-1].v) return validRows[validRows.length-1][key];
+        for (let i = 0; i < validRows.length - 1; i++) {
+            if (v >= validRows[i].v && v <= validRows[i+1].v) {
+                let r1 = validRows[i], r2 = validRows[i+1];
+                return r1[key] + (r2[key] - r1[key]) * (v - r1.v) / (r2.v - r1.v);
+            }
+        }
+        return 1.0;
+    }
+
+    function get_YF(zv) {
+        if (zv <= 17) return 4.26;
+        if (zv >= 150) return 3.60;
+        for (let i = 0; i < TABLE_6_18_YF.length - 1; i++) {
+            if (zv >= TABLE_6_18_YF[i].zv && zv <= TABLE_6_18_YF[i+1].zv) {
+                let r1 = TABLE_6_18_YF[i], r2 = TABLE_6_18_YF[i+1];
+                return r1.yf + (r2.yf - r1.yf) * (zv - r1.zv) / (r2.zv - r1.zv);
+            }
+        }
+        return 3.60;
+    }
+
     function calculate_shlim(id, h) { return id==='fH1' ? 2*h+70 : id==='fH2' ? 18*h+150 : id==='fH3' ? 17*h+200 : 23*h; }
     function calculate_sflim(id, h) { return id==='fF1' ? 1.8*h : id==='fF2' ? 550 : id==='fF3' ? 900 : 750; }
 
@@ -256,17 +312,14 @@
         ctx.clearRect(0, 0, W, H);
         
         const padding = 50; 
-        
         const totalWidth = aw + (d1/2) + (d2/2);
         const totalHeight = Math.max(d1, d2);
-
         const scaleX = (W - padding * 2) / totalWidth;
         const scaleY = (H - padding * 2) / totalHeight;
         const scale = Math.min(scaleX, scaleY);
         
         const drawnWidth = totalWidth * scale;
         const startX = (W - drawnWidth) / 2;
-
         const cx1 = startX + (d1/2) * scale; 
         const cy = H / 2; 
         const cx2 = cx1 + aw * scale;
@@ -316,9 +369,22 @@
             const bo_tri = document.getElementById('bo_tri').value;
             const ZR = parseFloat(document.getElementById('ZR').value);
             const k_mode = document.getElementById('k_mode').value;
-            const KHb_user = parseFloat(document.getElementById('KHb_user').value);
-            const KFb_user = parseFloat(document.getElementById('KFb_user').value);
             const m_coef = parseFloat(document.getElementById('m_coef').value);
+            
+            // Các hệ số Nâng cao (Quy tắc 8 & 10)
+            const Zv = parseFloat(document.getElementById('Zv').value);
+            const YR = parseFloat(document.getElementById('YR').value);
+            const KxH = parseFloat(document.getElementById('KxH').value);
+            const KxF = parseFloat(document.getElementById('KxF').value);
+            const delta_b = parseFloat(document.getElementById('delta_b').value);
+
+            let man_KHb=1.05, man_KFb=1.02, man_KHa=1.13, man_KFa=1.37, man_KHv=1.015, man_KFv=1.041, man_YF1=3.8, man_YF2=3.55;
+            if(k_mode === 'manual') {
+                [man_KHb, man_KFb] = document.getElementById('Kb_user').value.split(',').map(s=>parseFloat(s.trim()));
+                [man_KHa, man_KFa] = document.getElementById('Ka_user').value.split(',').map(s=>parseFloat(s.trim()));
+                [man_KHv, man_KFv] = document.getElementById('Kv_user').value.split(',').map(s=>parseFloat(s.trim()));
+                [man_YF1, man_YF2] = document.getElementById('YF_user').value.split(',').map(s=>parseFloat(s.trim()));
+            }
 
             const mat1 = GENERAL_MATERIAL_DB[document.getElementById('b1_mat').value];
             const mat1_props = mat1.options[parseInt(document.getElementById('b1_opt').value)];
@@ -341,42 +407,55 @@
             const sH_max_cp = Math.min(2.8 * mat1_props.sch, 2.8 * mat2_props.sch);
             const sF1_max_cp = 0.8 * mat1_props.sch; const sF2_max_cp = 0.8 * mat2_props.sch;
 
-            const NHO1 = 30 * Math.pow(HB1, 2.4), NHO2 = 30 * Math.pow(HB2, 2.4);
             const n2 = n1 / u;
             const NHE2 = 60 * 1 * n2 * Lh, NHE1 = u * NHE2;
-            const KHL1 = NHE1 >= NHO1 ? 1.0 : Math.pow(NHO1/NHE1, 1/6);
-            const KHL2 = NHE2 >= NHO2 ? 1.0 : Math.pow(NHO2/NHE2, 1/6);
-            const SH1 = mat1.type === 'mem' ? 1.1 : 1.2; const SH2 = mat2.type === 'mem' ? 1.1 : 1.2;
             
+            // Quy tắc 9: Chặn trần Hệ số tuổi thọ KHL (Max 2.6) và KFL (Max 3.2)
+            const NHO1 = 30 * Math.pow(HB1, 2.4), NHO2 = 30 * Math.pow(HB2, 2.4);
+            const NFO = 4 * Math.pow(10, 6); const mF = 6;
+            
+            let KHL1_calc = NHE1 >= NHO1 ? 1.0 : Math.pow(NHO1/NHE1, 1/6);
+            let KHL2_calc = NHE2 >= NHO2 ? 1.0 : Math.pow(NHO2/NHE2, 1/6);
+            let KFL1_calc = NHE1 >= NFO ? 1.0 : Math.pow(NFO/NHE1, 1/mF);
+            let KFL2_calc = NHE2 >= NFO ? 1.0 : Math.pow(NFO/NHE2, 1/mF);
+
+            const KHL1 = Math.min(2.6, Math.max(1.0, KHL1_calc));
+            const KHL2 = Math.min(2.6, Math.max(1.0, KHL2_calc));
+            const KFL1 = Math.min(3.2, Math.max(1.0, KFL1_calc));
+            const KFL2 = Math.min(3.2, Math.max(1.0, KFL2_calc));
+
+            const SH1 = mat1.type === 'mem' ? 1.1 : 1.2; const SH2 = mat2.type === 'mem' ? 1.1 : 1.2;
             const sH_cp1_base = (sHlim1_0 / SH1) * KHL1;
             const sH_cp2_base = (sHlim2_0 / SH2) * KHL2;
-            const sF_cp1 = (sFlim1_0 / 1.75) * KFC;
-            const sF_cp2 = (sFlim2_0 / 1.75) * KFC;
+            
+            const SF = 1.75;
+            const sF_cp1_base = (sFlim1_0 / SF) * KFL1 * KFC;
+            const sF_cp2_base = (sFlim2_0 / SF) * KFL2 * KFC;
 
             const T1 = 9.55 * Math.pow(10, 6) * P1 / n1;
-            
             const sH_min = Math.min(sH_cp1_base, sH_cp2_base);
             const sH_cp_base = Math.min(1.25 * sH_min, 0.5 * (sH_cp1_base + sH_cp2_base));
             const sH_cp_sobo = sH_cp_base;
-            const sH_cp_cx = sH_cp_base * ZR;
+            
+            // Tính ứng suất tiếp xúc chính thức (Bổ sung Zv, KxH)
+            const sH_cp_cx = sH_cp_base * ZR * Zv * KxH;
 
             const psi_bd_calc = 0.5 * psiba * (u + 1);
             const is_hard = (HB1 > 350 && HB2 > 350);
             const T_KHb = is_hard ? TABLE_HARD_KHB : TABLE_SOFT_KHB;
             const T_KFb = is_hard ? TABLE_HARD_KFB : TABLE_SOFT_KFB;
-            
             let col_idx = bo_tri === 'chia' ? 2 : (bo_tri === 'khong_doixung' ? 4 : 6);
             
-            const KHb_use = k_mode === 'manual' ? KHb_user : interpolate_factor(T_KHb, psi_bd_calc, col_idx);
-            const KFb_use = k_mode === 'manual' ? KFb_user : interpolate_factor(T_KFb, psi_bd_calc, col_idx);
+            const KHb_use = k_mode === 'manual' ? man_KHb : interpolate_factor(T_KHb, psi_bd_calc, col_idx);
+            const KFb_use = k_mode === 'manual' ? man_KFb : interpolate_factor(T_KFb, psi_bd_calc, col_idx);
 
             const Ka = 43; 
             let beta_rad_sb = beta_sb_deg * Math.PI / 180;
             let aw_calc = Ka * (u + 1) * Math.pow((T1 * KHb_use) / (Math.pow(sH_cp_sobo, 2) * u * psiba), 1/3);
-            let aw = Math.round(aw_calc);
-            let m = get_standard_module(m_coef * aw);
-            let x1 = 0, x2 = 0; 
+            
+            let aw = Math.round(aw_calc / 5) * 5;
 
+            let m = get_standard_module(m_coef * aw);
             let z1_calc = (2 * aw * Math.cos(beta_rad_sb)) / (m * (u + 1));
             let z1 = Math.max(17, Math.floor(z1_calc));
             let z2 = Math.round(z1 * u);
@@ -392,18 +471,52 @@
             
             let aw_thuc = aw;
             let dw1 = 2 * aw_thuc / (um + 1);
-            let delta_u = Math.abs(um - u) / u * 100;
-            let check_u = delta_u <= 4 ? "ĐẠT" : "KHÔNG ĐẠT (> 4%)";
             let bw2 = Math.round(psiba * aw_thuc);
-            let bw1 = bw2 + 4;
+            
+            // Quy tắc 2.4: Độ dôi bw1 không fix cứng
+            let bw1 = bw2 + delta_b;
+
+            // XÁC ĐỊNH VẬN TỐC VÒNG VÀ HỆ SỐ ĐỘNG LỰC HỌC
+            let v = (Math.PI * dw1 * n1) / 60000;
+            let cx = 9;
+            if (v <= 4) cx = 9; else if (v <= 10) cx = 8; else if (v <= 15) cx = 7; else cx = 6;
+
+            let KHa, KFa, KHv, KFv;
+            let deltaH = (HB2 > 350) ? 0.004 : 0.002;
+            let deltaF = 0.006;
+            let g0 = 73; 
+            if (m <= 3.55) { g0 = (cx===6)?38:(cx===7)?47:(cx===8)?56:73; }
+            else if (m <= 10) { g0 = (cx===6)?42:(cx===7)?53:(cx===8)?61:82; }
+            else { g0 = (cx===6)?48:(cx===7)?64:(cx===8)?73:100; }
+
+            if (k_mode === 'manual') {
+                KHa = man_KHa; KFa = man_KFa; KHv = man_KHv; KFv = man_KFv;
+            } else {
+                KHa = get_K_alpha(v, cx, true);
+                KFa = get_K_alpha(v, cx, false);
+                let vH = deltaH * g0 * v * Math.sqrt(aw_thuc / um);
+                let vF = deltaF * g0 * v * Math.sqrt(aw_thuc / um);
+                KHv = 1 + (vH * bw2 * dw1) / (2 * T1 * KHb_use * KHa);
+                KFv = 1 + (vF * bw2 * dw1) / (2 * T1 * KFb_use * KFa);
+            }
             
             const ZM = 274;
             let eps_alpha = (1.88 - 3.2*(1/z1 + 1/z2)) * Math.cos(beta_rad);
             let Zeps = Math.sqrt(1 / eps_alpha);
-            let ZH = 1.74; 
             
-            let KH = KHb_use * 1.13 * 1.03;
+            // Quy tắc 6: Tính hệ số trùng khớp dọc epsilon_beta
+            let eps_beta = (bw2 * Math.sin(beta_rad)) / (Math.PI * m);
+            let eps_beta_status = eps_beta >= 1.0 ? "ĐẠT" : "KHÔNG ĐẠT (Nên ≥ 1)";
+            let eps_beta_color = eps_beta >= 1.0 ? "success" : "highlight";
+
+            let alpha_n = 20 * Math.PI / 180;
+            let alpha_t = Math.atan(Math.tan(alpha_n) / Math.cos(beta_rad));
+            let beta_b = Math.atan(Math.cos(alpha_t) * Math.tan(beta_rad));
+            let ZH = Math.sqrt(2 * Math.cos(beta_b) / Math.sin(2 * alpha_t));
+            
+            let KH = KHb_use * KHa * KHv;
             let sH_thuc = ZM * ZH * Zeps * Math.sqrt((2 * T1 * KH * (um + 1)) / (bw2 * Math.pow(dw1, 2) * um));
+            
             let check_sH = sH_thuc <= sH_cp_cx ? "ĐẠT" : "KHÔNG ĐẠT";
             let color_sH = sH_thuc <= sH_cp_cx ? "success" : "highlight";
 
@@ -414,24 +527,60 @@
             
             let Ft = 2 * T1 / dw1;
             let Fr = Ft * Math.tan(20 * Math.PI / 180) / Math.cos(beta_rad);
-            let Fa = Ft * Math.tan(beta_rad);
+            let Fa1 = Ft * Math.tan(beta_rad);
 
-            let aw_suggestion_html = "", need_recalc = false;
-            let error_pct = 0;
+            let error_pct = ((sH_thuc - sH_cp_cx) / sH_cp_cx) * 100;
+            let need_recalc_aw = false, need_recalc_bw = false;
+            let aw_suggestion_html = "";
             
             let aw_new = aw, m_new = m, z1_new = z1, z2_new = z2, um_new = um;
             let beta_rad_new = beta_rad, beta_deg_new = beta_deg;
             let bw1_new = bw1, bw2_new = bw2, dw1_new = dw1, sH_thuc_new = sH_thuc;
             let d1_new = d1, d2_new = d2; 
+            let KF_thuc_new = KFb_use * KFa * KFv;
 
             if (sH_thuc > sH_cp_cx) {
-                error_pct = ((sH_thuc - sH_cp_cx) / sH_cp_cx) * 100;
-                if (error_pct <= 20) {
-                    need_recalc = true;
+                if (error_pct > 0 && error_pct <= 4) {
+                    need_recalc_bw = true;
+                    bw2_new = Math.ceil(bw2 * Math.pow(sH_thuc / sH_cp_cx, 2));
+                    let loop_limit = 0;
+                    while (true) {
+                        bw1_new = bw2_new + delta_b;
+                        let KHa_new = (k_mode === 'manual') ? man_KHa : get_K_alpha(v, cx, true);
+                        let KHv_new;
+                        if (k_mode === 'manual') {
+                            KHv_new = man_KHv;
+                        } else {
+                            let vH = deltaH * g0 * v * Math.sqrt(aw / um);
+                            KHv_new = 1 + (vH * bw2_new * dw1) / (2 * T1 * KHb_use * KHa_new);
+                        }
+                        let KH_new = KHb_use * KHa_new * KHv_new;
+                        sH_thuc_new = ZM * ZH * Zeps * Math.sqrt((2 * T1 * KH_new * (um + 1)) / (bw2_new * Math.pow(dw1, 2) * um));
+                        
+                        if (sH_thuc_new <= sH_cp_cx || loop_limit > 10) break;
+                        bw2_new++; loop_limit++;
+                    }
+
+                    if (k_mode === 'manual') {
+                        KF_thuc_new = man_KFb * man_KFa * man_KFv;
+                    } else {
+                        let KFa_new = get_K_alpha(v, cx, false);
+                        let vF = deltaF * g0 * v * Math.sqrt(aw / um);
+                        let KFv_new = 1 + (vF * bw2_new * dw1) / (2 * T1 * KFb_use * KFa_new);
+                        KF_thuc_new = KFb_use * KFa_new * KFv_new;
+                    }
+
+                    aw_suggestion_html = `<tr><td colspan="3" style="background-color:#fffbeb; color:#d97706; padding:15px; border: 1px solid #f59e0b;">
+                        <span>💡 CHIẾN LƯỢC TỐI ƯU THIẾT KẾ:</span><br>
+                        Ứng suất sinh ra (${sH_thuc.toFixed(1)} MPa) vượt mức cho phép ${error_pct.toFixed(1)}% (Nhỏ hơn 4%).<br>
+                        <span>→ <b>GIỮ NGUYÊN</b> khoảng cách trục a<sub>w</sub> = ${aw} mm, máy đã tự động tăng chiều rộng vành răng từ ${bw2} lên ${bw2_new} mm ở BẢNG 2 để triệt tiêu sai số.</span>
+                    </td></tr>`;
+
+                } else if (error_pct > 4) {
+                    need_recalc_aw = true;
                     let aw_new_calc = aw * Math.pow(Math.pow(sH_thuc / sH_cp_cx, 2), 1/3);
-                    aw_new = Math.round(aw_new_calc);
-                    if (aw_new <= aw) aw_new = aw + 1;
-                    if (aw_new % 2 !== 0) aw_new += 1;
+                    aw_new = Math.round(aw_new_calc / 5) * 5; 
+                    if (aw_new <= aw) aw_new = aw + 5;
                     
                     for (let step = 0; step < 15; step++) {
                         m_new = get_standard_module(m_coef * aw_new);
@@ -447,40 +596,81 @@
                         }
                         beta_rad_new = Math.acos(cos_beta_new);
                         beta_deg_new = beta_rad_new * 180 / Math.PI;
-                        let aw_thuc_new = aw_new;
                         
-                        dw1_new = 2 * aw_thuc_new / (um_new + 1);
-                        bw2_new = Math.round(psiba * aw_thuc_new);
-                        bw1_new = bw2_new + 4;
+                        dw1_new = 2 * aw_new / (um_new + 1);
+                        bw2_new = Math.round(psiba * aw_new);
+                        bw1_new = bw2_new + delta_b;
                         
+                        let v_new = (Math.PI * dw1_new * n1) / 60000;
+                        let cx_new = 9;
+                        if (v_new <= 4) cx_new = 9; else if (v_new <= 10) cx_new = 8; else if (v_new <= 15) cx_new = 7; else cx_new = 6;
+                        
+                        let KHa_new, KFa_new, KHv_new;
+                        if (k_mode === 'manual') {
+                            KHa_new = man_KHa; KFa_new = man_KFa; KHv_new = man_KHv; KF_thuc_new = man_KFb * man_KFa * man_KFv;
+                        } else {
+                            KHa_new = get_K_alpha(v_new, cx_new, true);
+                            KFa_new = get_K_alpha(v_new, cx_new, false);
+                            let g0_new = 73; 
+                            if (m_new <= 3.55) { g0_new = (cx_new===6)?38:(cx_new===7)?47:(cx_new===8)?56:73; }
+                            else if (m_new <= 10) { g0_new = (cx_new===6)?42:(cx_new===7)?53:(cx_new===8)?61:82; }
+                            else { g0_new = (cx_new===6)?48:(cx_new===7)?64:(cx_new===8)?73:100; }
+                            
+                            let vH_new = deltaH * g0_new * v_new * Math.sqrt(aw_new / um_new);
+                            let vF_new = deltaF * g0_new * v_new * Math.sqrt(aw_new / um_new);
+                            KHv_new = 1 + (vH_new * bw2_new * dw1_new) / (2 * T1 * KHb_use * KHa_new);
+                            let KFv_new = 1 + (vF_new * bw2_new * dw1_new) / (2 * T1 * KFb_use * KFa_new);
+                            KF_thuc_new = KFb_use * KFa_new * KFv_new;
+                        }
+
+                        let KH_new = KHb_use * KHa_new * KHv_new;
                         let eps_alpha_new = (1.88 - 3.2*(1/z1_new + 1/z2_new)) * Math.cos(beta_rad_new);
                         let Zeps_new = Math.sqrt(1 / eps_alpha_new);
-                        sH_thuc_new = ZM * ZH * Zeps_new * Math.sqrt((2 * T1 * KH * (um_new + 1)) / (bw2_new * Math.pow(dw1_new, 2) * um_new));
+
+                        let alpha_t_new = Math.atan(Math.tan(alpha_n) / Math.cos(beta_rad_new));
+                        let beta_b_new = Math.atan(Math.cos(alpha_t_new) * Math.tan(beta_rad_new));
+                        let ZH_new = Math.sqrt(2 * Math.cos(beta_b_new) / Math.sin(2 * alpha_t_new));
+
+                        sH_thuc_new = ZM * ZH_new * Zeps_new * Math.sqrt((2 * T1 * KH_new * (um_new + 1)) / (bw2_new * Math.pow(dw1_new, 2) * um_new));
                         
-                        if (sH_thuc_new <= sH_cp_cx) { aw_new = aw_thuc_new; break; } 
-                        else { aw_new = aw_thuc_new + 2; }
+                        if (sH_thuc_new <= sH_cp_cx) { break; } 
+                        else { aw_new += 5; }
                     }
-                    aw_suggestion_html = `<tr><td colspan="3" style="background-color:#2a2a2a; color:#fbbf24; padding:15px; border: 1px solid #fbbf24;">
-                        <span>⚠️ BÁO CÁO TỪ VÒNG LẶP MÔ PHỎNG:</span><br>
-                        Ứng suất sinh ra (${sH_thuc.toFixed(1)} MPa) lớn hơn [σH] = ${sH_cp_cx.toFixed(1)} MPa (Vượt ${error_pct.toFixed(1)}%).<br>
-                        <span>Hệ thống đã tự động chạy vòng lặp tìm nghiệm chẵn và chốt a<sub>w</sub> = ${aw_new.toFixed(1)} mm ở BẢNG 2!</span>
-                    </td></tr>`;
-                } else {
                     aw_suggestion_html = `<tr><td colspan="3" style="background-color:#3f1010; color:#ff4d4d; padding:15px; border: 1px solid #ff4d4d;">
-                        <span>🚨 GIỚI HẠN ĐỎ (Vượt ${error_pct.toFixed(1)}% > 20%):</span><br>Ứng suất tiếp xúc đang vượt quá xa mức chịu đựng của vật liệu. Hãy đổi Mác thép khác.
+                        <span>🚨 VƯỢT GIỚI HẠN CHUẨN ĐỎ (> 4%):</span><br>
+                        Ứng suất tiếp xúc sinh ra quá lớn (Vượt ${error_pct.toFixed(1)}%).<br>
+                        <span>Hệ thống đã tự động chạy vòng lặp tìm nghiệm và chốt nấc trục mới a<sub>w</sub> = ${aw_new.toFixed(1)} mm ở BẢNG 2!</span>
                     </td></tr>`;
                 }
+            } else if (error_pct < -15) {
+                // Quy tắc 5: Cảnh báo thiết kế dư bền lãng phí vật liệu
+                aw_suggestion_html = `<tr><td colspan="3" style="background-color:#fef3c7; color:#d97706; padding:15px; border: 1px solid #f59e0b;">
+                    <span>⚠️ CẢNH BÁO DƯ BỀN (LÃNG PHÍ):</span><br>
+                    Ứng suất sinh ra (${sH_thuc.toFixed(1)} MPa) quá nhỏ so với mức cho phép (Dư ${Math.abs(error_pct).toFixed(1)}% > 15%).<br>
+                    <span>→ <b>Gợi ý từ Máy:</b> Hãy thử giảm khoảng cách trục a<sub>w</sub>, giảm chiều rộng vành răng ψ<sub>ba</sub> hoặc chọn Mác thép mềm hơn để tối ưu khối lượng!</span>
+                </td></tr>`;
             }
 
+            let KF_thuc = KFb_use * KFa * KFv;
+            
+            // Tính Ứng suất uốn cho phép chính thức (Bổ sung YR, KxF)
+            let YS = 1.08 - 0.0695 * Math.log(m);
+            let sF_cp1_cx = sF_cp1_base * YR * YS * KxF;
+            let sF_cp2_cx = sF_cp2_base * YR * YS * KxF;
+
             let html_uon_quatai_b1 = "";
-            if (!need_recalc) {
+            let is_any_recalc = need_recalc_aw || need_recalc_bw;
+            
+            if (!is_any_recalc) {
                 let zv1 = z1 / Math.pow(Math.cos(beta_rad), 3); let zv2 = z2 / Math.pow(Math.cos(beta_rad), 3);
-                let YF1 = 3.47 + 13.2 / zv1; let YF2 = 3.47 + 13.2 / zv2;
-                let KF_thuc = KFb_use * 1.37 * 1.07;
+                let YF1, YF2;
+                if (k_mode === 'manual') { YF1 = man_YF1; YF2 = man_YF2; } 
+                else { YF1 = get_YF(zv1); YF2 = get_YF(zv2); }
+                
                 let Yeps = 1 / eps_alpha;
                 let Ybeta = 1 - beta_deg / 140;
                 
-                let sF1_thuc = (2 * T1 * KF_thuc * Yeps * Ybeta * YF1) / (bw1 * dw1 * m);
+                let sF1_thuc = (2 * T1 * KF_thuc * Yeps * Ybeta * YF1) / (bw2 * dw1 * m);
                 let sF2_thuc = sF1_thuc * YF2 / YF1;
                 
                 let sH_max = sH_thuc * Math.sqrt(Kqt);
@@ -488,18 +678,18 @@
 
                 html_uon_quatai_b1 = `
                 <tr><td colspan="3" class="step-title">4.KIỂM NGHIỆM ĐỘ BỀN UỐN MỎI</td></tr>
-                <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><span>${sF1_thuc.toFixed(1)} MPa</span></td><td class="${sF1_thuc<=sF_cp1?'success':'highlight'}">${sF1_thuc<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
-                <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><span>${sF2_thuc.toFixed(1)} MPa</span></td><td class="${sF2_thuc<=sF_cp2?'success':'highlight'}">${sF2_thuc<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
+                <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><span>${sF1_thuc.toFixed(1)} MPa</span></td><td class="${sF1_thuc<=sF_cp1_cx?'success':'highlight'}">${sF1_thuc<=sF_cp1_cx?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1_cx.toFixed(1)})</td></tr>
+                <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><span>${sF2_thuc.toFixed(1)} MPa</span></td><td class="${sF2_thuc<=sF_cp2_cx?'success':'highlight'}">${sF2_thuc<=sF_cp2_cx?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2_cx.toFixed(1)})</td></tr>
                 <tr><td colspan="3" class="step-title">5.KIỂM NGHIỆM QUÁ TẢI (TĨNH)</td></tr>
                 <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><span>${sH_max.toFixed(1)} MPa</span></td><td class="${sH_max<=sH_max_cp?'success':'highlight'}">${sH_max<=sH_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
                 <tr><th>Quá tải Uốn B1 (σF1max)</th><td><span>${sF1_max.toFixed(1)} MPa</span></td><td class="${sF1_max<=sF1_max_cp?'success':'highlight'}">${sF1_max<=sF1_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF1_max_cp.toFixed(1)})</td></tr>
                 <tr><th>Quá tải Uốn B2 (σF2max)</th><td><span>${sF2_max.toFixed(1)} MPa</span></td><td class="${sF2_max<=sF2_max_cp?'success':'highlight'}">${sF2_max<=sF2_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
                 <tr><td colspan="3" class="step-title">6.TỔNG KẾT KÍCH THƯỚC CHẾ TẠO VÀ LỰC</td></tr>
-                <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><span>${bw1} / ${bw2} mm</span></td><td>Bánh nhỏ làm rộng hơn 4mm</td></tr>
+                <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><span>${bw1} / ${bw2} mm</span></td><td>Bánh nhỏ làm rộng hơn ${delta_b}mm</td></tr>
                 <tr><th>Đường kính chia (d1 / d2)</th><td>${d1.toFixed(2)} / ${d2.toFixed(2)} mm</td><td>d = m.z / cosβ</td></tr>
                 <tr><th>Đường kính vòng đỉnh (da1 / da2)</th><td>${da1.toFixed(2)} / ${da2.toFixed(2)} mm</td><td>da = d + 2m</td></tr>
                 <tr><th>Đường kính vòng chân (df1 / df2)</th><td>${df1.toFixed(2)} / ${df2.toFixed(2)} mm</td><td>df = d - 2.5m</td></tr>
-                <tr><th>Lực (Ft / Fr / Fa)</th><td><span>${Ft.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa.toLocaleString('en-US',{maximumFractionDigits:0})} N</span></td><td>Fa là lực dọc trục đặc thù răng nghiêng</td></tr>
+                <tr><th>Lực (Ft / Fr / Fa1)</th><td><span>${Ft.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa1.toLocaleString('en-US',{maximumFractionDigits:0})} N</span></td><td>Fa1 là lực dọc trục đặc thù răng nghiêng</td></tr>
                 `;
             }
 
@@ -509,29 +699,41 @@
             <table>
                 <tr><td colspan="3" class="step-title">1.VẬT LIỆU BÁNH RĂNG</td></tr>
                 <tr><th>Mác thép & Độ cứng</th><td>B1: ${mat1.name} (${mat1.hard_type} ${b1_hard_val.toFixed(1)})<br>B2: ${mat2.name} (${mat2.hard_type} ${b2_hard_val.toFixed(1)})</td><td><span class="${mat_color}">${mat_check}</span></td></tr>
-                <tr><th>Tiếp xúc Cơ sở ([σH1] / [σH2])</th><td>${sH_cp1_base.toFixed(1)} / ${sH_cp2_base.toFixed(1)} MPa</td><td>Chưa tính độ nhám ZR</td></tr>
-                <tr><th>Tiếp xúc CHUNG ([σH])</th><td>Sơ bộ: <span>${sH_cp_sobo.toFixed(1)}</span> | K.nghiệm: <span class="highlight">${sH_cp_cx.toFixed(1)}</span> MPa</td><td>Trung bình cộng (Áp dụng ZR = ${ZR})</td></tr>
-                <tr><th>Uốn cho phép ([σF1] / [σF2])</th><td>${sF_cp1.toFixed(1)} / ${sF_cp2.toFixed(1)} MPa</td><td>Từ Bảng 6.2</td></tr>
+                <tr><th>Hệ số tuổi thọ (KHL / KFL)</th><td>B1: ${KHL1.toFixed(2)} / ${KFL1.toFixed(2)} <br>B2: ${KHL2.toFixed(2)} / ${KFL2.toFixed(2)}</td><td>Đã áp dụng giới hạn Max chặn trần</td></tr>
+                <tr><th>Tiếp xúc CHUNG ([σH])</th><td>Sơ bộ: <span>${sH_cp_sobo.toFixed(1)}</span> | K.nghiệm: <span class="highlight">${sH_cp_cx.toFixed(1)}</span> MPa</td><td>(Áp dụng ZR, Zv, KxH)</td></tr>
+                <tr><th>Uốn cho phép đã hiệu chỉnh ([σF1] / [σF2])</th><td>${sF_cp1_cx.toFixed(1)} / ${sF_cp2_cx.toFixed(1)} MPa</td><td>Đã nhân YS=${YS.toFixed(2)}, YR, KxF</td></tr>
                 <tr><td colspan="3" class="step-title">2.KÍCH THƯỚC CƠ BẢN & ĐỘNG HỌC</td></tr>
-                <tr><th>Khoảng cách trục (aw)</th><td><span style="font-size:1.1em;">${aw.toFixed(1)} mm</span></td><td>Làm tròn chuẩn từ ${aw_calc.toFixed(2)} mm</td></tr>
+                <tr><th>Khoảng cách trục (aw)</th><td><span style="font-size:1.1em;">${aw.toFixed(1)} mm</span></td><td>Làm tròn chuẩn (0 hoặc 5) từ ${aw_calc.toFixed(2)}</td></tr>
                 <tr><th>Mô đun tiêu chuẩn (m)</th><td><span>${m.toFixed(1)} mm</span></td><td>Tính theo hệ số m_coef = ${m_coef}</td></tr>
                 <tr><th>Số răng (z1 / z2)</th><td><span>${z1} / ${z2} răng</span></td><td>-</td></tr>
-                <tr><th>Sai số Tỉ số truyền (Δu)</th><td>${delta_u.toFixed(2)} %</td><td class="${delta_u<=4?'success':'highlight'}">${check_u}</td></tr>
                 <tr><th>Góc nghiêng thực tế (β)</th><td><span>${beta_deg.toFixed(2)} độ</span></td><td>Tính chính xác từ β sơ bộ</td></tr>
+                <tr><th>Hệ số trùng khớp dọc (εβ)</th><td><span>${eps_beta.toFixed(2)}</span></td><td class="${eps_beta_color}">${eps_beta_status}</td></tr>
+                <tr><th>Hệ số tải trọng (KH / KF)</th><td>K<sub>H</sub> = ${KH.toFixed(2)} / K<sub>F</sub> = ${KF_thuc.toFixed(2)}</td><td>Đã tra cứu K<sub>α</sub>, K<sub>v</sub></td></tr>
                 <tr><td colspan="3" class="step-title">3.KIỂM NGHIỆM BỀN MỎI TIẾP XÚC</td></tr>
-                <tr><th>Ứng suất tiếp xúc thực tế (σH)</th><td><span>${sH_thuc.toFixed(1)} MPa</span></td><td class="${color_sH}">${check_sH} (So với ${sH_cp_cx.toFixed(1)})</td></tr>
+                <tr><th>Ứng suất tiếp xúc (σH)</th><td><span>${sH_thuc.toFixed(1)} MPa</span></td><td class="${color_sH}">${check_sH} (So với ${sH_cp_cx.toFixed(1)})</td></tr>
                 ${aw_suggestion_html}
                 ${html_uon_quatai_b1}
             </table>`;
 
-            if (need_recalc) {
+            if (is_any_recalc) {
                 let zv1_new = z1_new / Math.pow(Math.cos(beta_rad_new), 3); let zv2_new = z2_new / Math.pow(Math.cos(beta_rad_new), 3);
-                let YF1_new = 3.47 + 13.2 / zv1_new; let YF2_new = 3.47 + 13.2 / zv2_new;
-                let KF_loop = KFb_use * 1.37 * 1.07;
+                
+                let YF1_new, YF2_new;
+                if (k_mode === 'manual') { YF1_new = man_YF1; YF2_new = man_YF2; } 
+                else { YF1_new = get_YF(zv1_new); YF2_new = get_YF(zv2_new); }
+
                 let eps_alpha_new = (1.88 - 3.2*(1/z1_new + 1/z2_new)) * Math.cos(beta_rad_new);
                 let Yeps_new = 1 / eps_alpha_new; let Ybeta_new = 1 - beta_deg_new / 140;
                 
-                let sF1_thuc_new = (2 * T1 * KF_loop * Yeps_new * Ybeta_new * YF1_new) / (bw1_new * dw1_new * m_new);
+                let eps_beta_new = (bw2_new * Math.sin(beta_rad_new)) / (Math.PI * m_new);
+                let eps_beta_status_new = eps_beta_new >= 1.0 ? "ĐẠT" : "KHÔNG ĐẠT (Nên ≥ 1)";
+                let eps_beta_color_new = eps_beta_new >= 1.0 ? "success" : "highlight";
+
+                let YS_new = 1.08 - 0.0695 * Math.log(m_new);
+                let sF_cp1_cx_new = sF_cp1_base * YR * YS_new * KxF;
+                let sF_cp2_cx_new = sF_cp2_base * YR * YS_new * KxF;
+
+                let sF1_thuc_new = (2 * T1 * KF_thuc_new * Yeps_new * Ybeta_new * YF1_new) / (bw2_new * dw1_new * m_new);
                 let sF2_thuc_new = sF1_thuc_new * YF2_new / YF1_new;
                 
                 let sH_max_new = sH_thuc_new * Math.sqrt(Kqt);
@@ -543,23 +745,26 @@
 
                 let Ft_new = 2 * T1 / dw1_new; 
                 let Fr_new = Ft_new * Math.tan(20 * Math.PI / 180) / Math.cos(beta_rad_new);
-                let Fa_new = Ft_new * Math.tan(beta_rad_new);
+                let Fa1_new = Ft_new * Math.tan(beta_rad_new);
+
+                let header_title = need_recalc_bw ? `KẾT QUẢ HIỆU CHỈNH CHIỀU RỘNG RĂNG (a<sub>w</sub> GIỮ NGUYÊN = ${aw_new.toFixed(1)} mm)` : `KẾT QUẢ KIỂM NGHIỆM CHÍNH THỨC (a<sub>w</sub> = ${aw_new.toFixed(1)} mm)`;
 
                 resultHtml += `
                 <br><hr style="border-top: 2px dashed #10b981; margin: 40px 0;">
-                <h2 style="text-align:center; color:#047857;">BẢNG 2: KẾT QUẢ KIỂM NGHIỆM CHÍNH THỨC (a<sub>w</sub> = ${aw_new.toFixed(1)} mm)</h2>
+                <h2 style="text-align:center; color:#047857;">BẢNG 2: ${header_title}</h2>
                 <div class="canvas-container"><canvas id="canvas_b2" width="700" height="350"></canvas></div>
                 <table>
                     <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">KÍCH THƯỚC CƠ BẢN ĐƯỢC CẬP NHẬT</td></tr>
-                    <tr><th>Khoảng cách trục (aw)</th><td><span style="font-size:1.1em;">${aw_new.toFixed(1)} mm</span></td><td>Từ vòng lặp tự động sửa lỗi</td></tr>
+                    <tr><th>Khoảng cách trục (aw)</th><td><span style="font-size:1.1em;">${aw_new.toFixed(1)} mm</span></td><td>${need_recalc_bw ? 'Được giữ nguyên' : 'Từ vòng lặp tự động sửa lỗi'}</td></tr>
                     <tr><th>Mô đun tiêu chuẩn (m)</th><td><span>${m_new.toFixed(1)} mm</span></td><td>Tính theo hệ số m_coef = ${m_coef}</td></tr>
                     <tr><th>Số răng (z1 / z2)</th><td><span>${z1_new} / ${z2_new} răng</span></td><td>Đã phân bổ lại</td></tr>
                     <tr><th>Góc nghiêng thực tế (β)</th><td><span>${beta_deg_new.toFixed(2)} độ</span></td><td>Góc nghiêng sau điều chỉnh</td></tr>
+                    <tr><th>Hệ số trùng khớp dọc (εβ)</th><td><span>${eps_beta_new.toFixed(2)}</span></td><td class="${eps_beta_color_new}">${eps_beta_status_new}</td></tr>
                     
                     <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">4. KIỂM NGHIỆM BỀN MỎI LẦN 2</td></tr>
                     <tr><th>Ứng suất tiếp xúc (σH)</th><td><span>${sH_thuc_new.toFixed(1)} MPa</span></td><td class="success">ĐẠT (≤ ${sH_cp_cx.toFixed(1)})</td></tr>
-                    <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><span>${sF1_thuc_new.toFixed(1)} MPa</span></td><td class="${sF1_thuc_new<=sF_cp1?'success':'highlight'}">${sF1_thuc_new<=sF_cp1?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1.toFixed(1)})</td></tr>
-                    <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><span>${sF2_thuc_new.toFixed(1)} MPa</span></td><td class="${sF2_thuc_new<=sF_cp2?'success':'highlight'}">${sF2_thuc_new<=sF_cp2?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2.toFixed(1)})</td></tr>
+                    <tr><th>Ứng suất uốn Bánh 1 (σF1)</th><td><span>${sF1_thuc_new.toFixed(1)} MPa</span></td><td class="${sF1_thuc_new<=sF_cp1_cx_new?'success':'highlight'}">${sF1_thuc_new<=sF_cp1_cx_new?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp1_cx_new.toFixed(1)})</td></tr>
+                    <tr><th>Ứng suất uốn Bánh 2 (σF2)</th><td><span>${sF2_thuc_new.toFixed(1)} MPa</span></td><td class="${sF2_thuc_new<=sF_cp2_cx_new?'success':'highlight'}">${sF2_thuc_new<=sF_cp2_cx_new?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF_cp2_cx_new.toFixed(1)})</td></tr>
 
                     <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">5.KIỂM NGHIỆM QUÁ TẢI LẦN 2</td></tr>
                     <tr><th>Quá tải Tiếp xúc (σHmax)</th><td><span>${sH_max_new.toFixed(1)} MPa</span></td><td class="${sH_max_new<=sH_max_cp?'success':'highlight'}">${sH_max_new<=sH_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sH_max_cp.toFixed(1)})</td></tr>
@@ -567,11 +772,11 @@
                     <tr><th>Quá tải Uốn B2 (σF2max)</th><td><span>${sF2_max_new.toFixed(1)} MPa</span></td><td class="${sF2_max_new<=sF2_max_cp?'success':'highlight'}">${sF2_max_new<=sF2_max_cp?'ĐẠT':'KHÔNG ĐẠT'} (≤ ${sF2_max_cp.toFixed(1)})</td></tr>
 
                     <tr><td colspan="3" class="step-title" style="background-color:#10b981 !important;">6.TỔNG KẾT CHẾ TẠO VÀ LỰC MỚI</td></tr>
-                    <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><span>${bw1_new} / ${bw2_new} mm</span></td><td>Đã tính lại</td></tr>
+                    <tr><th>Chiều rộng vành răng (bw1 / bw2)</th><td><span style="font-size:1.1em; color:#047857; font-weight:bold;">${bw1_new} / ${bw2_new} mm</span></td><td>${need_recalc_bw ? `Được tăng để triệt tiêu sai số (Δb = ${delta_b})` : `Đã tính lại (Δb = ${delta_b})`}</td></tr>
                     <tr><th>Đường kính chia (d1 / d2)</th><td>${d1_new.toFixed(2)} / ${d2_new.toFixed(2)} mm</td><td>d = m.z / cosβ</td></tr>
                     <tr><th>Đường kính vòng đỉnh (da1 / da2)</th><td>${da1_new.toFixed(2)} / ${da2_new.toFixed(2)} mm</td><td>da = d + 2m</td></tr>
                     <tr><th>Đường kính vòng chân (df1 / df2)</th><td>${df1_new.toFixed(2)} / ${df2_new.toFixed(2)} mm</td><td>df = d - 2.5m</td></tr>
-                    <tr><th>Lực (Ft / Fr / Fa)</th><td><span>${Ft_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa_new.toLocaleString('en-US',{maximumFractionDigits:0})} N</span></td><td>Fa là lực dọc trục đặc thù răng nghiêng</td></tr>
+                    <tr><th>Lực (Ft / Fr / Fa1)</th><td><span>${Ft_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fr_new.toLocaleString('en-US',{maximumFractionDigits:0})} N / ${Fa1_new.toLocaleString('en-US',{maximumFractionDigits:0})} N</span></td><td>Fa1 là lực dọc trục đặc thù răng nghiêng</td></tr>
                 </table>`;
             }
 
@@ -581,7 +786,7 @@
 
             setTimeout(() => {
                 drawHelicalCanvas('canvas_b1', aw, d1, d2);
-                if (need_recalc) drawHelicalCanvas('canvas_b2', aw_new, d1_new, d2_new);
+                if (is_any_recalc) drawHelicalCanvas('canvas_b2', aw_new, d1_new, d2_new);
             }, 50);
 
         } catch (e) {
@@ -593,7 +798,6 @@
     window.onload = initUI;
 </script>
 <script>
-    // Nhận tín hiệu đổi màu từ trang chủ index.html gửi vào
     window.addEventListener('message', function(event) {
         if (event.data && event.data.theme === 'light') {
             document.body.classList.add('light-theme');
@@ -601,8 +805,6 @@
             document.body.classList.remove('light-theme');
         }
     });
-
-    // Khi load lại trang con, giữ nguyên chế độ màu đang cài đặt ở trang chủ
     if (localStorage.getItem('ctmc_theme') === 'light') {
         document.body.classList.add('light-theme');
     }

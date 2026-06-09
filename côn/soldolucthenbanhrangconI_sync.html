@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1 - Bánh răng côn</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(180deg, #eef3f9 0%, #e9eef5 100%);
+        color: #1b1f23;
+    }
+    .page { width: 1280px; margin: 20px auto; }
+    .title-box {
+        background: linear-gradient(135deg, #173b6d, #29589b);
+        color: #fff;
+        padding: 18px 24px;
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(20,48,86,.18);
+        margin-bottom: 18px;
+    }
+    .title-box h2 { margin: 0; font-size: 28px; letter-spacing: .3px; }
+    .title-box p { margin: 8px 0 0; font-size: 14px; opacity: .95; }
+    .controls-wrap {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+    .control-card {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #dbe5f0;
+        box-shadow: 0 8px 20px rgba(30,50,90,.08);
+        padding: 16px;
+    }
+    .control-card h3 { margin: 0 0 14px; font-size: 16px; color: #173b6d; }
+    .input-grid { display: grid; gap: 10px; }
+    .field { display: grid; grid-template-columns: 82px 1fr; align-items: center; gap: 8px; }
+    .field label { font-size: 14px; font-weight: 700; color: #26374c; }
+    .field input {
+        width: 100%; height: 38px; border-radius: 10px;
+        border: 1px solid #cfd9e6; background: #f8fbff;
+        padding: 0 12px; font-size: 14px; outline: none; transition: .2s;
+    }
+    .field input:focus { border-color: #5a8dee; box-shadow: 0 0 0 3px rgba(90,141,238,.14); background: #fff; }
+    .btn-update {
+        border: none; padding: 13px 24px; border-radius: 12px;
+        background: linear-gradient(135deg, #8b3dff, #c548e8);
+        color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
+        box-shadow: 0 10px 18px rgba(164,73,233,.25); transition: .2s;
+        width: 100%; margin-top: 8px;
+    }
+    .btn-update:hover { transform: translateY(-1px); box-shadow: 0 12px 22px rgba(164,73,233,.32); }
+    .note-box, .result-box {
+        background: #fff; border-radius: 18px; border: 1px solid #dbe5f0;
+        box-shadow: 0 8px 20px rgba(30,50,90,.08);
+        padding: 16px 18px; margin-bottom: 18px;
+        font-size: 14px; line-height: 1.75;
+    }
+    .note-box { color: #33485f; }
+    .result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 18px; }
+    .result-box b { color: #173b6d; }
+    .svg-wrap {
+        background: #fff; border-radius: 22px; border: 1px solid #dbe5f0;
+        box-shadow: 0 10px 24px rgba(30,50,90,.10); padding: 14px;
+    }
+    svg { width: 100%; height: auto; display: block; background: #fff; border-radius: 16px; }
+    text { font-size: 13px; fill: #111; font-family: Arial, sans-serif; }
+    .truc { stroke: #111; stroke-width: 4; stroke-linecap: round; }
+    .hinh { stroke: #111; stroke-width: 2.1; fill: none; }
+    .kyhieu { stroke: #777; stroke-width: 1.5; fill: none; }
+    .arrow { stroke: #b82fd4; stroke-width: 2.5; fill: none; marker-end: url(#arrowMagenta); }
+    .axis { stroke: #111; stroke-width: 1.5; }
+    .axis-left { stroke: #111; stroke-width: 1.5; }
+    .axis-arrow { stroke:#111; stroke-width:1.5; marker-end:url(#arrowBlack); }
+    .axis-left-arrow { stroke:#111; stroke-width:1.5; marker-end:url(#arrowBlack); }
+    .tick-line { stroke: #111; stroke-width: 1.3; }
+    .grid-line { stroke: #e6edf6; stroke-width: 1; }
+    .q, .m, .t { stroke: #111; stroke-width: 3; fill: none; }
+    .q-fill, .m-fill, .t-fill { fill: url(#hatchVertical); stroke: #111; stroke-width: .9; }
+    .qx-fill, .my-fill { fill: url(#hatchDiagonalXOZ); stroke: #111; stroke-width: .9; }
+    .dong { stroke: #63d7e5; stroke-width: 1.2; stroke-dasharray: 5 5; }
+    .value-text { font-size: 12px; fill: #111; font-weight: 700; }
+    .label-blue { fill: #234fd6; font-size: 13px; font-weight: 700; }
+    .coord { stroke: #333; stroke-width: 1.8; fill: none; marker-end: url(#arrowBlack); }
+    .coord-text { font-size: 12px; fill: #333; font-weight: 700; }
+    .diagram-title { font-size: 18px; font-weight: 700; fill: #000; }
+    .diagram-unit { font-size: 14px; font-weight: 500; fill: #000; }
+    .tick-text { font-size: 12px; fill: #111; }
+    .formula-small { color: #47627f; font-size: 13px; }
+
+    .shaft-check-box {
+        background:#fff; border-radius:18px; border:1px solid #dbe5f0;
+        box-shadow:0 8px 20px rgba(30,50,90,.08);
+        padding:16px 18px; margin-bottom:18px;
+    }
+    .shaft-check-box h3 { margin:0 0 12px; color:#0b3692; font-size:17px; }
+    .calc-table { width:100%; border-collapse:collapse; margin:10px 0 12px; font-size:13px; background:#fff; }
+    .calc-table th { background:#eaf1fb; color:#003399; font-weight:700; text-align:center; }
+    .calc-table th, .calc-table td { border:1px solid #cfd9e8; padding:9px 10px; vertical-align:middle; }
+    .calc-table td { text-align:center; }
+    .calc-table .left { text-align:left; }
+    .ok { color:#087c39; font-weight:700; }
+    .fail { color:#b42318; font-weight:700; }
+    .final-note { margin-top:8px; font-size:14px; line-height:1.7; }
+    .check-controls {
+        background:#fff; border-radius:18px; border:1px solid #dbe5f0;
+        box-shadow:0 8px 20px rgba(30,50,90,.08);
+        padding:16px 18px; margin-bottom:18px;
+    }
+    .check-controls h3 { margin:0 0 12px; color:#0b3692; font-size:17px; }
+    .check-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+    .check-field label { display:block; font-size:13px; font-weight:700; color:#26374c; margin-bottom:6px; }
+    .check-field select, .check-field input { width:100%; height:38px; border-radius:10px; border:1px solid #cfd9e6; background:#f8fbff; padding:0 10px; }
+    .check-result { background:#fff; border-radius:18px; border:1px solid #dbe5f0; box-shadow:0 8px 20px rgba(30,50,90,.08); padding:16px 18px; margin-bottom:18px; }
+    .section-title { color:#0b3692; font-weight:700; margin:10px 0 8px; }
+
+
+/* ===== KIỂM NGHIỆM RIÊNG A, D THEN VÀ C Ổ LĂN ===== */
+.verify-panel{background:#fff;border:1px solid #dbe5f0;border-radius:18px;box-shadow:0 8px 20px rgba(30,50,90,.08);padding:16px 18px;margin-bottom:18px;}
+.verify-title{font-size:17px;font-weight:700;color:#0b3692;margin-bottom:12px;border-left:4px solid #2563eb;padding-left:9px;}
+.verify-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:stretch;}
+.verify-grid label{background:#f8fbff;border:1px solid #dbe5f0;border-radius:12px;padding:10px;display:block;font-size:13px;font-weight:700;color:#26374c;line-height:1.35;}
+.verify-grid input,.verify-grid select{width:100%;height:38px;border-radius:10px;border:1px solid #cfd9e6;background:#fff;padding:0 10px;margin-top:6px;font-size:13px;}
+.verify-grid input[readonly]{background:#eef2f7;color:#475569;}
+.verify-output-box{background:#fff;border:1px solid #dbe5f0;border-radius:18px;box-shadow:0 8px 20px rgba(30,50,90,.08);padding:16px 18px;margin-bottom:18px;}
+.verify-pair{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:10px;}
+.verify-card-result{border:1px solid #cfd9e8;border-radius:12px;overflow:hidden;background:#fff;}
+.verify-card-head{background:#eaf1fb;color:#002b8f;font-weight:700;padding:10px 12px;font-size:14px;line-height:1.45;}
+.verify-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.verify-table th,.verify-table td{border:1px solid #cfd9e8;padding:7px 8px;text-align:center;vertical-align:middle;}
+.verify-table thead th{background:#f4f8ff;color:#002b8f;font-weight:700;}
+.verify-table tbody th{background:#fff;color:#0f172a;font-weight:700;}
+.verify-final{margin-top:12px;padding:12px;border:1px solid #cfd9e8;border-radius:10px;background:#f8fafc;font-size:14px;line-height:1.7;}
+.ok-text{color:#087a24;font-weight:700}.bad-text{color:#b42318;font-weight:700}
+.section-note{background:#f8fafc;border:1px dashed #b8c4d4;border-radius:12px;padding:10px 12px;color:#334155;line-height:1.5;margin:8px 0 12px;font-size:13px;}
+@media(max-width:1100px){.verify-grid{grid-template-columns:repeat(2,1fr)}.verify-pair{grid-template-columns:1fr}}
+@media(max-width:650px){.verify-grid{grid-template-columns:1fr}}
+
+
+.v-normal-title{grid-column:1/-1;font-weight:700;color:#0f172a;background:#eef6ff!important;border-left:4px solid #2563eb!important;}
+.v-spline-title{grid-column:1/-1;font-weight:700;color:#0f172a;background:#f4f7ff!important;border-left:4px solid #7c3aed!important;}
+.kcompare .kchoose{background:#dcfce7;font-weight:700;color:#166534;}
+.kcompare{table-layout:fixed;font-size:11.5px;}
+.kcompare th,.kcompare td{padding:5px 4px;line-height:1.25;word-break:normal;}
+.kcompare .small{font-size:10px;}
+.auto-hidden-by-final{display:none!important;}
+</style>
+
+<style id="fit-frame-final-css">
+html,body{width:100%;max-width:100%;overflow-x:hidden!important;}
+*,*::before,*::after{box-sizing:border-box;}
+.page,.wrap{width:100%!important;max-width:1500px!important;margin:0 auto!important;padding-left:14px!important;padding-right:14px!important;}
+.controls,.integrated-panel,.verify-bottom-wrap,.check-controls,.shaft-check-box,.verify-panel,.verify-output-box,.result-box,.note-box,.svg-wrap{width:100%!important;max-width:100%!important;box-sizing:border-box!important;}
+svg{width:100%!important;max-width:100%!important;height:auto!important;display:block!important;}
+table{max-width:100%!important;}
+.calc-table,.verify-table,.small-verify-table{min-width:0!important;}
+input,select{max-width:100%!important;}
+@media(max-width:1200px){.form-grid,.controls-wrap,.check-grid,.verify-grid,.integrated-grid{grid-template-columns:1fr 1fr!important;}.verify-pair,.shaft-result-grid,.then-result-grid{grid-template-columns:1fr!important;}}
+@media(max-width:760px){.form-grid,.controls-wrap,.check-grid,.verify-grid,.integrated-grid{grid-template-columns:1fr!important;}}
+</style>
+
+<style id="truc1-ui-sync-final-css">
+/* Đồng bộ giao diện nhập liệu trục I theo kiểu trục II */
+.title-box{background:linear-gradient(180deg,#fff 0%,#fbfcfe 100%)!important;border:1px solid #cfd6df!important;border-radius:10px!important;box-shadow:0 10px 26px rgba(28,45,64,.08)!important;color:#0f172a!important;padding:18px 22px!important;}
+.title-box h2{font-size:24px!important;color:#0f172a!important;}
+.title-box p{color:#5b6470!important;}
+.controls-wrap{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important;align-items:stretch!important;}
+.control-card,.check-controls,.verify-panel{background:#f7f9fc!important;border:1px solid #dde5ef!important;border-radius:10px!important;box-shadow:0 10px 26px rgba(28,45,64,.08)!important;padding:14px!important;}
+.control-card h3,.check-controls h3,.verify-title{margin:0 0 12px!important;font-size:15px!important;font-weight:700!important;color:#0f172a!important;border-left:4px solid #1f36cc!important;padding-left:8px!important;}
+.input-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px 12px!important;}
+.field{display:flex!important;flex-direction:column!important;gap:5px!important;align-items:stretch!important;grid-template-columns:none!important;}
+.field label{font-size:13px!important;color:#334155!important;font-weight:700!important;}
+.field input,.field select,.check-field input,.check-field select,.verify-grid input,.verify-grid select{width:100%!important;height:39px!important;padding:8px 10px!important;font-size:14px!important;border:1px solid #aeb8c4!important;border-radius:7px!important;background:#fff!important;}
+.btn-update{background:linear-gradient(180deg,#3b82f6 0%,#2563eb 100%)!important;border-radius:8px!important;box-shadow:0 6px 16px rgba(37,99,235,.24)!important;margin-top:0!important;}
+.check-grid,.verify-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;}
+.note-box,.result-box,.shaft-check-box,.verify-output-box{border-radius:10px!important;border:1px solid #dde5ef!important;box-shadow:0 10px 26px rgba(28,45,64,.08)!important;}
+.svg-wrap{border-radius:10px!important;border:1px solid #cfd6df!important;box-shadow:0 10px 26px rgba(28,45,64,.08)!important;padding:0!important;overflow:hidden!important;}
+</style>
+
+<style id="shaft1-short-arrows-bold-diagrams">
+/* Mũi tên sơ đồ lực trục I: ngắn hơn, đầu mũi tên nhỏ hơn */
+.arrow {
+    stroke-width: 1.35 !important;
+    marker-end: url(#arrow) !important;
+}
+.force-arrow, .force, .arrow-force {
+    stroke-width: 1.35 !important;
+    marker-end: url(#arrow) !important;
+}
+
+/* Đường viền/đường đi biểu đồ phải đậm đều, kể cả đoạn đứng tại D */
+.qy-line, .mx-line, .qx-line, .my-line, .t-line,
+.diagram-line, .line-diagram, .moment-line, .shear-line {
+    stroke-width: 2.7 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    fill: none !important;
+}
+
+/* Phần hatch vẫn giữ mảnh hơn, chỉ viền biểu đồ đậm */
+.qy-fill, .mx-fill, .qx-fill, .my-fill, .t-fill {
+    stroke-width: 1.4 !important;
+}
+</style>
+
+
+<style id="shaft1-final-short-arrows-bold-lines">
+.arrow, .force-arrow, .force, .arrow-force {
+    stroke-width: 1.25 !important;
+    marker-end: url(#arrow) !important;
+}
+.qy-line, .mx-line, .qx-line, .my-line, .t-line,
+.diagram-line, .line-diagram, .moment-line, .shear-line {
+    stroke-width: 2.9 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    fill: none !important;
+}
+.qy-fill, .mx-fill, .qx-fill, .my-fill, .t-fill {
+    stroke-width: 1.2 !important;
+}
+</style>
+
+
+<style id="shaft1-equal-arrow-size-final">
+.arrow, .force, .force-arrow, .arrow-force {
+    stroke-width: 1.65 !important;
+    marker-end: url(#arrow) !important;
+}
+.qy-line, .mx-line, .qx-line, .my-line, .t-line,
+.diagram-line, .line-diagram, .moment-line, .shear-line {
+    stroke-width: 2.8 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    fill: none !important;
+}
+.qy-fill, .mx-fill, .qx-fill, .my-fill, .t-fill {
+    stroke-width: 1.2 !important;
+}
+</style>
+
+
+<style id="force-arrow-visible-trucI">
+.arrow, .force, .force-arrow, .arrow-force {
+    stroke: #a83bd8 !important;
+    stroke-width: 1.9 !important;
+    marker-end: url(#forceArrowI) !important;
+}
+.qy-line, .mx-line, .qx-line, .my-line, .t-line,
+.diagram-line, .line-diagram, .moment-line, .shear-line {
+    stroke-width: 2.8 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    fill: none !important;
+}
+</style>
+
+</head>
+<body>
+<div class="page">
+    <div class="title-box">
+        <h2>Sơ đồ lực + biểu đồ Qy, Mx, Qx, My, T1</h2>
+        <p>Tính phản lực FBx, FBy, FCx, FCy và vẽ biểu đồ theo thuật toán bánh răng côn.</p>
+    </div>
+
+    <div class="check-controls" id="shaftDiameterControls">
+        <h3>Tra [σ] để tính đường kính trục tại các tiết diện j</h3>
+        <div class="final-note">Công thức dùng trong phần chọn đường kính yêu cầu: <b>d<sub>j</sub> = ∛(M<sub>tdj</sub>/(0,1[σ]))</b>. Giá trị <b>[σ]</b> được tra theo đường kính trục sơ bộ <b>d<sub>sb</sub></b> và nhóm vật liệu.</div>
+        <div class="check-grid">
+            <div class="check-field"><label>1. Điều kiện hộp giảm tốc</label><select id="dia_gearbox" onchange="diaLoadSteels()"><option value="medium">Hộp giảm tốc chịu tải trọng trung bình</option><option value="heavy">Hộp giảm tốc chịu tải nặng, trục đặt trên ổ trượt quay nhanh</option></select></div>
+            <div class="check-field"><label>2. Nhãn hiệu thép dùng cho trục</label><select id="dia_steel" onchange="diaLoadHeat()"></select></div>
+            <div class="check-field"><label>3. Phương pháp nhiệt luyện</label><select id="dia_heat" onchange="updateDiagrams()"></select></div>
+            <div class="check-field"><label>Nhóm vật liệu tra bảng 10.5</label><input id="dia_groupLabel" type="text" value="" readonly></div>
+            <div class="check-field"><label>Giới hạn bền σb, MPa</label><input id="dia_sigmaB" type="text" value="" readonly></div>
+            <div class="check-field"><label>Đường kính trục sơ bộ dsb, mm</label><input id="dia_dsb" type="text" value="" readonly></div>
+            <div class="check-field"><label>Mốc dsb dùng tra bảng</label><input id="dia_dsbMoc" type="text" value="" readonly></div>
+            <div class="check-field"><label>[σ], MPa</label><input id="dia_sigmaAllow" type="text" value="" readonly></div>
+        </div>
+    </div>
+
+    <div class="controls-wrap">
+        <div class="control-card">
+            <h3>Lực bánh răng côn</h3>
+            <div class="input-grid">
+                <div class="field"><label for="Fr1">Fr1</label><input type="number" id="Fr1" value="669" step="0.1"></div>
+                <div class="field"><label for="Fa1">Fa1</label><input type="number" id="Fa1" value="141.2" step="0.1"></div>
+                <div class="field"><label for="Ft1">Ft1</label><input type="number" id="Ft1" value="1878.4" step="0.1"></div>
+                <div class="field"><label for="Frkn1">Frkn1</label><input type="number" id="Frkn1" value="399.3" step="0.1"></div>
+            </div>
+        </div>
+
+        <div class="control-card">
+            <h3>Kích thước</h3>
+            <div class="input-grid">
+                <div class="field"><label for="l12">l12</label><input type="number" id="l12" value="70.5" step="0.1"></div>
+                <div class="field"><label for="l11">l11</label><input type="number" id="l11" value="75" step="0.1"></div>
+                <div class="field"><label for="l13">l13</label><input type="number" id="l13" value="122.5" step="0.1"></div>
+                <div class="field"><label for="dm1">dm1</label><input type="number" id="dm1" value="60.375" step="0.001"></div>
+            </div>
+        </div>
+
+        <div class="control-card">
+            <h3>Mômen xoắn</h3>
+            <div class="input-grid">
+                <div class="field"><label for="T1">T1</label><input type="number" id="T1" value="57730.067" step="0.001"></div>
+                <div class="field"><label for="tauAllow">[τ]</label><input type="number" id="tauAllow" value="18" step="0.1"></div>
+                <button class="btn-update" onclick="updateDiagrams()">Cập nhật biểu đồ</button>
+            </div>
+        </div>
+
+        <div class="control-card">
+            <h3>Chiều quay nhận từ Index</h3>
+            <div class="input-grid">
+                <div class="field"><label for="chieuQuayTrucI_local">Chiều quay</label>
+                    <select id="chieuQuayTrucI_local" onchange="updateDiagrams()">
+                        <option value="cw" selected>Cùng chiều kim đồng hồ</option>
+                        <option value="ccw">Ngược chiều kim đồng hồ</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-card">
+            <h3>Ghi chú tính toán</h3>
+            <div class="formula-small">
+                AB = l12, BC = l11, BD = l13, CD = l13 − l11<br>
+                MFa1 = Fa1·dm1/2<br>
+                FCy = (Fr1·BD − MFa1)/BC<br>
+                FBy = FCy − Fr1<br>
+                Nếu trục I cùng chiều kim đồng hồ:<br>
+                FCx = (−Frkn1·AB + Ft1·BD)/BC<br>
+                FBx = −Frkn1 + FCx − Ft1<br>
+                Nếu trục I ngược chiều kim đồng hồ:<br>
+                FCx = (Frkn1·AB − Ft1·BD)/BC<br>
+                FBx = Frkn1 + FCx + Ft1
+            </div>
+        </div>
+    </div>
+
+    <div class="note-box">
+        <b>Quy ước:</b> Qy, Qx dùng đơn vị <b>N</b>; Mx, My, T1 dùng đơn vị <b>N.mm</b>. Biểu đồ Mx nằm trong mặt phẳng <b>XOY</b>; biểu đồ Qx, My nằm trong mặt phẳng <b>XOZ</b>: trục tung/thanh giá trị vẫn thẳng đứng, còn hình biểu đồ và hatch là nét dài nghiêng cùng phương trục X. T1 chạy từ <b>A đến D</b>.
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+
+    <div class="shaft-check-box" id="shaftCheckBox"></div>
+
+
+
+
+    <div class="svg-wrap">
+        <svg width="1240" height="1280" viewBox="0 0 1240 1280">
+            <defs>
+                <marker id="arrowMagenta" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#b82fd4"></polygon>
+                </marker>
+                <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 9 3, 0 6" fill="#333"></polygon>
+                </marker>
+                <pattern id="hatchVertical" width="8" height="8" patternUnits="userSpaceOnUse">
+                    <rect width="8" height="8" fill="white"></rect>
+                    <line x1="2" y1="0" x2="2" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
+                    <line x1="6" y1="0" x2="6" y2="8" stroke="#d57adf" stroke-width="1.3"></line>
+                </pattern>
+                <pattern id="hatchDiagonalXOZ" width="6" height="6" patternUnits="userSpaceOnUse">
+                    <rect width="6" height="6" fill="white"></rect>
+                    <!-- Hatch nét dài, liền nét, đặt sát nhau và cùng phương với trục X trong mặt phẳng XOZ -->
+                    <line x1="-18" y1="18" x2="18" y2="-18" stroke="#d57adf" stroke-width="1.25"></line>
+                    <line x1="-15" y1="18" x2="21" y2="-18" stroke="#d57adf" stroke-width="1.25"></line>
+                    <line x1="-12" y1="18" x2="24" y2="-18" stroke="#d57adf" stroke-width="1.25"></line>
+                    <line x1="-9" y1="18" x2="27" y2="-18" stroke="#d57adf" stroke-width="1.25"></line>
+                </pattern>
+            </defs>
+            <g id="topLayer"></g>
+            <g id="qyLayer"></g>
+            <g id="mxLayer"></g>
+            <g id="qxLayer"></g>
+            <g id="myLayer"></g>
+            <g id="tLayer"></g>
+            <g id="coordLayer"></g>
+        </svg>
+    </div>
+
+    <div class="verify-panel" id="verifyControls">
+        <div class="verify-title">Kiểm nghiệm trục tại các tiết diện nguy hiểm A, C, D</div>
+        <div class="section-note">
+            Dữ liệu tự động lấy từ biểu đồ: d<sub>A</sub>, d<sub>D</sub>, d<sub>C</sub> lấy từ bảng chọn đường kính; M<sub>j</sub> là mômen uốn tổng hợp tại tiết diện j; T<sub>j</sub> lấy theo mômen xoắn T1 trên trục.
+            A và D kiểm nghiệm theo trục có then; C kiểm nghiệm theo trục tròn lắp ổ lăn.
+        </div>
+        <div class="section-note">Vật liệu kiểm nghiệm lấy chung từ phần <b>Tra [σ] để tính đường kính trục</b> ở đầu trang, không nhập lại ở đây.</div>
+        <div class="verify-grid">
+            <label class="auto-hidden-by-final">1. Điều kiện hộp giảm tốc
+                <select id="v_gearbox" onchange="vLoadSteels();updateDiagrams()">
+                    <option value="medium">Hộp giảm tốc chịu tải trọng trung bình</option>
+                    <option value="heavy">Hộp giảm tốc chịu tải nặng, trục đặt trên ổ trượt quay nhanh</option>
+                </select>
+            </label>
+            <label class="auto-hidden-by-final">2. Nhãn hiệu thép dùng cho trục
+                <select id="v_steel" onchange="vLoadHeat();updateDiagrams()"></select>
+            </label>
+            <label class="auto-hidden-by-final">3. Phương pháp nhiệt luyện
+                <select id="v_heat" onchange="updateDiagrams()"></select>
+            </label>
+            <label class="auto-hidden-by-final">4. Loại vật liệu tự động
+                <input id="v_materialType" readonly>
+            </label>
+            <label>Dạng ứng suất xoắn chung
+                <select id="v_torsionMode" onchange="updateDiagrams()">
+                    <option value="motChieu">Quay 1 chiều - chu kỳ mạch động</option>
+                    <option value="haiChieu">Quay 2 chiều - chu kỳ đối xứng</option>
+                </select>
+            </label>
+            <label>Hệ số an toàn cho phép [S]
+                <input id="v_sAllow" type="number" value="1.8" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label>Độ nhẵn bề mặt chung A, C, D
+                <select id="v_surface" onchange="updateDiagrams()">
+                    <option value="mai">Mài Ra 0,32...0,16</option>
+                    <option value="tienRa25" selected>Tiện Ra 2,5...0,63</option>
+                    <option value="tienRz80">Tiện thô Rz 80...20</option>
+                    <option value="khongGiaCong">Bề mặt không gia công</option>
+                </select>
+            </label>
+            <label>Tăng bền bề mặt mặc định
+                <select id="v_strengthen" onchange="updateDiagrams()">
+                    <option value="khong">Không tăng bền</option>
+                    <option value="toiTanSo">Tôi tần số cao</option>
+                    <option value="thamNito">Thấm nitơ</option>
+                    <option value="thamCacbon">Thấm cacbon</option>
+                    <option value="phunBi">Phun bi</option>
+                    <option value="lanNen">Lăn nén</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <div class="verify-panel">
+        <div class="verify-title">Tiết diện A - lắp đai / khớp nối, trục có then</div>
+        <div class="verify-grid">
+            <label>Dạng tiết diện tại A
+                <select id="v_sectionA" onchange="vToggleAdvancedSections('A');vUpdateKeyDefaults();updateDiagrams()">
+                    <option value="motThen" selected>Trục có 1 rãnh then</option>
+                    <option value="haiThen">Trục có 2 rãnh then</option>
+                    <option value="thenHoaChuNhat">Then hoa răng chữ nhật</option>
+                    <option value="thenHoaThanKhai">Then hoa răng thân khai</option>
+                </select>
+            </label>
+            <label class="v_normal_A">Gia công then tại A
+                <select id="v_machiningA" onchange="updateDiagrams()">
+                    <option value="phaydia">Dao phay đĩa</option>
+                    <option value="phayngon">Dao phay ngón</option>
+                </select>
+            </label>
+            <label>Kiểu lắp tại A
+                <select id="v_fitA" onchange="vSuggestFit('A');updateDiagrams()">
+                    <option value="k6" selected>k6</option><option value="r6">r6</option><option value="h6">h6</option><option value="s6">s6</option>
+                </select>
+            </label>            <label>Chiều dài mayơ l<sub>mA</sub>, mm
+                <input id="v_lmA" type="number" value="60" step="0.01" oninput="vUpdateKeyDefaults();updateDiagrams()">
+            </label>
+            <label class="v_normal_A v_key_count_auto_A hidden">Số rãnh then tại A
+                <select id="v_keyCountA" onchange="vUpdateKeyDefaults();updateDiagrams()"><option value="1">1 rãnh then</option><option value="2">2 rãnh then</option></select>
+            </label>
+            <label class="v_normal_A">Loại then tại A
+                <select id="v_keyTypeA" onchange="vUpdateKeyDefaults();updateDiagrams()"><option value="thuong">Then bằng</option><option value="cao">Then bằng cao</option><option value="banNguyet">Then bán nguyệt</option></select>
+            </label>
+            <label class="v_normal_A">b then A, mm<input id="v_bA" type="number" value="8" step="0.01" readonly></label>
+            <label class="v_normal_A">h then A, mm<input id="v_hA" type="number" value="7" step="0.01" readonly></label>
+            <label class="v_normal_A">t1 then A, mm<input id="v_tA" type="number" value="4" step="0.01" readonly></label>
+            <label class="v_normal_A">l then A, mm<input id="v_lA" type="number" value="50" step="0.01" readonly></label>
+            <label class="v_normal_A">Dạng lắp then A
+                <select id="v_keyFitA" onchange="updateDiagrams()"><option value="coDinh">Cố định</option><option value="diDong">Di động</option></select>
+            </label>
+            <label class="v_normal_A">Vật liệu mayơ A
+                <select id="v_hubA" onchange="updateDiagrams()"><option value="thep">Thép</option><option value="gang">Gang</option></select>
+            </label>
+            <label class="v_normal_A">Đặc tính tải then A
+                <select id="v_keyLoadA" onchange="updateDiagrams()"><option value="tinh">Tĩnh</option><option value="vaDapNhe" selected>Va đập nhẹ</option><option value="vaDapManh">Va đập mạnh</option></select>
+            </label>
+            <label class="v_normal_A">[τc] cơ sở A, MPa
+                <select id="v_tauBaseA" onchange="updateDiagrams()"><option value="60">60</option><option value="70">70</option><option value="80">80</option><option value="90" selected>90</option></select>
+            </label>
+            <label class="v_rect_A hidden">Cỡ then hoa CN A
+                <select id="v_rectSizeA" onchange="vFillSplineDefaults('A');updateDiagrams()"><option value="light">Cỡ nhẹ</option><option value="medium" selected>Cỡ trung</option><option value="heavy">Cỡ nặng</option></select>
+            </label>
+            <label class="v_rect_A hidden">z × d × D A
+                <select id="v_rectStdA" onchange="vFillRectStd('A');updateDiagrams()"></select>
+            </label>
+            <label class="v_rect_A hidden">z; d; D; dtb; h A
+                <input id="v_rectInfoA" readonly>
+            </label>
+            <label class="v_rect_A hidden">Dạng mối ghép then hoa CN A
+                <select id="v_rectFitA" onchange="updateDiagrams()"><option value="fixed">Cố định</option><option value="moving">Di động</option></select>
+            </label>
+            <label class="v_rect_A hidden">σch mayơ; s; Ks; Kr A
+                <input id="v_rectParamsA" value="350;1.5;1.2;1" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_A hidden">[σd] di động A, MPa
+                <input id="v_rectAllowMovingA" type="number" value="15" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_A hidden">e A, mm
+                <input id="v_rectEA" type="number" value="24" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_A hidden">Loại bánh răng / β A
+                <select id="v_rectGearA" onchange="updateDiagrams()"><option value="straight">Răng thẳng</option><option value="helical">Răng nghiêng</option></select>
+                <input id="v_rectBetaA" type="number" value="15" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_A hidden">dw / αw A
+                <input id="v_rectDwA" type="number" value="86.9" step="0.01" oninput="updateDiagrams()">
+                <input id="v_rectAlphaA" type="number" value="20" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_A hidden">Kx / trường hợp bảng 9.7 A
+                <input id="v_rectKxA" type="number" value="1.6" step="0.001" oninput="updateDiagrams()">
+                <select id="v_rectMountA" onchange="updateDiagrams()"><option value="torsion">Đoạn trục bị xoắn</option><option value="notorsion">Không bị xoắn</option><option value="puretorsion">Chỉ xoắn</option></select>
+            </label>
+            <label class="v_rect_A hidden">ξ tính W then hoa CN A
+                <select id="v_xiRectA" onchange="updateDiagrams()"><option value="1.125">1,125 - cỡ nhẹ</option><option value="1.205" selected>1,205 - cỡ trung</option><option value="1.265">1,265 - cỡ nặng</option></select>
+            </label>
+            <label class="v_inv_A hidden">Dãy then hoa thân khai A
+                <select id="v_invSeriesA" onchange="vFillSplineDefaults('A');updateDiagrams()"><option value="day1">Dãy 1</option><option value="day2">Dãy 2</option></select>
+            </label>
+            <label class="v_inv_A hidden">D × m × z A
+                <select id="v_invStdA" onchange="vFillInvStd('A');updateDiagrams()"></select>
+            </label>
+            <label class="v_inv_A hidden">D; m; z; dtb; h A
+                <input id="v_invInfoA" readonly>
+            </label>
+            <label class="v_inv_A hidden">φ A
+                <select id="v_invPhiA" onchange="updateDiagrams()"><option value="0.7">0,7</option><option value="0.75" selected>0,75</option><option value="0.8">0,8</option></select>
+            </label>
+            <label class="v_inv_A hidden">Loại mối ghép thân khai A
+                <select id="v_invFitA" onchange="updateDiagrams()"><option value="fixed">Cố định</option><option value="movingNoLoad">Di động không tải</option><option value="movingLoad">Di động có tải</option></select>
+            </label>
+            <label class="v_inv_A hidden">Điều kiện bảng 9.8 / bề mặt A
+                <select id="v_invConditionA" onchange="updateDiagrams()"><option value="a">a - nặng</option><option value="b" selected>b - trung bình</option><option value="c">c - tốt</option></select>
+                <select id="v_invHeatA" onchange="updateDiagrams()"><option value="no">Không nhiệt luyện</option><option value="yes">Được nhiệt luyện</option></select>
+            </label>
+            <label class="v_inv_A hidden">Cách lấy [σd] / [σm] A
+                <select id="v_invAllowModeA" onchange="updateDiagrams()"><option value="avg">Trung bình</option><option value="min">Nhỏ nhất</option><option value="max">Lớn nhất</option></select>
+                <select id="v_invWearModeA" onchange="updateDiagrams()"><option value="special">Tra bảng 9.9</option><option value="general">Tổng quát</option></select>
+            </label>
+            <label class="v_inv_A hidden">e/l và nhiệt luyện thân khai A
+                <select id="v_invEoverLA" onchange="updateDiagrams()"><option value="0">0</option><option value="0.25">0,25</option><option value="0.50" selected>0,50</option></select>
+                <select id="v_invWearHeatA" onchange="updateDiagrams()"><option value="none">Không nhiệt luyện HRC20</option><option value="improve">Tôi cải thiện HRC28</option><option value="quench40">Tôi HRC40</option><option value="quench45">Tôi HRC45</option><option value="quench52">Tôi HRC52</option><option value="carburize60">Thấm C/N HRC60</option></select>
+            </label>
+            <label class="v_inv_A hidden">Kc / Kb / Kg A
+                <select id="v_invKcA" onchange="updateDiagrams()"><option value="1">Tĩnh: 1</option><option value="0.77">Nặng: 0,77</option><option value="0.63" selected>Trung bình đều: 0,63</option><option value="0.57">Trung bình thường: 0,57</option><option value="0.43">Nhẹ: 0,43</option></select>
+                <select id="v_invKbA" onchange="updateDiagrams()"><option value="0.7">0,7</option><option value="1" selected>1</option><option value="1.4">1,4</option></select>
+                <select id="v_invKgA" onchange="updateDiagrams()"><option value="1" selected>1</option><option value="1.25">1,25</option><option value="3">3</option></select>
+            </label>
+            <label class="v_inv_A hidden">n / Lh A
+                <input id="v_invSpeedA" type="number" value="300" step="0.01" oninput="updateDiagrams()">
+                <input id="v_invLifeA" type="number" value="10000" step="0.01" oninput="updateDiagrams()">
+            </label>
+        </div>
+    </div>
+
+    <div class="verify-panel">
+        <div class="verify-title">Tiết diện C - lắp ổ lăn</div>
+        <div class="verify-grid">
+            <label>Dạng tiết diện tại C<input value="Trục tròn - lắp ổ lăn" readonly></label>
+            <label>Kiểu lắp ổ lăn tại C
+                <select id="v_fitC" onchange="vSuggestFit('C');updateDiagrams()"><option value="k6" selected>k6</option><option value="r6">r6</option><option value="h6">h6</option><option value="s6">s6</option></select>
+            </label>
+            <label>[S] tại C<input id="v_sAllowC" type="number" value="1.8" step="0.01" oninput="updateDiagrams()"></label>
+        </div>
+    </div>
+
+    <div class="verify-panel">
+        <div class="verify-title">Tiết diện D - lắp bánh răng, trục có then</div>
+        <div class="verify-grid">
+            <label>Dạng tiết diện tại D
+                <select id="v_sectionD" onchange="vToggleAdvancedSections('D');vUpdateKeyDefaults();updateDiagrams()">
+                    <option value="motThen" selected>Trục có 1 rãnh then</option>
+                    <option value="haiThen">Trục có 2 rãnh then</option>
+                    <option value="thenHoaChuNhat">Then hoa răng chữ nhật</option>
+                    <option value="thenHoaThanKhai">Then hoa răng thân khai</option>
+                </select>
+            </label>
+            <label class="v_normal_D">Gia công then tại D
+                <select id="v_machiningD" onchange="updateDiagrams()"><option value="phaydia">Dao phay đĩa</option><option value="phayngon">Dao phay ngón</option></select>
+            </label>
+            <label>Kiểu lắp tại D
+                <select id="v_fitD" onchange="vSuggestFit('D');updateDiagrams()"><option value="k6" selected>k6</option><option value="r6">r6</option><option value="h6">h6</option><option value="s6">s6</option></select>
+            </label>            <label>Chiều dài mayơ l<sub>mD</sub>, mm<input id="v_lmD" type="number" value="60" step="0.01" oninput="vUpdateKeyDefaults();updateDiagrams()"></label>
+            <label class="v_normal_D v_key_count_auto_D hidden">Số rãnh then tại D<select id="v_keyCountD" onchange="vUpdateKeyDefaults();updateDiagrams()"><option value="1">1 rãnh then</option><option value="2">2 rãnh then</option></select></label>
+            <label class="v_normal_D">Loại then tại D<select id="v_keyTypeD" onchange="vUpdateKeyDefaults();updateDiagrams()"><option value="thuong">Then bằng</option><option value="cao">Then bằng cao</option><option value="banNguyet">Then bán nguyệt</option></select></label>
+            <label class="v_normal_D">b then D, mm<input id="v_bD" type="number" value="8" step="0.01" readonly></label>
+            <label class="v_normal_D">h then D, mm<input id="v_hD" type="number" value="7" step="0.01" readonly></label>
+            <label class="v_normal_D">t1 then D, mm<input id="v_tD" type="number" value="4" step="0.01" readonly></label>
+            <label class="v_normal_D">l then D, mm<input id="v_lD" type="number" value="50" step="0.01" readonly></label>
+            <label class="v_normal_D">Dạng lắp then D<select id="v_keyFitD" onchange="updateDiagrams()"><option value="coDinh">Cố định</option><option value="diDong">Di động</option></select></label>
+            <label class="v_normal_D">Vật liệu mayơ D<select id="v_hubD" onchange="updateDiagrams()"><option value="thep">Thép</option><option value="gang">Gang</option></select></label>
+            <label class="v_normal_D">Đặc tính tải then D<select id="v_keyLoadD" onchange="updateDiagrams()"><option value="tinh">Tĩnh</option><option value="vaDapNhe" selected>Va đập nhẹ</option><option value="vaDapManh">Va đập mạnh</option></select></label>
+            <label class="v_normal_D">[τc] cơ sở D, MPa<select id="v_tauBaseD" onchange="updateDiagrams()"><option value="60">60</option><option value="70">70</option><option value="80">80</option><option value="90" selected>90</option></select></label>
+            <label class="v_rect_D hidden">Cỡ then hoa CN D
+                <select id="v_rectSizeD" onchange="vFillSplineDefaults('D');updateDiagrams()"><option value="light">Cỡ nhẹ</option><option value="medium" selected>Cỡ trung</option><option value="heavy">Cỡ nặng</option></select>
+            </label>
+            <label class="v_rect_D hidden">z × d × D D
+                <select id="v_rectStdD" onchange="vFillRectStd('D');updateDiagrams()"></select>
+            </label>
+            <label class="v_rect_D hidden">z; d; D; dtb; h D
+                <input id="v_rectInfoD" readonly>
+            </label>
+            <label class="v_rect_D hidden">Dạng mối ghép then hoa CN D
+                <select id="v_rectFitD" onchange="updateDiagrams()"><option value="fixed">Cố định</option><option value="moving">Di động</option></select>
+            </label>
+            <label class="v_rect_D hidden">σch mayơ; s; Ks; Kr D
+                <input id="v_rectParamsD" value="350;1.5;1.2;1" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_D hidden">[σd] di động D, MPa
+                <input id="v_rectAllowMovingD" type="number" value="15" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_D hidden">e D, mm
+                <input id="v_rectED" type="number" value="24" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_D hidden">Loại bánh răng / β D
+                <select id="v_rectGearD" onchange="updateDiagrams()"><option value="straight">Răng thẳng</option><option value="helical">Răng nghiêng</option></select>
+                <input id="v_rectBetaD" type="number" value="15" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_D hidden">dw / αw D
+                <input id="v_rectDwD" type="number" value="86.9" step="0.01" oninput="updateDiagrams()">
+                <input id="v_rectAlphaD" type="number" value="20" step="0.01" oninput="updateDiagrams()">
+            </label>
+            <label class="v_rect_D hidden">Kx / trường hợp bảng 9.7 D
+                <input id="v_rectKxD" type="number" value="1.6" step="0.001" oninput="updateDiagrams()">
+                <select id="v_rectMountD" onchange="updateDiagrams()"><option value="torsion">Đoạn trục bị xoắn</option><option value="notorsion">Không bị xoắn</option><option value="puretorsion">Chỉ xoắn</option></select>
+            </label>
+            <label class="v_rect_D hidden">ξ tính W then hoa CN D
+                <select id="v_xiRectD" onchange="updateDiagrams()"><option value="1.125">1,125 - cỡ nhẹ</option><option value="1.205" selected>1,205 - cỡ trung</option><option value="1.265">1,265 - cỡ nặng</option></select>
+            </label>
+            <label class="v_inv_D hidden">Dãy then hoa thân khai D
+                <select id="v_invSeriesD" onchange="vFillSplineDefaults('D');updateDiagrams()"><option value="day1">Dãy 1</option><option value="day2">Dãy 2</option></select>
+            </label>
+            <label class="v_inv_D hidden">D × m × z D
+                <select id="v_invStdD" onchange="vFillInvStd('D');updateDiagrams()"></select>
+            </label>
+            <label class="v_inv_D hidden">D; m; z; dtb; h D
+                <input id="v_invInfoD" readonly>
+            </label>
+            <label class="v_inv_D hidden">φ D
+                <select id="v_invPhiD" onchange="updateDiagrams()"><option value="0.7">0,7</option><option value="0.75" selected>0,75</option><option value="0.8">0,8</option></select>
+            </label>
+            <label class="v_inv_D hidden">Loại mối ghép thân khai D
+                <select id="v_invFitD" onchange="updateDiagrams()"><option value="fixed">Cố định</option><option value="movingNoLoad">Di động không tải</option><option value="movingLoad">Di động có tải</option></select>
+            </label>
+            <label class="v_inv_D hidden">Điều kiện bảng 9.8 / bề mặt D
+                <select id="v_invConditionD" onchange="updateDiagrams()"><option value="a">a - nặng</option><option value="b" selected>b - trung bình</option><option value="c">c - tốt</option></select>
+                <select id="v_invHeatD" onchange="updateDiagrams()"><option value="no">Không nhiệt luyện</option><option value="yes">Được nhiệt luyện</option></select>
+            </label>
+            <label class="v_inv_D hidden">Cách lấy [σd] / [σm] D
+                <select id="v_invAllowModeD" onchange="updateDiagrams()"><option value="avg">Trung bình</option><option value="min">Nhỏ nhất</option><option value="max">Lớn nhất</option></select>
+                <select id="v_invWearModeD" onchange="updateDiagrams()"><option value="special">Tra bảng 9.9</option><option value="general">Tổng quát</option></select>
+            </label>
+            <label class="v_inv_D hidden">e/l và nhiệt luyện thân khai D
+                <select id="v_invEoverLD" onchange="updateDiagrams()"><option value="0">0</option><option value="0.25">0,25</option><option value="0.50" selected>0,50</option></select>
+                <select id="v_invWearHeatD" onchange="updateDiagrams()"><option value="none">Không nhiệt luyện HRC20</option><option value="improve">Tôi cải thiện HRC28</option><option value="quench40">Tôi HRC40</option><option value="quench45">Tôi HRC45</option><option value="quench52">Tôi HRC52</option><option value="carburize60">Thấm C/N HRC60</option></select>
+            </label>
+            <label class="v_inv_D hidden">Kc / Kb / Kg D
+                <select id="v_invKcD" onchange="updateDiagrams()"><option value="1">Tĩnh: 1</option><option value="0.77">Nặng: 0,77</option><option value="0.63" selected>Trung bình đều: 0,63</option><option value="0.57">Trung bình thường: 0,57</option><option value="0.43">Nhẹ: 0,43</option></select>
+                <select id="v_invKbD" onchange="updateDiagrams()"><option value="0.7">0,7</option><option value="1" selected>1</option><option value="1.4">1,4</option></select>
+                <select id="v_invKgD" onchange="updateDiagrams()"><option value="1" selected>1</option><option value="1.25">1,25</option><option value="3">3</option></select>
+            </label>
+            <label class="v_inv_D hidden">n / Lh D
+                <input id="v_invSpeedD" type="number" value="300" step="0.01" oninput="updateDiagrams()">
+                <input id="v_invLifeD" type="number" value="10000" step="0.01" oninput="updateDiagrams()">
+            </label>
+        </div>
+    </div>
+
+    <div class="verify-output-box" id="verifyOutputBox"></div>
+
+
+
+
+</div>
+
+<script>
+function createSvgEl(tag, attrs = {}) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const key in attrs) el.setAttribute(key, attrs[key]);
+    return el;
+}
+function clearLayer(id) { document.getElementById(id).innerHTML = ""; }
+function addText(layer, x, y, str, cls = "", anchor = "start") {
+    const t = createSvgEl("text", { x, y, "text-anchor": anchor });
+    if (cls) t.setAttribute("class", cls);
+    t.textContent = str;
+    layer.appendChild(t);
+    return t;
+}
+function addLine(layer, x1, y1, x2, y2, cls) {
+    const l = createSvgEl("line", { x1, y1, x2, y2, class: cls });
+    if ((cls === "axis" && Math.abs(y2-y1) < 0.01 && (x2-x1) > 250) ||
+        (cls === "axis-left" && Math.abs(x2-x1) < 0.01 && Math.abs(y2-y1) > 120)) {
+        l.setAttribute("marker-end", "url(#arrowBlack)");
+    }
+    layer.appendChild(l);
+    return l;
+}
+function addCircle(layer, cx, cy, r, cls = "", fill = "none") {
+    const c = createSvgEl("circle", { cx, cy, r, class: cls, fill });
+    layer.appendChild(c);
+    return c;
+}
+function addPath(layer, d, cls) {
+    const p = createSvgEl("path", { d, class: cls });
+    layer.appendChild(p);
+    return p;
+}
+function addPolygon(layer, points, cls) {
+    const p = createSvgEl("polygon", { points, class: cls });
+    layer.appendChild(p);
+    return p;
+}
+function formatNumber(n) { return Number(n).toLocaleString("vi-VN", { maximumFractionDigits: 3 }); }
+function formatTickValueWithUnit(n, unit) { return `${formatNumber(n)} ${unit}`; }
+function getVal(id, fallback = 0) { return parseFloat(document.getElementById(id).value) || fallback; }
+function niceCeil(value, step) { return Math.ceil(Math.max(value, 1) / step) * step; }
+
+function drawTopCoordLikeSample(layer, x, y) {
+    addCircle(layer, x, y, 3, "", "#111");
+    addText(layer, x - 7, y + 18, "o", "coord-text", "middle");
+    addLine(layer, x, y, x, y - 74, "coord");
+    addText(layer, x - 10, y - 82, "y", "coord-text");
+    addLine(layer, x, y, x + 82, y, "coord");
+    addText(layer, x + 88, y - 4, "z", "coord-text");
+    addLine(layer, x, y, x - 46, y + 52, "coord");
+    addText(layer, x - 54, y + 66, "x", "coord-text");
+}
+function drawCoordOXY_Yup(layer, x, y) {
+    addLine(layer, x, y, x, y - 28, "coord");
+    addLine(layer, x, y, x + 34, y, "coord");
+    addText(layer, x - 6, y - 34, "Y", "coord-text");
+    addText(layer, x + 40, y + 4, "X", "coord-text");
+}
+function drawCoordOXY_Ydown(layer, x, y) {
+    addLine(layer, x, y, x, y + 28, "coord");
+    addLine(layer, x, y, x + 34, y, "coord");
+    addText(layer, x - 6, y + 42, "Y", "coord-text");
+    addText(layer, x + 40, y + 4, "X", "coord-text");
+}
+function drawCoordOXZ_Xout(layer, x, y) {
+    addLine(layer, x, y, x + 34, y, "coord");
+    addLine(layer, x, y, x - 24, y + 22, "coord");
+    addText(layer, x + 40, y + 4, "Z", "coord-text");
+    addText(layer, x - 36, y + 28, "X", "coord-text");
+}
+function drawCoordOXZ_Xin(layer, x, y) {
+    addLine(layer, x, y, x + 36, y, "coord");
+    addLine(layer, x, y, x + 28, y - 28, "coord");
+    addText(layer, x + 42, y + 4, "Z", "coord-text");
+    addText(layer, x + 32, y - 34, "X", "coord-text");
+}
+function drawCoordOYX_Yup(layer, x, y) {
+    addLine(layer, x, y, x, y - 28, "coord");
+    addLine(layer, x, y, x + 34, y, "coord");
+    addText(layer, x - 6, y - 34, "Y", "coord-text");
+    addText(layer, x + 40, y + 4, "X", "coord-text");
+}
+function drawVerticalTicks(layer, xAxis, y0, maxAbsValue, unit, positiveDown = false) {
+    const tickDist = 62;
+    const yTop = y0 - tickDist, yMid = y0, yBot = y0 + tickDist;
+    addLine(layer, xAxis - 6, yTop, xAxis + 6, yTop, "tick-line");
+    addLine(layer, xAxis - 6, yMid, xAxis + 6, yMid, "tick-line");
+    addLine(layer, xAxis - 6, yBot, xAxis + 6, yBot, "tick-line");
+    const topText = positiveDown ? -maxAbsValue : maxAbsValue;
+    const botText = positiveDown ? maxAbsValue : -maxAbsValue;
+    addText(layer, xAxis - 12, yTop + 4, formatTickValueWithUnit(topText, unit), "tick-text", "end");
+    addText(layer, xAxis - 12, yMid + 4, formatTickValueWithUnit(0, unit), "tick-text", "end");
+    addText(layer, xAxis - 12, yBot + 4, formatTickValueWithUnit(botText, unit), "tick-text", "end");
+    addLine(layer, xAxis, yTop, xAxis + 840, yTop, "grid-line");
+    addLine(layer, xAxis, yMid, xAxis + 840, yMid, "grid-line");
+    addLine(layer, xAxis, yBot, xAxis + 840, yBot, "grid-line");
+}
+function drawDiagramLabel(layer, x, y, title, unit) {
+    addText(layer, x, y, title, "diagram-title", "middle");
+    addText(layer, x, y + 34, `(${unit})`, "diagram-unit", "middle");
+}
+
+
+function cubeRoot(n) { return Math.cbrt(Math.max(0, n)); }
+function standardChooseGreaterOrEqual(value, arr) {
+    for (const x of arr) if (x >= value) return x;
+    return arr[arr.length - 1];
+}
+function passText(ok) { return ok ? '<span class="ok">Đạt</span>' : '<span class="fail">Không đạt</span>'; }
+const diaSigmaTable = {
+    30: [58, 63, 67, 70],
+    50: [48, 50, 55, 60],
+    100: [45, 48, 50, 55]
+};
+const diaMaterialByGearbox = {
+    medium: [
+        { steel: "Thép 45", heat: "Thường hóa", sigmaB: 600, group: "Thép CT6, 45; σb ≥ 600", col: 1 },
+        { steel: "Thép 45", heat: "Tôi cải thiện", sigmaB: 850, group: "Thép 45 tôi; σb ≥ 850", col: 2 },
+        { steel: "Thép 40X", heat: "Tôi cải thiện", sigmaB: 850, group: "Thép 45 tôi; σb ≥ 850", col: 2 }
+    ],
+    heavy: [
+        { steel: "Thép 20X", heat: "Thấm cacbon", sigmaB: 650, group: "Thép hợp kim thấm C", col: 3 },
+        { steel: "Thép 12XH3A", heat: "Thấm cacbon", sigmaB: 900, group: "Thép hợp kim thấm C", col: 3 },
+        { steel: "Thép 18XGT", heat: "Thấm cacbon", sigmaB: 1000, group: "Thép hợp kim thấm C", col: 3 }
+    ]
+};
+function diaGetOptions() {
+    const gb = document.getElementById('dia_gearbox')?.value || 'medium';
+    return diaMaterialByGearbox[gb] || diaMaterialByGearbox.medium;
+}
+function diaLoadSteels() {
+    const steelSel = document.getElementById('dia_steel');
+    if (!steelSel) return;
+    const opts = diaGetOptions();
+    const oldSteel = steelSel.value;
+    const steels = [...new Set(opts.map(x => x.steel))];
+    steelSel.innerHTML = steels.map(st => `<option value="${st}">${st}</option>`).join('');
+    steelSel.value = steels.includes(oldSteel) ? oldSteel : steels[0];
+    diaLoadHeat();
+}
+function diaLoadHeat() {
+    const heatSel = document.getElementById('dia_heat');
+    const steelSel = document.getElementById('dia_steel');
+    if (!heatSel || !steelSel) return;
+    const opts = diaGetOptions().filter(x => x.steel === steelSel.value);
+    heatSel.innerHTML = opts.map((x, i) => `<option value="${i}">${x.heat}</option>`).join('');
+    heatSel.value = '0';
+    updateDiagrams();
+}
+function diaCurrentMaterial() {
+    const steel = document.getElementById('dia_steel')?.value || 'Thép 45';
+    const idx = Number(document.getElementById('dia_heat')?.value || 0);
+    const opts = diaGetOptions().filter(x => x.steel === steel);
+    return opts[idx] || opts[0] || diaMaterialByGearbox.medium[0];
+}
+function diaNearestDsbMoc(dsb) {
+    const mocs = [30, 50, 100];
+    let best = mocs[0];
+    for (const m of mocs) if (Math.abs(m - dsb) < Math.abs(best - dsb)) best = m;
+    return best;
+}
+function diaGetSigmaInfo(T1, tau) {
+    const stdBearing = [20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,100];
+    const d1tinh = cubeRoot(Math.abs(T1) / (0.2 * tau));
+    const d1 = standardChooseGreaterOrEqual(d1tinh, stdBearing);
+    const d11 = d1;
+    const d12 = d1 + 5;
+    const dOlan = standardChooseGreaterOrEqual(d1 + 10, stdBearing);
+    const dsb = dOlan;
+    const dsbMoc = diaNearestDsbMoc(dsb);
+    const mat = diaCurrentMaterial();
+    const sigmaAllow = diaSigmaTable[dsbMoc][mat.col];
+    const ids = {
+        dia_groupLabel: mat.group,
+        dia_sigmaB: `${mat.sigmaB}`,
+        dia_dsb: `${formatNumber(dsb)}  (dổ lăn = d1 + 10)`,
+        dia_dsbMoc: `${dsbMoc}`,
+        dia_sigmaAllow: `${sigmaAllow}`
+    };
+    for (const [id, val] of Object.entries(ids)) {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    }
+    return { ...mat, d1tinh, d1, d11, d12, dOlan, dsb, dsbMoc, sigmaAllow };
+}
+function chooseMountedDiameter(candidates, demand, baseDiameter, minGap, maxGap, targetGap) {
+    const valid = candidates.filter(d => {
+        const gap = baseDiameter - d;
+        return d >= demand && d < baseDiameter && gap >= minGap && gap <= maxGap;
+    });
+    if (!valid.length) return null;
+    valid.sort((a, b) => {
+        const aPreferred = (a % 5 === 0) ? 0 : 1;
+        const bPreferred = (b % 5 === 0) ? 0 : 1;
+        const aGapScore = Math.abs((baseDiameter - a) - targetGap);
+        const bGapScore = Math.abs((baseDiameter - b) - targetGap);
+        if (aPreferred !== bPreferred) return aPreferred - bPreferred;
+        if (aGapScore !== bGapScore) return aGapScore - bGapScore;
+        return b - a;
+    });
+    return valid[0];
+}
+function calcShaftDiameterCheck(data) {
+    const { T1, tau, sigmaAllow, sigmaInfo, M_A, M_B, M_C, M_D } = data;
+    const stdBearing = [20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,100];
+    const stdMounted = [10,10.5,11,11.5,12,13,14,15,16,17,18,19,20,21,22,24,25,26,28,30,32,34,36,38,40,42,45,48,50,52,55,60,63,65,70,80,85,95,100,105,110,120,125,130,140,150,160];
+
+    const d1tinh = cubeRoot(T1 / (0.2 * tau));
+    const d1 = standardChooseGreaterOrEqual(d1tinh, stdBearing);
+    const d11 = d1;
+    const d12 = d1 + 5;
+    const dOlan = standardChooseGreaterOrEqual(d1 + 10, stdBearing);
+
+    const MtdA = 0;
+    const MtdB = Math.sqrt(M_B*M_B + 0.75*T1*T1);
+    const MtdC = Math.sqrt(M_C*M_C + 0.75*T1*T1);
+    const MtdD = Math.sqrt(M_D*M_D + 0.75*T1*T1);
+
+    const dAtinh = cubeRoot(MtdA / (0.1 * sigmaAllow));
+    const dBtinh = cubeRoot(MtdB / (0.1 * sigmaAllow));
+    const dCtinh = cubeRoot(MtdC / (0.1 * sigmaAllow));
+    const dDtinh = cubeRoot(MtdD / (0.1 * sigmaAllow));
+
+    let chosen = null;
+    const trials = [];
+
+    for (const dC of stdBearing) {
+        const dB = dC;
+        if (dC < dOlan) continue;
+
+        const dA = chooseMountedDiameter(stdMounted, Math.max(dAtinh, d11), dC, 8, 13, 10);
+        const dD = chooseMountedDiameter(stdMounted, Math.max(dDtinh, d12), dC, 3, 8, 5);
+
+        const shape = dA !== null && dD !== null && dA < dD && dD < dB && dB === dC;
+        const ben = shape && dA >= dAtinh && dB >= dBtinh && dC >= dCtinh && dD >= dDtinh;
+        const sobo = shape && dA > d11 && dD > d12 && dB >= dOlan && dC >= dOlan;
+        const gapA = dA === null ? null : dC - dA;
+        const gapD = dD === null ? null : dC - dD;
+        const row = { dA, dB, dC, dD, dOlan, d11, d12, gapA, gapD, shape, ben, sobo, ok: ben && sobo };
+        trials.push(row);
+        if (row.ok) {
+            chosen = row;
+            break;
+        }
+    }
+    if (!chosen) chosen = trials[trials.length - 1] || { dA: null, dB: null, dC: null, dD: null, dOlan, d11, d12, gapA: null, gapD: null, shape: false, ben: false, sobo: false, ok: false };
+    return { std: stdBearing, stdMounted, d1tinh, d1, d11, d12, dOlan, sigmaAllow, sigmaInfo, MtdA, MtdB, MtdC, MtdD, dAtinh, dBtinh, dCtinh, dDtinh, chosen, trials };
+}
+function renderShaftDiameterTables(input) {
+    const box = document.getElementById('shaftCheckBox');
+    const r = calcShaftDiameterCheck(input);
+    const c = r.chosen;
+    const f = formatNumber;
+    const diaText = (x) => x === null || x === undefined ? 'Không chọn được' : `${f(x)} mm`;
+    const reqRows = [
+        ['A', input.M_A, 0, r.MtdA, r.dAtinh, c.dA, 'Lắp khớp nối / bánh đai'],
+        ['B', input.M_B, input.T1, r.MtdB, r.dBtinh, c.dB, 'Ổ lăn'],
+        ['C', input.M_C, input.T1, r.MtdC, r.dCtinh, c.dC, 'Ổ lăn'],
+        ['D', input.M_D, input.T1, r.MtdD, r.dDtinh, c.dD, 'Lắp bánh răng']
+    ];
+    const lastTrials = r.trials.map(t => `<tr><td>dC = dB = ${f(t.dC)}</td><td>dA=${diaText(t.dA)}; dD=${diaText(t.dD)}; dB=dC=${f(t.dC)} mm</td><td>${t.gapA===null?'--':f(t.gapA)} mm</td><td>${t.gapD===null?'--':f(t.gapD)} mm</td><td>${passText(t.shape)}</td><td>${passText(t.ben)}</td><td>${t.sobo ? '<span class="ok">Đạt điều kiện sơ bộ</span>' : '<span class="fail">Chưa đạt sơ bộ</span>'}</td><td>${passText(t.ok)}</td></tr>`).join('');
+    box.innerHTML = `
+        <h3>Chọn đường kính trục theo thuật toán dA &lt; dD &lt; dB = dC</h3>
+        <div class="final-note"><b>Nguyên tắc dừng:</b> tính d1 theo mômen xoắn, chọn <b>dổ lăn = d1 + 10</b> theo bảng ổ lăn; sau đó thử <b>dC</b> theo bảng tiêu chuẩn ổ lăn. Với mỗi dC lấy <b>dB = dC</b>, chọn <b>dA</b> và <b>dD</b> theo bảng tiêu chuẩn đoạn lắp bánh răng/bánh đai/khớp nối sao cho <b>dA &lt; dD &lt; dB = dC</b>.</div>
+        <table class="calc-table">
+            <thead><tr><th>Loại hộp giảm tốc</th><th>Mác thép</th><th>Nhiệt luyện</th><th>σb (MPa)</th><th>Nhóm vật liệu tra bảng 10.5</th><th>d<sub>sb</sub> dùng tra</th><th>[σ] (MPa)</th></tr></thead>
+            <tbody><tr><td>${document.getElementById('dia_gearbox')?.selectedOptions[0]?.textContent || ''}</td><td>${r.sigmaInfo.steel}</td><td>${r.sigmaInfo.heat}</td><td>${f(r.sigmaInfo.sigmaB)}</td><td>${r.sigmaInfo.group}</td><td>dổ lăn = ${f(r.dOlan)} mm → mốc ${r.sigmaInfo.dsbMoc} mm</td><td><b>${f(r.sigmaAllow)}</b></td></tr></tbody>
+        </table>
+        <table class="calc-table">
+            <thead><tr><th>Điểm</th><th>Vị trí lắp</th><th>M (N.mm)</th><th>T dùng tính (N.mm)</th><th>Mtd (N.mm)</th></tr></thead>
+            <tbody>
+                ${reqRows.map(x => `<tr><td><b>${x[0]}</b></td><td>${x[6]}</td><td>${f(x[1])}</td><td>${f(x[2])}</td><td>${f(x[3])}</td></tr>`).join('')}
+            </tbody>
+        </table>
+        <table class="calc-table">
+            <thead><tr><th>Nội dung</th><th>Công thức / điều kiện</th><th>Kết quả</th></tr></thead>
+            <tbody>
+                <tr><td><b>d₁ tính</b></td><td>∛(|T1|/(0,2·[τ])) = ∛(${f(Math.abs(input.T1))}/(0,2·${f(input.tau)}))</td><td>${f(r.d1tinh)} mm</td></tr>
+                <tr><td><b>d₁ chọn</b></td><td>Chọn lớn hơn và gần nhất theo bảng ổ lăn</td><td>d₁ = ${f(r.d1)} mm</td></tr>
+                <tr><td><b>d₁₁</b></td><td>d₁₁ = d₁</td><td>${f(r.d11)} mm</td></tr>
+                <tr><td><b>d₁₂</b></td><td>d₁₂ = d₁ + 5</td><td>${f(r.d12)} mm</td></tr>
+                <tr><td><b>dổ lăn</b></td><td>dổ lăn = d₁ + 10, chọn theo bảng ổ lăn</td><td>${f(r.dOlan)} mm</td></tr>
+            </tbody>
+        </table>
+        <table class="calc-table">
+            <thead><tr><th>d<sub>sb</sub> gần nhất, mm</th><th>Nhóm 1</th><th>Thép CT6, 45; σb ≥ 600</th><th>Thép 45 tôi; σb ≥ 850</th><th>Thép hợp kim thấm C</th></tr></thead>
+            <tbody>
+                <tr><td>30</td><td>58</td><td>63</td><td>67</td><td>70</td></tr>
+                <tr><td>50</td><td>48</td><td>50</td><td>55</td><td>60</td></tr>
+                <tr><td>100</td><td>45</td><td>48</td><td>50</td><td>55</td></tr>
+            </tbody>
+        </table>
+        <table class="calc-table">
+            <thead><tr><th>Tiết diện</th><th>Mtd (N.mm)</th><th>Đường kính yêu cầu</th><th>Đường kính chọn</th><th>Kiểm tra</th></tr></thead>
+            <tbody>
+                ${reqRows.map(x => `<tr><td><b>${x[0]}</b></td><td>${f(x[3])}</td><td>d${x[0]} ≥ ∛(Mtd${x[0]}/(0,1·[σ])) = ∛(${f(x[3])}/(0,1·${f(r.sigmaAllow)})) = ${f(x[4])}</td><td>d${x[0]} = ${diaText(x[5])}</td><td>${passText((x[5] || 0) >= x[4])}</td></tr>`).join('')}
+            </tbody>
+        </table>
+        <table class="calc-table">
+            <thead><tr><th>Điều kiện kết cấu</th><th>Biểu thức</th><th>Kết quả</th></tr></thead>
+            <tbody>
+                <tr><td><b>dA &lt; dD &lt; dB = dC</b></td><td>${diaText(c.dA)} &lt; ${diaText(c.dD)} &lt; ${diaText(c.dB)} = ${diaText(c.dC)}</td><td>${passText(c.shape)}</td></tr>
+                <tr><td><b>dA cách dC khoảng 8...13 mm</b></td><td>dC − dA = ${c.gapA===null?'--':f(c.gapA)} mm</td><td>${passText(c.gapA !== null && c.gapA >= 8 && c.gapA <= 13)}</td></tr>
+                <tr><td><b>dD cách dC khoảng 3...8 mm</b></td><td>dC − dD = ${c.gapD===null?'--':f(c.gapD)} mm</td><td>${passText(c.gapD !== null && c.gapD >= 3 && c.gapD <= 8)}</td></tr>
+                <tr><td><b>dA &gt; d₁₁</b></td><td>${diaText(c.dA)} &gt; ${f(r.d11)} mm</td><td>${passText((c.dA || 0) > r.d11)}</td></tr>
+                <tr><td><b>dD &gt; d₁₂</b></td><td>${diaText(c.dD)} &gt; ${f(r.d12)} mm</td><td>${passText((c.dD || 0) > r.d12)}</td></tr>
+                <tr><td><b>dB = dC ≥ dổ lăn</b></td><td>${diaText(c.dB)} = ${diaText(c.dC)} ≥ ${f(r.dOlan)} mm</td><td>${passText((c.dB || 0) >= r.dOlan && (c.dC || 0) >= r.dOlan)}</td></tr>
+            </tbody>
+        </table>
+        <table class="calc-table">
+            <thead><tr><th>dC thử theo bảng ổ lăn</th><th>Bộ đường kính suy ra</th><th>dC-dA</th><th>dC-dD</th><th>Dạng trục</th><th>Điều kiện bền</th><th>Điều kiện sơ bộ</th><th>Kết luận chọn</th></tr></thead>
+            <tbody>${lastTrials}</tbody>
+        </table>
+        <div class="final-note"><b>Kết luận chọn bộ đường kính:</b> dA = ${diaText(c.dA)} &lt; dD = ${diaText(c.dD)} &lt; dB = dC = ${diaText(c.dC)}. Bộ này được chọn vì đạt bền, đạt điều kiện sơ bộ và ưu tiên các đường kính tiêu chuẩn có đuôi 0 hoặc 5 khi có thể.</div>
+    `;
+}
+
+
+
+const knData={
+"40":[{nl:"Tôi cải thiện",S:"≤ 60",doRan:"HB 192...228",sb:700,sch:400}],
+"45":[{nl:"Thường hóa",S:"≤ 80",doRan:"HB 170...217",sb:600,sch:340},{nl:"Tôi cải thiện",S:"≤ 100",doRan:"HB 192...240",sb:750,sch:450},{nl:"Tôi cải thiện",S:"≤ 60",doRan:"HB 241...285",sb:850,sch:580}],
+"50":[{nl:"Thường hóa",S:"≤ 80",doRan:"HB 179...228",sb:640,sch:350},{nl:"Tôi cải thiện",S:"≤ 80",doRan:"HB 228...255",sb:700,sch:530}],
+"40X":[{nl:"Tôi cải thiện",S:"≤ 100",doRan:"HB 230...260",sb:850,sch:550},{nl:"Tôi cải thiện",S:"≤ 60",doRan:"HB 260...280",sb:950,sch:700},{nl:"Thấm nitơ",S:"≤ 60",doRan:"HRC 50...59",sb:1000,sch:800}],
+"45X":[{nl:"Tôi cải thiện",S:"≤ 100",doRan:"HB 230...280",sb:850,sch:650},{nl:"Tôi cải thiện",S:"100...300",doRan:"HB 163...269",sb:750,sch:500},{nl:"Tôi cải thiện",S:"300...500",doRan:"HB 163...269",sb:700,sch:450}],
+"40XH":[{nl:"Tôi cải thiện",S:"≤ 100",doRan:"HB 230...300",sb:850,sch:600},{nl:"Tôi cải thiện",S:"100...300",doRan:"HB ≥ 241",sb:800,sch:580},{nl:"Tôi",S:"≤ 40",doRan:"HRC 48...54",sb:1600,sch:1400}],
+"35XM":[{nl:"Tôi cải thiện",S:"≤ 100",doRan:"HB 241",sb:900,sch:800},{nl:"Tôi cải thiện",S:"≤ 50",doRan:"HB 269",sb:900,sch:800},{nl:"Tôi",S:"≤ 40",doRan:"HRC 45...53",sb:1600,sch:1400}],
+"20X":[{nl:"Thấm cacbon",S:"≤ 60",doRan:"HRC 46...53",sb:650,sch:400}],
+"12XH3A":[{nl:"Thấm cacbon",S:"≤ 60",doRan:"HRC 56...63",sb:900,sch:700}],
+"25XΓT":[{nl:"Thấm cacbon",S:"-",doRan:"HRC 58...63",sb:1150,sch:950}]
+};
+const knBangK={400:{then:{phaydia:[1.30,1.20],phayngon:[1.51,1.20]},hoa:{rangCN:[1.35,2.10],rangKhai:[1.35,1.40]},ren:[1.45,1.27]},600:{then:{phaydia:[1.46,1.54],phayngon:[1.76,1.54]},hoa:{rangCN:[1.55,2.36],rangKhai:[1.55,1.46]},ren:[1.96,1.58]},800:{then:{phaydia:[1.62,1.88],phayngon:[2.01,1.88]},hoa:{rangCN:[1.65,2.55],rangKhai:[1.65,1.52]},ren:[2.32,1.79]},1000:{then:{phaydia:[1.77,2.22],phayngon:[2.26,2.22]},hoa:{rangCN:[1.72,2.70],rangKhai:[1.72,1.58]},ren:[2.61,1.97]},1200:{then:{phaydia:[1.92,2.39],phayngon:[2.50,2.39]},hoa:{rangCN:[1.75,2.80],rangKhai:[1.75,1.60]},ren:[2.90,2.14]}};
+const knBangKx={400:{mai:1,tienRa25:1.05,tienRz80:1.20,khongGiaCong:1.30},600:{mai:1,tienRa25:1.06,tienRz80:1.20,khongGiaCong:1.35},800:{mai:1,tienRa25:1.10,tienRz80:1.25,khongGiaCong:1.50},1200:{mai:1,tienRa25:1.25,tienRz80:1.50,khongGiaCong:2.20}};
+const knBangEps={d:[15,20,30,40,50,70,80,100],uon_cacbon:[0.95,0.92,0.88,0.85,0.81,0.76,0.73,0.70],uon_hopkim:[0.87,0.83,0.77,0.73,0.70,0.66,0.64,0.62],xoan:[0.92,0.89,0.81,0.78,0.76,0.73,0.71,0.70]};
+function knFmt(x,n=2){ if(!isFinite(x)) return "∞"; return Number(x).toFixed(n).replace('.',','); }
+function knVal(id,def=0){ const el=document.getElementById(id); return el?Number(el.value)||def:def; }
+function knLoadNhietLuyen(){ const thep=document.getElementById('kn_thep').value; const nl=document.getElementById('kn_nhietluyen'); nl.innerHTML='<option value="">-- Chọn nhiệt luyện --</option>'; if(!thep) return; knData[thep].forEach((x,i)=>{const op=document.createElement('option');op.value=i;op.textContent=`${x.nl} | S ${x.S} mm | ${x.doRan}`;nl.appendChild(op);}); nl.value='0'; updateDiagrams(); }
+function knUpdateGiaCong(){ const loai=document.getElementById('kn_loai').value; const s=document.getElementById('kn_giacong'); s.innerHTML=''; if(loai==='then') s.innerHTML='<option value="phaydia">Dao phay đĩa</option><option value="phayngon">Dao phay ngón</option>'; else if(loai==='hoa') s.innerHTML='<option value="rangCN">Răng chữ nhật</option><option value="rangKhai">Răng thân khai</option>'; else s.innerHTML='<option value="ren">Trục cắt ren</option>'; updateDiagrams(); }
+function knPsi(sb){ if(sb>=500&&sb<700)return{ps:0.05,pt:0}; if(sb>=700&&sb<1000)return{ps:0.10,pt:0.05}; if(sb>=1000&&sb<1200)return{ps:0.20,pt:0.10}; return{ps:0.25,pt:0.15}; }
+function knMocK(sb){ if(sb>=1200)return 1200; if(sb>=1000)return 1000; if(sb>=800)return 800; if(sb>=600)return 600; return 400; }
+function knK(sb,loai,gc){ const row=knBangK[knMocK(sb)]; if(loai==='then'){ const key=row.then[gc]?gc:'phaydia'; return{ks:row.then[key][0],kt:row.then[key][1]}; } if(loai==='hoa'){ const key=row.hoa[gc]?gc:'rangCN'; return{ks:row.hoa[key][0],kt:row.hoa[key][1]}; } return{ks:row.ren[0],kt:row.ren[1]}; }
+function knMocKx(sb){ if(sb>=1200)return 1200; if(sb>=800)return 800; if(sb>=600)return 600; return 400; }
+function knNoiSuy(d,ds,ys){ if(d<=ds[0])return ys[0]; if(d>=ds[ds.length-1])return ys[ys.length-1]; for(let i=0;i<ds.length-1;i++){ if(d>=ds[i]&&d<=ds[i+1]) return ys[i]+((d-ds[i])/(ds[i+1]-ds[i]))*(ys[i+1]-ys[i]); } return ys[0]; }
+function knEps(d,loaiVL){ return{es:knNoiSuy(d,knBangEps.d,loaiVL==='cacbon'?knBangEps.uon_cacbon:knBangEps.uon_hopkim),et:knNoiSuy(d,knBangEps.d,knBangEps.xoan)}; }
+function knKy(sb,tangBen,dang){ if(tangBen==='khong')return 1; const base={trucNhan:1.2,tapTrungIt:1.55,tapTrungNhieu:1.85}; if(tangBen==='toiTanSo') return base[dang]+0.25; if(tangBen==='thamNito') return base[dang]+0.15; if(tangBen==='thamCacbon') return base[dang]+0.4; if(tangBen==='phunBi') return base[dang]+0.1; if(tangBen==='lanNen') return base[dang]+0.15; return 1; }
+function knW(d){ const dang=document.getElementById('kn_dangTietDien').value; const d0=knVal('kn_d0',6), b=knVal('kn_bThen',8), t=knVal('kn_tThen',4), xi=knVal('kn_xi',1.125); let Wj,W0j; if(dang==='tron'||dang==='thenHoaThanKhai'){Wj=Math.PI*d**3/32; W0j=Math.PI*d**3/16;} else if(dang==='loNgang'){Wj=Math.PI*d**3/32*(1-1.54*d0/d); W0j=Math.PI*d**3/16*(1-d0/d);} else if(dang==='motThen'){Wj=Math.PI*d**3/32-(b*t*(d-t)**2)/(2*d); W0j=Math.PI*d**3/16-(b*t*(d-t)**2)/(2*d);} else if(dang==='haiThen'){Wj=Math.PI*d**3/32-(b*t*(d-t)**2)/d; W0j=Math.PI*d**3/16-(b*t*(d-t)**2)/d;} else {Wj=xi*Math.PI*d**3/32; W0j=xi*Math.PI*d**3/16;} return{Wj,W0j}; }
+function knCalcOne(name,d,M,T){ const thep=document.getElementById('kn_thep').value||'45'; const idx=document.getElementById('kn_nhietluyen').value||'0'; const item=knData[thep][Number(idx)]; const sb=item.sb, sch=item.sch; const loaiVL=document.getElementById('kn_loaiVatLieu').value; const loai=document.getElementById('kn_loai').value; const gc=document.getElementById('kn_giacong').value; const beMat=document.getElementById('kn_beMat').value; const tangBen=document.getElementById('kn_tangBen').value; const dangKy=document.getElementById('kn_dangTrucKy').value; const dangXoan=document.getElementById('kn_dangXoan').value; const sCP=knVal('kn_sChoPhep',1.8); const psi=knPsi(sb); const K=knK(sb,loai,gc); const eps=knEps(d,loaiVL); const kx=knBangKx[knMocKx(sb)][beMat]; const ky=knKy(sb,tangBen,dangKy); const W=knW(d); const sigma_1=loaiVL==='cacbon'?0.436*sb:0.35*sb+100; const tau_1=0.58*sigma_1; const sigmaA=Math.abs(M)/W.Wj; const sigmaM=0; let tauA,tauM; if(dangXoan==='motChieu'){tauA=Math.abs(T)/(2*W.W0j); tauM=tauA;}else{tauA=Math.abs(T)/W.W0j; tauM=0;} const Ksd=(K.ks/eps.es+kx-1)/ky; const Ktd=(K.kt/eps.et+kx-1)/ky; const sSigma=sigma_1/(Ksd*sigmaA+psi.ps*sigmaM); const sTau=tau_1/(Ktd*tauA+psi.pt*tauM); const sTong=(sSigma*sTau)/Math.sqrt(sSigma*sSigma+sTau*sTau); const sigmaTinh=Math.abs(M)/(0.1*d**3); const tauTinh=Math.abs(T)/(0.2*d**3); const sigmaTd=Math.sqrt(sigmaTinh**2+3*tauTinh**2); const sigmaCP=0.8*sch; return{name,d,M:Math.abs(M),T:Math.abs(T),item,sb,sch,psi,K,eps,kx,ky,W,sigma_1,tau_1,sigmaA,sigmaM,tauA,tauM,Ksd,Ktd,sSigma,sTau,sTong,sigmaTinh,tauTinh,sigmaTd,sigmaCP,datMoi:sTong>=sCP,datTinh:sigmaTd<=sigmaCP,datChung:sTong>=sCP&&sigmaTd<=sigmaCP,sCP}; }
+function knRow(r){ return `<tr><td><b>${r.name}</b></td><td>d = ${knFmt(r.d)} mm<br>M = ${knFmt(r.M)} N.mm<br>T = ${knFmt(r.T)} N.mm</td><td>W = ${knFmt(r.W.Wj,2)} mm³<br>W₀ = ${knFmt(r.W.W0j,2)} mm³</td><td>σa = ${knFmt(r.sigmaA,2)} MPa<br>τa = ${knFmt(r.tauA,2)} MPa</td><td>Sσ = ${knFmt(r.sSigma,3)}<br>Sτ = ${knFmt(r.sTau,3)}<br>S = ${knFmt(r.sTong,3)}</td><td>${knFmt(r.sTong,3)} ${r.datMoi?'≥':'<'} ${knFmt(r.sCP)}<br>${r.datMoi?'<span class="ok">Đạt bền mỏi</span>':'<span class="fail">Không đạt bền mỏi</span>'}</td><td>σtd = ${knFmt(r.sigmaTd,2)} MPa<br>[σ] = ${knFmt(r.sigmaCP,2)} MPa<br>${r.datTinh?'<span class="ok">Đạt bền tĩnh</span>':'<span class="fail">Không đạt bền tĩnh</span>'}</td></tr>`; }
+function renderShaftFatigueCheck(args){ const box=document.getElementById('shaftFatigueBox'); if(!box) return; const b=knCalcOne('B',args.dB,args.M_B,args.T1); const c=knCalcOne('C',args.dC,args.M_C,args.T1); box.innerHTML=`<h3>Kiểm nghiệm bền mỏi và bền tĩnh tại B, C</h3><div class="final-note"><b>Dữ liệu tự động:</b> B dùng dB = ${knFmt(args.dB)} mm, M<sub>B</sub> = ${knFmt(args.M_B)} N.mm; C dùng dC = ${knFmt(args.dC)} mm, M<sub>C</sub> = ${knFmt(args.M_C)} N.mm; T = T1 = ${knFmt(args.T1)} N.mm.</div><div class="section-title">Vật liệu: Thép ${b.item.nl ? document.getElementById('kn_thep').value : ''} - ${b.item.nl}; σb = ${b.sb} MPa; σch = ${b.sch} MPa</div><table class="calc-table"><thead><tr><th>Tiết diện</th><th>Dữ liệu lấy từ biểu đồ</th><th>WB/WoB hoặc WC/WoC</th><th>Ứng suất</th><th>Hệ số an toàn</th><th>Kiểm nghiệm mỏi</th><th>Kiểm nghiệm tĩnh</th></tr></thead><tbody>${knRow(b)}${knRow(c)}</tbody></table><div class="final-note"><b>Kết luận:</b> ${b.datChung&&c.datChung?'<span class="ok">Trục đạt tại cả hai tiết diện nguy hiểm B và C.</span>':'<span class="fail">Có tiết diện chưa đạt, cần tăng đường kính hoặc thay đổi thông số.</span>'}</div>`; }
+
+function updateDiagrams() {
+    ["topLayer","qyLayer","mxLayer","qxLayer","myLayer","tLayer","coordLayer"].forEach(clearLayer);
+    const topLayer = document.getElementById("topLayer");
+    const qyLayer = document.getElementById("qyLayer");
+    const mxLayer = document.getElementById("mxLayer");
+    const qxLayer = document.getElementById("qxLayer");
+    const myLayer = document.getElementById("myLayer");
+    const tLayer = document.getElementById("tLayer");
+    const coordLayer = document.getElementById("coordLayer");
+
+    const Fr1 = getVal("Fr1");
+    const Fa1 = getVal("Fa1");
+    const Ft1 = getVal("Ft1");
+    const Frkn1 = getVal("Frkn1");
+    const AB = Math.round(getVal("l12", 1));
+    const BC = Math.round(getVal("l11", 1));
+    const BD = Math.round(getVal("l13", BC + 1));
+    const dm1 = getVal("dm1");
+    const T1 = getVal("T1");
+    const tau = getVal("tauAllow", 18);
+    const CD = BD - BC;
+
+    const MFa1 = Fa1 * dm1 / 2;
+    const FCy = (Fr1 * BD - MFa1) / BC;
+    const FBy = FCy - Fr1;
+
+    // ÁP DỤNG CHIỀU QUAY TRỤC I:
+    // cw  : Ft1 và Frkn1 hướng chéo lên trên về phía bên phải.
+    // ccw : Ft1 và Frkn1 hướng chéo xuống dưới về phía bên trái.
+    const chieuQuayTrucI = document.getElementById("chieuQuayTrucI_local")?.value || "cw";
+    let FCx, FBx, Frkn1_Q, Ft1_Q;
+
+    if(chieuQuayTrucI === "cw"){
+        FCx = (-Frkn1 * AB + Ft1 * BD) / BC;
+        FBx = -Frkn1 + FCx - Ft1;
+        Frkn1_Q = -Frkn1;
+        Ft1_Q = -Ft1;
+    }else{
+        FCx = (Frkn1 * AB - Ft1 * BD) / BC;
+        FBx = Frkn1 + FCx + Ft1;
+        Frkn1_Q = Frkn1;
+        Ft1_Q = Ft1;
+    }
+
+    // Thuật toán vẽ biểu đồ: giữ nguyên dấu đại số của FBx, FBy, FCx, FCy.
+    // Nếu phản lực âm thì chỉ đảo chiều mũi tên trên sơ đồ lực.
+    const QY_AB = 0;
+    const QY_BC = QY_AB - FBy;
+    const QY_CD = QY_BC + FCy;
+    const QY_D  = QY_CD - Fr1;
+
+    const MX_A = 0;
+    const MX_B = MX_A + QY_AB * AB;
+    const MX_C = MX_B + QY_BC * BC;
+    const MX_D_BEFORE = MX_C + QY_CD * CD;
+    const MX_D_AFTER = MX_D_BEFORE - MFa1;
+
+    const QX_AB = Frkn1_Q;
+    const QX_BC = QX_AB - FBx;
+    const QX_CD = QX_BC + FCx;
+    const QX_D  = QX_CD + Ft1_Q;
+
+    const MY_A = 0;
+    const MY_B = MY_A + QX_AB * AB;
+    const MY_C = MY_B + QX_BC * BC;
+    const MY_D = MY_C + QX_CD * CD;
+
+    const M_A = Math.sqrt(MX_A*MX_A + MY_A*MY_A);
+    const M_B = Math.sqrt(MX_B*MX_B + MY_B*MY_B);
+    const M_C = Math.sqrt(MX_C*MX_C + MY_C*MY_C);
+    const MX_D_CHON = Math.max(Math.abs(MX_D_BEFORE), Math.abs(MX_D_AFTER));
+    const M_D = Math.sqrt(MX_D_CHON*MX_D_CHON + MY_D*MY_D);
+
+    const sigmaInfo = diaGetSigmaInfo(Math.abs(T1), tau);
+    const diaInput = { T1: Math.abs(T1), tau, sigmaAllow: sigmaInfo.sigmaAllow, sigmaInfo, M_A, M_B, M_C, M_D };
+    renderShaftDiameterTables(diaInput);
+    const diaResult = calcShaftDiameterCheck(diaInput);
+    window.lastDiagramDataForVerify = { M_A, M_B, M_C, M_D, T1: Math.abs(T1), diaResult };
+    vUpdateKeyDefaults(diaResult.chosen);
+    renderVerifyAll({ M_A, M_C, M_D, T1: Math.abs(T1), chosen: diaResult.chosen });
+
+    document.getElementById("resultBox").innerHTML = `
+        <div class="result-grid">
+            <div><b>Phản lực theo Y:</b> FBy = ${formatNumber(FBy)} N; FCy = ${formatNumber(FCy)} N</div>
+            <div><b>Phản lực theo X:</b> FBx = ${formatNumber(FBx)} N; FCx = ${formatNumber(FCx)} N</div>
+            <div><b>MFa1:</b> ${formatNumber(MFa1)} N.mm</div>
+            <div><b>Chiều dài:</b> AB = ${formatNumber(AB)} mm; BC = ${formatNumber(BC)} mm; BD = ${formatNumber(BD)} mm; CD = ${formatNumber(CD)} mm</div>
+            <div><b>Qy:</b> AB=${formatNumber(QY_AB)}; BC=${formatNumber(QY_BC)}; CD=${formatNumber(QY_CD)}; D=${formatNumber(QY_D)} N</div>
+            <div><b>Mx:</b> A=${formatNumber(MX_A)}; B=${formatNumber(MX_B)}; C=${formatNumber(MX_C)}; D trước MFa1=${formatNumber(MX_D_BEFORE)}; D sau=${formatNumber(MX_D_AFTER)} N.mm</div>
+            <div><b>Qx:</b> AB=${formatNumber(QX_AB)}; BC=${formatNumber(QX_BC)}; CD=${formatNumber(QX_CD)}; D=${formatNumber(QX_D)} N</div>
+            <div><b>My:</b> A=${formatNumber(MY_A)}; B=${formatNumber(MY_B)}; C=${formatNumber(MY_C)}; D=${formatNumber(MY_D)} N.mm</div>
+            <div><b>T1:</b> ${formatNumber(T1)} N.mm, chạy từ A đến D</div>
+        </div>
+    `;
+
+    const totalLength = AB + BD;
+    const drawStart = 180;
+    const drawEnd = 980;
+    const kx = (drawEnd - drawStart) / totalLength;
+    const xA = drawStart;
+    const xB = xA + AB * kx;
+    const xC = xB + BC * kx;
+    const xD = xB + BD * kx;
+    const xAxisLeft = 128;
+    const yShaft = 160;
+    const yQy0 = 400;
+    const yMx0 = 590;
+    const yQx0 = 780;
+    const yMy0 = 970;
+    const yT0 = 1160;
+
+    drawTopForceDiagram(topLayer, coordLayer, { xA, xB, xC, xD, yShaft, FBx, FBy, FCx, FCy, chieuQuayTrucI });
+    [xA, xB, xC, xD].forEach(x => addLine(topLayer, x, yShaft, x, 1210, "dong"));
+
+    drawShearDiagramRect(qyLayer, {
+        title: "Qy", unit: "N", xA, xB, xC, xD, y0: yQy0, xAxisLeft,
+        values: [QY_AB, QY_BC, QY_CD], finalDrop: QY_D,
+        fillClass: "q-fill", lineClass: "q", positiveDown: false
+    });
+    drawCoordOXY_Yup(qyLayer, 1140, yQy0 + 8);
+
+    drawMomentDiagramWithJump(mxLayer, {
+        title: "Mx", unit: "N.mm", xA, xB, xC, xD, y0: yMx0, xAxisLeft,
+        moments: [MX_A, MX_B, MX_C, MX_D_BEFORE, MX_D_AFTER],
+        fillClass: "m-fill", lineClass: "m", positiveDown: true
+    });
+    drawCoordOXY_Ydown(mxLayer, 1140, yMx0 + 8);
+
+    drawShearDiagramXOZ(qxLayer, {
+        title: "Qx", unit: "N", xA, xB, xC, xD, y0: yQx0, xAxisLeft,
+        values: [QX_AB, QX_BC, QX_CD], finalDrop: QX_D,
+        fillClass: "qx-fill", lineClass: "q", xMode: "out"
+    });
+    drawCoordOXZ_Xout(qxLayer, 1140, yQx0 + 8);
+
+    drawMomentDiagramXOZ(myLayer, {
+        title: "My", unit: "N.mm", xA, xB, xC, xD, y0: yMy0, xAxisLeft,
+        moments: [MY_A, MY_B, MY_C, MY_D],
+        fillClass: "my-fill", lineClass: "m", xMode: "in"
+    });
+    drawCoordOXZ_Xin(myLayer, 1140, yMy0 + 8);
+
+    drawTorsionDiagram(tLayer, {
+        title: "T₁", unit: "N.mm", xA, xB, xC, xD, y0: yT0, xAxisLeft,
+        T1, fillClass: "t-fill", lineClass: "t"
+    });
+    drawCoordOYX_Yup(tLayer, 1140, yT0 + 8);
+}
+
+function drawVerticalForceBySign(layer, x, y, value, positiveDir, label) {
+    const L = 56;
+    let y2;
+    if (positiveDir === "up") {
+        y2 = value >= 0 ? y - L : y + L;
+    } else {
+        y2 = value >= 0 ? y + L : y - L;
+    }
+    addLine(layer, x, y, x, y2, "arrow");
+    const textY = y2 < y ? y2 - 8 : y2 + 18;
+    addText(layer, x + 8, textY, label, "label-blue");
+}
+
+function drawDiagonalForceBySign(layer, x, y, value, positiveDir, label) {
+    const dx = 44;
+    const dy = 34;
+    let x2, y2;
+    if (positiveDir === "upRight") {
+        x2 = value >= 0 ? x + dx : x - dx;
+        y2 = value >= 0 ? y - dy : y + dy;
+    } else {
+        x2 = value >= 0 ? x - dx : x + dx;
+        y2 = value >= 0 ? y + dy : y - dy;
+    }
+    addLine(layer, x, y, x2, y2, "arrow");
+    const textX = x2 > x ? x2 + 8 : x2 - 42;
+    const textY = y2 < y ? y2 - 8 : y2 + 18;
+    addText(layer, textX, textY, label, "label-blue");
+}
+
+function drawTopForceDiagram(topLayer, coordLayer, p) {
+    const { xA, xB, xC, xD, yShaft, FBx, FBy, FCx, FCy, chieuQuayTrucI='cw' } = p;
+    // Trục bắt đầu từ sau cụm hình tại A, không còn đoạn dư thừa bên trái A
+    const shaftStartAfterA = null;
+
+    // Hình bánh răng/khối tại A: dời sang phải để tâm hình chữ nhật lớn trùng vị trí A
+    // Từ trái qua phải: hình chữ nhật lớn trước, sau đó mới đến hình chữ nhật nhỏ.
+    const aMainW = 54 * 0.7;
+    const aMainH = 192 * 0.7;
+    const aMainX = xA - aMainW / 2;
+    const aMainTop = yShaft - aMainH / 2;
+    const aSmallW = 38 * 0.7;
+    const aSmallH = 88 * 0.7;
+    const aSmallX = aMainX + aMainW;
+    const aSmallTop = yShaft - aSmallH / 2;
+    // Điểm xuất phát lực Frkn1 đặt đúng tại tâm hình chữ nhật lớn, gióng xuống biểu đồ là A
+    const aPointX = xA;
+    const aPointY = yShaft;
+
+    const aMainRect = createSvgEl("rect", { x: aMainX, y: aMainTop, width: aMainW, height: aMainH, fill: "#fff", stroke: "#111", "stroke-width": 2.3 });
+    const aSmallRect = createSvgEl("rect", { x: aSmallX, y: aSmallTop, width: aSmallW, height: aSmallH, fill: "#fff", stroke: "#111", "stroke-width": 2.3 });
+    topLayer.appendChild(aMainRect);
+    topLayer.appendChild(aSmallRect);
+    // Xóa đoạn trục dư bên trái A; chỉ vẽ trục từ sau cụm hình A sang phải.
+    addLine(topLayer, aSmallX + aSmallW, yShaft, xD - (54 * 0.7) / 2 - 4, yShaft, "truc");
+    addLine(topLayer, aPointX, aMainTop + 16, aPointX, yShaft + 148, "dong");
+    addText(topLayer, xA, aMainTop - 10, "A", "", "middle");
+    // Dấu X tại điểm xuất phát lực Frkn1: to hơn và nhạt hơn
+    const xMark1 = createSvgEl("line", { x1: aPointX - 7, y1: aPointY - 7, x2: aPointX + 7, y2: aPointY + 7, stroke: "#777", "stroke-width": 2.1, "stroke-linecap": "round" });
+    const xMark2 = createSvgEl("line", { x1: aPointX - 7, y1: aPointY + 7, x2: aPointX + 7, y2: aPointY - 7, stroke: "#777", "stroke-width": 2.1, "stroke-linecap": "round" });
+    topLayer.appendChild(xMark1);
+    topLayer.appendChild(xMark2);
+
+    addText(topLayer, xB - 6, yShaft - 22, "B");
+    addText(topLayer, xC - 6, yShaft - 22, "C");
+    addText(topLayer, xD - 5, yShaft - 22, "D");
+
+    addLine(topLayer, xB - 18, yShaft - 11, xB + 18, yShaft - 11, "hinh");
+    addLine(topLayer, xB - 18, yShaft + 13, xB + 18, yShaft + 13, "hinh");
+    addLine(topLayer, xC - 22, yShaft - 11, xC + 22, yShaft - 11, "hinh");
+    addLine(topLayer, xC - 22, yShaft + 13, xC + 22, yShaft + 13, "hinh");
+
+    addCircle(topLayer, xC + 64, yShaft - 36, 14, "kyhieu");
+    addCircle(topLayer, xC + 64, yShaft - 36, 4, "kyhieu");
+    addCircle(topLayer, xC + 64, yShaft + 42, 16, "kyhieu");
+    addLine(topLayer, xC + 48, yShaft + 42, xC + 80, yShaft + 42, "kyhieu");
+    addLine(topLayer, xC + 64, yShaft + 26, xC + 64, yShaft + 58, "kyhieu");
+
+    // Hình thang tại D: điểm D là chính giữa hình thang và có dấu X.
+    // Các lực Fa1, Ft1, Fr1 xuất phát tại trung điểm cạnh trên của hình thang.
+    const gearTopY = yShaft - 96 * 0.7;
+    const gearBotY = yShaft + 96 * 0.7;
+    const gearW = 54 * 0.7;
+
+    // Đặt hình thang sao cho tâm hình thang trùng đúng vị trí D trên biểu đồ.
+    const gearLeftX = xD - gearW / 2;
+    const gearRightX = xD + gearW / 2;
+    const gearRightTopY = yShaft - 46 * 0.7;
+    const gearRightBotY = yShaft + 46 * 0.7;
+
+    addLine(topLayer, gearLeftX, gearTopY, gearLeftX, gearBotY, "hinh");
+    addLine(topLayer, gearLeftX, gearTopY, gearRightX, gearRightTopY, "hinh");
+    addLine(topLayer, gearRightX, gearRightTopY, gearRightX, gearRightBotY, "hinh");
+    addLine(topLayer, gearRightX, gearRightBotY, gearLeftX, gearBotY, "hinh");
+
+    // Điểm D chính giữa hình thang.
+    const dPointX = xD;
+    const dPointY = yShaft;
+
+    // Dấu X tại D.
+    const dX1 = createSvgEl("line", {
+        x1: dPointX - 7, y1: dPointY - 7,
+        x2: dPointX + 7, y2: dPointY + 7,
+        stroke: "#777", "stroke-width": 2.1, "stroke-linecap": "round"
+    });
+    const dX2 = createSvgEl("line", {
+        x1: dPointX - 7, y1: dPointY + 7,
+        x2: dPointX + 7, y2: dPointY - 7,
+        stroke: "#777", "stroke-width": 2.1, "stroke-linecap": "round"
+    });
+    topLayer.appendChild(dX1);
+    topLayer.appendChild(dX2);
+
+    // Đường gióng D xuống các biểu đồ vẫn đi qua chính giữa hình thang.
+    addLine(topLayer, dPointX, dPointY, dPointX, 1210, "dong");
+
+    // Trung điểm cạnh trên của hình thang là điểm xuất phát 3 lực.
+    const Px = (gearLeftX + gearRightX) / 2;
+    const Py = (gearTopY + gearRightTopY) / 2;
+    addCircle(topLayer, Px, Py, 4, "", "#234fd6");
+
+    // Frkn1 đổi hướng theo chiều quay trục I.
+    if(chieuQuayTrucI === "cw"){
+        addLine(topLayer, aPointX, aPointY, aPointX + 44, aPointY - 34, "arrow");
+        addText(topLayer, aPointX + 50, aPointY - 42, "Frkn1", "label-blue");
+    }else{
+        addLine(topLayer, aPointX, aPointY, aPointX - 44, aPointY + 34, "arrow");
+        addText(topLayer, aPointX - 68, aPointY + 52, "Frkn1", "label-blue");
+    }
+
+    // Vẽ phản lực theo dấu:
+    // FBx > 0: chéo lên phải; FBx < 0: chéo xuống trái.
+    // FBy > 0: xuống; FBy < 0: lên.
+    // FCx > 0: chéo xuống trái; FCx < 0: chéo lên phải.
+    // FCy > 0: lên; FCy < 0: xuống.
+    drawDiagonalForceBySign(topLayer, xB, yShaft, FBx, "upRight", "FBx");
+    drawVerticalForceBySign(topLayer, xB, yShaft, FBy, "down", "FBy");
+
+    drawDiagonalForceBySign(topLayer, xC, yShaft, FCx, "downLeft", "FCx");
+    drawVerticalForceBySign(topLayer, xC, yShaft, FCy, "up", "FCy");
+
+    // Ba lực tại hình thang D xuất phát ở trung điểm cạnh trên, không xuất phát tại điểm D.
+    // Ft1 đổi hướng theo chiều quay trục I.
+    if(chieuQuayTrucI === "cw"){
+        addLine(topLayer, Px, Py, Px + 44, Py - 34, "arrow");
+        addText(topLayer, Px + 50, Py - 42, "Ft1", "label-blue");
+    }else{
+        addLine(topLayer, Px, Py, Px - 44, Py + 34, "arrow");
+        addText(topLayer, Px - 70, Py + 54, "Ft1", "label-blue");
+    }
+    addLine(topLayer, Px, Py, Px - 56, Py, "arrow");
+    addText(topLayer, Px - 78, Py - 8, "Fa1", "label-blue");
+    addLine(topLayer, Px, Py, Px, Py + 56, "arrow");
+    addText(topLayer, Px + 8, Py + 70, "Fr1", "label-blue");
+
+    // Đã xóa các đường mũi tên kích thước l11, l12, l13 trên sơ đồ lực.
+    drawTopCoordLikeSample(coordLayer, 62, yShaft);
+}
+
+function drawShearDiagramRect(layer, config) {
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, values, finalDrop, fillClass, lineClass, positiveDown } = config;
+    const [vAB, vBC, vCD] = values;
+    const maxV = niceCeil(Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), Math.abs(finalDrop || 0), 1), 10);
+    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addLine(layer, xA, y0, xD + 24, y0, "axis-arrow");
+    addLine(layer, xAxisLeft, y0 + 85, xAxisLeft, y0 - 85, "axis-left-arrow");
+    drawVerticalTicks(layer, xAxisLeft, y0, maxV, unit, positiveDown);
+    const scale = 62 / maxV;
+    const mapY = (v) => positiveDown ? y0 + v * scale : y0 - v * scale;
+    const yAB = mapY(vAB), yBC = mapY(vBC), yCD = mapY(vCD);
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yAB} L ${xB} ${yAB} L ${xB} ${yBC} L ${xC} ${yBC} L ${xC} ${yCD} L ${xD} ${yCD} L ${xD} ${y0} Z`, fillClass);
+    addPath(layer, `M ${xA} ${yAB} L ${xB} ${yAB} L ${xB} ${yBC} L ${xC} ${yBC} L ${xC} ${yCD} L ${xD} ${yCD} L ${xD} ${y0}`, lineClass);
+    addText(layer, xA - 14, y0 - 8, "A"); addText(layer, xB, y0 + 24, "B", "", "middle"); addText(layer, xC, y0 + 24, "C", "", "middle"); addText(layer, xD + 10, y0 + 24, "D");
+    [[xA,xB,vAB,yAB],[xB,xC,vBC,yBC],[xC,xD,vCD,yCD]].forEach(([x1,x2,v,y]) => {
+        addText(layer, (x1+x2)/2, y + (v >= 0 ? -12 : 26), formatTickValueWithUnit(Math.abs(v), unit), "value-text", "middle");
+    });
+}
+
+function drawMomentDiagramWithJump(layer, config) {
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, moments, fillClass, lineClass, positiveDown } = config;
+    const [mA, mB, mC, mD1, mD2] = moments;
+    const maxM = niceCeil(Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD1), Math.abs(mD2), 1), 1000);
+    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addLine(layer, xA, y0, xD + 24, y0, "axis-arrow");
+    addLine(layer, xAxisLeft, y0 + 85, xAxisLeft, y0 - 85, "axis-left-arrow");
+    drawVerticalTicks(layer, xAxisLeft, y0, maxM, unit, positiveDown);
+    const scale = 70 / maxM;
+    const mapY = (m) => positiveDown ? y0 + m * scale : y0 - m * scale;
+    const yA = mapY(mA), yB = mapY(mB), yC = mapY(mC), yD1 = mapY(mD1), yD2 = mapY(mD2);
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yA} L ${xB} ${yB} L ${xC} ${yC} L ${xD} ${yD1} L ${xD} ${yD2} L ${xD} ${y0} Z`, fillClass);
+    addPath(layer, `M ${xA} ${yA} L ${xB} ${yB} L ${xC} ${yC} L ${xD} ${yD1} L ${xD} ${yD2}`, lineClass);
+    addText(layer, xA - 14, y0 - 8, "A"); addText(layer, xB, y0 + 24, "B", "", "middle"); addText(layer, xC, y0 + 24, "C", "", "middle"); addText(layer, xD + 10, y0 + 24, "D");
+    if (mC !== 0) addText(layer, xC, yC + (mC >= 0 ? 26 : -12), formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
+    if (mD1 !== 0) addText(layer, xD - 6, yD1 + (mD1 >= 0 ? 26 : -12), formatTickValueWithUnit(Math.abs(mD1), unit), "value-text", "end");
+}
+
+
+function drawXOZTicks(layer, xAxis, y0, maxAbsValue, unit, xMode = "out") {
+    // Trục tung/thanh giá trị của Qx, My giữ thẳng đứng như Qy, Mx.
+    const tickDist = 62;
+    const yTop = y0 - tickDist;
+    const yMid = y0;
+    const yBot = y0 + tickDist;
+
+    // Vẽ rõ trục tung và mũi tên ở trên.
+    addLine(layer, xAxis, yBot + 18, xAxis, yTop - 18, "axis-left-arrow");
+
+    addLine(layer, xAxis - 6, yTop, xAxis + 6, yTop, "tick-line");
+    addLine(layer, xAxis - 6, yMid, xAxis + 6, yMid, "tick-line");
+    addLine(layer, xAxis - 6, yBot, xAxis + 6, yBot, "tick-line");
+
+    addText(layer, xAxis - 12, yTop + 4, formatTickValueWithUnit(maxAbsValue, unit), "tick-text", "end");
+    addText(layer, xAxis - 12, yMid + 4, formatTickValueWithUnit(0, unit), "tick-text", "end");
+    addText(layer, xAxis - 12, yBot + 4, formatTickValueWithUnit(-maxAbsValue, unit), "tick-text", "end");
+
+    addLine(layer, xAxis, yTop, xAxis + 840, yTop, "grid-line");
+    addLine(layer, xAxis, yMid, xAxis + 840, yMid, "grid-line");
+    addLine(layer, xAxis, yBot, xAxis + 840, yBot, "grid-line");
+}
+
+function mapXOZPoint(x, y0, value, scale, xMode = "out") {
+    const skew = 1.0;
+    if (xMode === "out") {
+        // Mặt phẳng XOZ: Z nằm ngang, X dương chéo xuống trái.
+        return { x: x - value * scale * skew, y: y0 + value * scale };
+    }
+    // Mặt phẳng XOZ: Z nằm ngang, X dương chéo lên phải.
+    return { x: x + value * scale * skew, y: y0 - value * scale };
+}
+
+function drawShearDiagramXOZ(layer, config) {
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, values, finalDrop, fillClass, lineClass, xMode } = config;
+    const [vAB, vBC, vCD] = values;
+    const maxV = niceCeil(Math.max(Math.abs(vAB), Math.abs(vBC), Math.abs(vCD), Math.abs(finalDrop || 0), 1), 10);
+    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+
+    // Trục hoành của biểu đồ Qx là trục Z, tung độ biểu đồ lấy theo phương X chéo của mặt phẳng XOZ.
+    addLine(layer, xA, y0, xD + 24, y0, "axis-arrow");
+    drawXOZTicks(layer, xAxisLeft, y0, maxV, unit, xMode);
+
+    const scale = 62 / maxV;
+    const pA0 = { x: xA, y: y0 };
+    const pB0 = { x: xB, y: y0 };
+    const pC0 = { x: xC, y: y0 };
+    const pD0 = { x: xD, y: y0 };
+    const pA = mapXOZPoint(xA, y0, vAB, scale, xMode);
+    const pB1 = mapXOZPoint(xB, y0, vAB, scale, xMode);
+    const pB2 = mapXOZPoint(xB, y0, vBC, scale, xMode);
+    const pC1 = mapXOZPoint(xC, y0, vBC, scale, xMode);
+    const pC2 = mapXOZPoint(xC, y0, vCD, scale, xMode);
+    const pD = mapXOZPoint(xD, y0, vCD, scale, xMode);
+
+    addPath(layer, `M ${pA0.x} ${pA0.y} L ${pA.x} ${pA.y} L ${pB1.x} ${pB1.y} L ${pB2.x} ${pB2.y} L ${pC1.x} ${pC1.y} L ${pC2.x} ${pC2.y} L ${pD.x} ${pD.y} L ${pD0.x} ${pD0.y} Z`, fillClass);
+    addPath(layer, `M ${pA.x} ${pA.y} L ${pB1.x} ${pB1.y} L ${pB2.x} ${pB2.y} L ${pC1.x} ${pC1.y} L ${pC2.x} ${pC2.y} L ${pD.x} ${pD.y}`, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+
+    [[xA,xB,vAB],[xB,xC,vBC],[xC,xD,vCD]].forEach(([x1,x2,v]) => {
+        const p = mapXOZPoint((x1+x2)/2, y0, v, scale, xMode);
+        addText(layer, p.x, p.y + (v >= 0 ? 22 : -12), formatTickValueWithUnit(Math.abs(v), unit), "value-text", "middle");
+    });
+}
+
+function drawMomentDiagramXOZ(layer, config) {
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, moments, fillClass, lineClass, xMode } = config;
+    const [mA, mB, mC, mD] = moments;
+    const maxM = niceCeil(Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1), 1000);
+    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+
+    // Trục hoành của biểu đồ My là trục Z, tung độ biểu đồ lấy theo phương X chéo của mặt phẳng XOZ.
+    addLine(layer, xA, y0, xD + 24, y0, "axis-arrow");
+    drawXOZTicks(layer, xAxisLeft, y0, maxM, unit, xMode);
+
+    const scale = 70 / maxM;
+    const pA0 = { x: xA, y: y0 };
+    const pD0 = { x: xD, y: y0 };
+    const pA = mapXOZPoint(xA, y0, mA, scale, xMode);
+    const pB = mapXOZPoint(xB, y0, mB, scale, xMode);
+    const pC = mapXOZPoint(xC, y0, mC, scale, xMode);
+    const pD = mapXOZPoint(xD, y0, mD, scale, xMode);
+
+    addPath(layer, `M ${pA0.x} ${pA0.y} L ${pA.x} ${pA.y} L ${pB.x} ${pB.y} L ${pC.x} ${pC.y} L ${pD.x} ${pD.y} L ${pD0.x} ${pD0.y} Z`, fillClass);
+    addPath(layer, `M ${pA.x} ${pA.y} L ${pB.x} ${pB.y} L ${pC.x} ${pC.y} L ${pD.x} ${pD.y}`, lineClass);
+
+    addText(layer, xA - 14, y0 - 8, "A");
+    addText(layer, xB, y0 + 24, "B", "", "middle");
+    addText(layer, xC, y0 + 24, "C", "", "middle");
+    addText(layer, xD + 10, y0 + 24, "D");
+    if (mB !== 0) addText(layer, pB.x, pB.y + (mB >= 0 ? -12 : 26), formatTickValueWithUnit(Math.abs(mB), unit), "value-text", "middle");
+    if (mC !== 0) addText(layer, pC.x, pC.y + (mC >= 0 ? -12 : 26), formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
+}
+
+function drawMomentDiagramStandard(layer, config) {
+    const { title, unit, xA, xB, xC, xD, y0, xAxisLeft, moments, fillClass, lineClass, positiveDown } = config;
+    const [mA, mB, mC, mD] = moments;
+    const maxM = niceCeil(Math.max(Math.abs(mA), Math.abs(mB), Math.abs(mC), Math.abs(mD), 1), 1000);
+    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addLine(layer, xA, y0, xD + 24, y0, "axis-arrow");
+    addLine(layer, xAxisLeft, y0 + 85, xAxisLeft, y0 - 85, "axis-left-arrow");
+    drawVerticalTicks(layer, xAxisLeft, y0, maxM, unit, positiveDown);
+    const scale = 70 / maxM;
+    const mapY = (m) => positiveDown ? y0 + m * scale : y0 - m * scale;
+    const yA = mapY(mA), yB = mapY(mB), yC = mapY(mC), yD = mapY(mD);
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yA} L ${xB} ${yB} L ${xC} ${yC} L ${xD} ${yD} L ${xD} ${y0} Z`, fillClass);
+    addPath(layer, `M ${xA} ${yA} L ${xB} ${yB} L ${xC} ${yC} L ${xD} ${yD}`, lineClass);
+    addText(layer, xA - 14, y0 - 8, "A"); addText(layer, xB, y0 + 24, "B", "", "middle"); addText(layer, xC, y0 + 24, "C", "", "middle"); addText(layer, xD + 10, y0 + 24, "D");
+    if (mB !== 0) addText(layer, xB, yB + (mB >= 0 ? -12 : 26), formatTickValueWithUnit(Math.abs(mB), unit), "value-text", "middle");
+    if (mC !== 0) addText(layer, xC, yC + (mC >= 0 ? -12 : 26), formatTickValueWithUnit(Math.abs(mC), unit), "value-text", "middle");
+}
+
+function drawTorsionDiagram(layer, config) {
+    const { title, unit, xA, xD, y0, xAxisLeft, T1, fillClass, lineClass } = config;
+    const maxT = niceCeil(Math.abs(T1), 1000);
+    drawDiagramLabel(layer, 42, y0 - 8, title, unit);
+    addLine(layer, xA, y0, xD + 24, y0, "axis-arrow");
+    addLine(layer, xAxisLeft, y0 + 85, xAxisLeft, y0 - 85, "axis-left-arrow");
+    drawVerticalTicks(layer, xAxisLeft, y0, maxT, unit, false);
+    const scale = 62 / maxT;
+    const yT = y0 - T1 * scale;
+    addPath(layer, `M ${xA} ${y0} L ${xA} ${yT} L ${xD} ${yT} L ${xD} ${y0} Z`, fillClass);
+    addPath(layer, `M ${xA} ${yT} L ${xD} ${yT}`, lineClass);
+    addText(layer, xA - 14, y0 - 8, "A"); addText(layer, xD + 10, y0 + 24, "D");
+    if (T1 !== 0) addText(layer, (xA+xD)/2, yT + (T1 > 0 ? -12 : 26), formatTickValueWithUnit(Math.abs(T1), unit), "value-text", "middle");
+}
+
+
+
+/* ===== KIỂM NGHIỆM A, D THEN VÀ C Ổ LĂN - GHÉP THEO MÔ HÌNH KIỂM NGHIỆM ===== */
+const vMaterialData = {
+  medium: [
+    {steel:"Thép 45", heat:"Thường hóa", code:"45", type:"cacbon", sb:600, sch:340},
+    {steel:"Thép 45", heat:"Tôi cải thiện", code:"45", type:"cacbon", sb:850, sch:580},
+    {steel:"Thép 40X", heat:"Tôi cải thiện", code:"40X", type:"hopkim", sb:850, sch:550}
+  ],
+  heavy: [
+    {steel:"Thép 20X", heat:"Thấm cacbon", code:"20X", type:"hopkim", sb:650, sch:400},
+    {steel:"Thép 12XH3A", heat:"Thấm cacbon", code:"12XH3A", type:"hopkim", sb:900, sch:700},
+    {steel:"Thép 18XGT", heat:"Thấm cacbon", code:"18XGT", type:"hopkim", sb:1000, sch:950}
+  ]
+};
+const vBangThen = [
+{min:6,max:8,b:2,h:2,t1:1.2,t2:1},{min:8,max:10,b:3,h:3,t1:1.8,t2:1.4},{min:10,max:12,b:4,h:4,t1:2.5,t2:1.8},{min:12,max:17,b:5,h:5,t1:3,t2:2.3},{min:17,max:22,b:6,h:6,t1:3.5,t2:2.8},{min:22,max:30,b:8,h:7,t1:4,t2:2.8},{min:30,max:38,b:10,h:8,t1:5,t2:3.3},{min:38,max:44,b:12,h:8,t1:5,t2:3.3},{min:44,max:50,b:14,h:9,t1:5.5,t2:3.8},{min:50,max:58,b:16,h:10,t1:6,t2:4.3},{min:58,max:65,b:18,h:11,t1:7,t2:4.4},{min:65,max:75,b:20,h:12,t1:7.5,t2:4.9},{min:75,max:85,b:22,h:14,t1:9,t2:5.4},{min:85,max:95,b:25,h:14,t1:9,t2:5.4},{min:95,max:110,b:28,h:16,t1:10,t2:6.4},{min:110,max:130,b:32,h:18,t1:11,t2:7.4},{min:130,max:150,b:36,h:20,t1:12,t2:8.4},{min:150,max:170,b:40,h:22,t1:13,t2:9.4}
+];
+
+const vBangThenCao = [
+{min:30,max:38,b:10,h:9,t1:5.5,t2:3.3},{min:38,max:44,b:12,h:11,t1:5.5,t2:4.4},{min:44,max:50,b:14,h:12,t1:7,t2:4.9},{min:50,max:58,b:16,h:14,t1:9,t2:5.4},{min:58,max:65,b:18,h:16,t1:10,t2:6.4},{min:65,max:75,b:20,h:18,t1:11,t2:7.4},{min:75,max:85,b:22,h:20,t1:12,t2:8.4},{min:85,max:95,b:25,h:22,t1:13,t2:9.4},{min:95,max:110,b:28,h:25,t1:15,t2:10.4},{min:110,max:130,b:32,h:28,t1:17,t2:11.4},{min:130,max:150,b:36,h:32,t1:20,t2:12.4},{min:150,max:170,b:40,h:36,t1:22,t2:12.4}
+];
+const vBangThenBanNguyet = [
+{min:3,max:4,b:1,h:1.4,l:3.8,t1:1,t2:.6},{min:4,max:5,b:1.5,h:2.6,l:6.8,t1:2,t2:.8},{min:5,max:6,b:2,h:2.6,l:6.8,t1:1.8,t2:1},{min:6,max:7,b:2,h:3.7,l:9.7,t1:2.9,t2:1},{min:7,max:8,b:2.5,h:3.7,l:9.7,t1:2.9,t2:1},{min:8,max:10,b:3,h:5,l:12.6,t1:3.8,t2:1.4},{min:10,max:12,b:3,h:6.5,l:15.7,t1:5.3,t2:1.4},{min:12,max:14,b:4,h:6.5,l:15.7,t1:5,t2:1.8},{min:14,max:16,b:4,h:7.5,l:18.6,t1:6,t2:1.8},{min:16,max:18,b:5,h:6.5,l:15.7,t1:4.5,t2:2.3},{min:18,max:20,b:5,h:7.5,l:18.6,t1:5.5,t2:2.3},{min:20,max:22,b:6,h:9,l:21.6,t1:7,t2:2.3},{min:22,max:25,b:6,h:9,l:21.6,t1:6.5,t2:2.8},{min:25,max:28,b:6,h:10,l:24.5,t1:7.5,t2:2.8},{min:28,max:32,b:8,h:11,l:27.3,t1:8,t2:3.3},{min:32,max:38,b:10,h:13,l:31.4,t1:10,t2:3.3}
+];
+function vNearestKey(arr,d){return arr.reduce((a,b)=>{const ca=(a.min+a.max)/2, cb=(b.min+b.max)/2; return Math.abs(cb-d)<Math.abs(ca-d)?b:a;},arr[0]);}
+function vCurrentNormalKeyType(sec){return document.getElementById(`v_keyType${sec}`)?.value||'thuong';}
+const vBangK = {
+400:{then:{phaydia:[1.30,1.20],phayngon:[1.51,1.20]},hoa:{rangCN:[1.35,2.10],rangKhai:[1.35,1.40]}},
+600:{then:{phaydia:[1.46,1.54],phayngon:[1.76,1.54]},hoa:{rangCN:[1.55,2.36],rangKhai:[1.55,1.46]}},
+800:{then:{phaydia:[1.62,1.88],phayngon:[2.01,1.88]},hoa:{rangCN:[1.65,2.55],rangKhai:[1.65,1.52]}},
+1000:{then:{phaydia:[1.77,2.22],phayngon:[2.26,2.22]},hoa:{rangCN:[1.72,2.70],rangKhai:[1.72,1.58]}},
+1200:{then:{phaydia:[1.92,2.39],phayngon:[2.50,2.39]},hoa:{rangCN:[1.75,2.80],rangKhai:[1.75,1.60]}}
+};
+const vBangKx={400:{mai:1,tienRa25:1.05,tienRz80:1.20,khongGiaCong:1.30},600:{mai:1,tienRa25:1.06,tienRz80:1.20,khongGiaCong:1.35},800:{mai:1,tienRa25:1.10,tienRz80:1.25,khongGiaCong:1.50},1200:{mai:1,tienRa25:1.25,tienRz80:1.50,khongGiaCong:2.20}};
+const vBangEps={d:[15,20,30,40,50,70,80,100],uon_cacbon:[0.95,0.92,0.88,0.85,0.81,0.76,0.73,0.70],uon_hopkim:[0.87,0.83,0.77,0.73,0.70,0.66,0.64,0.62],xoan:[0.92,0.89,0.81,0.78,0.76,0.73,0.71,0.70]};
+const vBangLap = {
+  small:{limit:"< 30...50", ksigma:{r6:[2.25,2.50,2.75,3.00,3.25,3.50,3.75,4.25],k6:[1.69,1.88,2.06,2.25,2.44,2.63,2.82,3.19],h6:[1.46,1.63,1.79,1.95,2.11,2.28,2.44,2.76],s6:[2.25,2.50,2.75,3.00,3.25,3.50,3.75,4.25]}, ktau:{r6:[1.75,1.90,2.05,2.20,2.35,2.50,2.65,2.95],k6:[1.41,1.53,1.64,1.75,1.86,1.98,2.09,2.31],h6:[1.28,1.38,1.47,1.57,1.67,1.77,1.86,2.06],s6:[1.75,1.90,2.05,2.20,2.35,2.50,2.65,2.95]}},
+  large:{limit:"> 50...100", ksigma:{s6:[2.75,3.05,3.36,3.66,3.96,4.28,4.60,5.20],k6:[2.06,2.29,2.52,2.75,2.97,3.21,3.45,3.90],r6:[2.75,3.05,3.36,3.66,3.96,4.28,4.60,5.20],h6:[1.79,1.98,2.18,2.38,2.57,2.77,2.98,3.37]}, ktau:{s6:[2.15,2.34,2.52,2.71,2.89,3.08,3.26,3.64],k6:[1.68,1.82,1.96,2.10,2.24,2.38,2.52,2.80],r6:[2.15,2.34,2.52,2.71,2.89,3.08,3.26,3.64],h6:[1.52,1.65,1.77,1.90,2.03,2.16,2.28,2.54]}}
+};
+const vSigmaDKey={coDinh:{thep:{tinh:150,vaDapNhe:100,vaDapManh:50},gang:{tinh:80,vaDapNhe:53,vaDapManh:27}},diDong:{thep:{tinh:50,vaDapNhe:40,vaDapManh:30},gang:{tinh:50,vaDapNhe:40,vaDapManh:30}}};
+function vFmt(x,n=2){ if(!isFinite(x)) return "∞"; return Number(x).toLocaleString("vi-VN",{maximumFractionDigits:n,minimumFractionDigits:n}); }
+function vVal(id,def=0){ const el=document.getElementById(id); const v=Number(el?.value); return isFinite(v)?v:def; }
+function vLoadSteels(){ const gb=document.getElementById('v_gearbox')?.value||'medium'; const sel=document.getElementById('v_steel'); if(!sel) return; const steels=[...new Set(vMaterialData[gb].map(x=>x.steel))]; const old=sel.value; sel.innerHTML=steels.map(x=>`<option value="${x}">${x}</option>`).join(''); sel.value=steels.includes(old)?old:steels[0]; vLoadHeat(false); }
+function vLoadHeat(doUpdate=true){ const gb=document.getElementById('v_gearbox')?.value||'medium'; const steel=document.getElementById('v_steel')?.value; const heats=vMaterialData[gb].filter(x=>x.steel===steel); const sel=document.getElementById('v_heat'); if(!sel) return; sel.innerHTML=heats.map((x,i)=>`<option value="${i}">${x.heat} | σb=${x.sb} MPa</option>`).join(''); sel.value='0'; vCurrentMaterial(); if(doUpdate) updateDiagrams(); }
+function vCurrentMaterial(){
+ const gb=document.getElementById('dia_gearbox')?.value || document.getElementById('v_gearbox')?.value || 'medium';
+ const steel=document.getElementById('dia_steel')?.value || document.getElementById('v_steel')?.value;
+ const idx=Number(document.getElementById('dia_heat')?.value ?? document.getElementById('v_heat')?.value ?? 0);
+ const arr=(vMaterialData[gb]||vMaterialData.medium).filter(x=>x.steel===steel);
+ const mat=arr[idx]||arr[0]||(vMaterialData[gb]||vMaterialData.medium)[0];
+ const g=document.getElementById('v_gearbox'); if(g) g.value=gb;
+ const st=document.getElementById('v_steel'); if(st && steel) st.value=steel;
+ const ht=document.getElementById('v_heat'); if(ht) ht.value=String(idx);
+ const mt=document.getElementById('v_materialType'); if(mt) mt.value=mat.type==='cacbon'?'Thép cacbon':'Thép hợp kim';
+ return mat;
+}
+function vMocK(sb){ if(sb>=1200)return 1200; if(sb>=1000)return 1000; if(sb>=800)return 800; if(sb>=600)return 600; return 400; }
+function vMocKx(sb){ if(sb>=1200)return 1200; if(sb>=800)return 800; if(sb>=600)return 600; return 400; }
+function vPsi(sb){ if(sb>=500&&sb<700)return{ps:0.05,pt:0}; if(sb>=700&&sb<1000)return{ps:0.10,pt:0.05}; if(sb>=1000&&sb<1200)return{ps:0.20,pt:0.10}; return{ps:0.25,pt:0.15}; }
+function vNoiSuy(d,ds,ys){ if(d<=ds[0])return ys[0]; if(d>=ds[ds.length-1])return ys[ys.length-1]; for(let i=0;i<ds.length-1;i++){ if(d>=ds[i]&&d<=ds[i+1]) return ys[i]+(d-ds[i])/(ds[i+1]-ds[i])*(ys[i+1]-ys[i]); } return ys[0]; }
+function vEps(d,type){ return {es:vNoiSuy(d,vBangEps.d,type==='cacbon'?vBangEps.uon_cacbon:vBangEps.uon_hopkim), et:vNoiSuy(d,vBangEps.d,vBangEps.xoan)}; }
+function vKy(sb,tang){ return tang==='khong'?1:1.35; }
+
+const vRectStdData={
+ light:[{z:6,d:23,D:26,b:6,h:3},{z:6,d:26,D:30,b:6,h:3},{z:6,d:28,D:32,b:7,h:4},{z:8,d:32,D:36,b:6,h:4},{z:8,d:36,D:40,b:7,h:4},{z:8,d:42,D:46,b:8,h:5},{z:8,d:46,D:50,b:9,h:5},{z:8,d:52,D:58,b:10,h:6},{z:8,d:62,D:68,b:12,h:6},{z:10,d:72,D:78,b:12,h:7}],
+ medium:[{z:6,d:23,D:28,b:6,h:4},{z:6,d:26,D:32,b:6,h:4},{z:6,d:28,D:34,b:7,h:5},{z:8,d:32,D:38,b:6,h:5},{z:8,d:36,D:42,b:7,h:5},{z:8,d:42,D:48,b:8,h:6},{z:8,d:46,D:54,b:9,h:7},{z:8,d:52,D:60,b:10,h:7},{z:8,d:62,D:72,b:12,h:8},{z:10,d:72,D:82,b:12,h:9},{z:10,d:82,D:92,b:14,h:9}],
+ heavy:[{z:10,d:42,D:52,b:8,h:8},{z:10,d:46,D:56,b:9,h:8},{z:10,d:52,D:62,b:10,h:8},{z:10,d:62,D:72,b:12,h:8},{z:10,d:72,D:82,b:12,h:9},{z:10,d:82,D:92,b:14,h:10},{z:10,d:92,D:102,b:16,h:10}]
+};
+const vInvStdData={
+ day1:[{D:30,m:1,z:28},{D:35,m:1.25,z:26},{D:40,m:1.5,z:24},{D:45,m:1.5,z:28},{D:50,m:2,z:24},{D:55,m:2,z:26},{D:60,m:2,z:28},{D:65,m:2.5,z:24},{D:70,m:2.5,z:26},{D:75,m:2.5,z:28},{D:80,m:3,z:24},{D:90,m:3,z:28},{D:100,m:3,z:32}],
+ day2:[{D:32,m:1,z:30},{D:38,m:1.25,z:28},{D:42,m:1.5,z:26},{D:48,m:1.5,z:30},{D:52,m:2,z:25},{D:58,m:2,z:28},{D:62,m:2,z:30},{D:68,m:2.5,z:25},{D:72,m:2.5,z:27},{D:78,m:2.5,z:29},{D:85,m:3,z:26},{D:95,m:3,z:30}]
+};
+function vNearestByD(arr,d,key='d'){ return arr.reduce((a,b)=>Math.abs((b[key]||b.D)-d)<Math.abs((a[key]||a.D)-d)?b:a,arr[0]); }
+function vSetGroupVisible(selector, show){
+ document.querySelectorAll(selector).forEach(e=>{
+   e.classList.toggle('hidden', !show);
+   e.style.display = show ? '' : 'none';
+   e.querySelectorAll('input,select,textarea,button').forEach(x=>{
+     if(!show){ x.dataset.prevDisabled = x.disabled ? '1' : '0'; x.disabled = true; }
+     else if(x.dataset.prevDisabled !== '1'){ x.disabled = false; }
+   });
+ });
+}
+function vSetLabelVisibleById(id, show){
+ const el=document.getElementById(id);
+ if(!el) return;
+ const lab=el.closest('label');
+ if(!lab) return;
+ lab.classList.toggle('hidden', !show);
+ lab.style.display = show ? '' : 'none';
+ if(!show){ el.dataset.prevDisabled = el.disabled ? '1' : '0'; el.disabled = true; }
+ else if(el.dataset.prevDisabled !== '1'){ el.disabled = false; }
+}
+function vToggleAdvancedSections(sec){
+ const type=document.getElementById(`v_section${sec}`)?.value||'motThen';
+ const isNormal = (type==='motThen' || type==='haiThen');
+ const isRect = type==='thenHoaChuNhat';
+ const isInv = type==='thenHoaThanKhai';
+
+ // Chỉ hiện đúng nhóm đang dùng:
+ // - Trục có 1/2 rãnh then: chỉ hiện then bằng, then bằng cao, then bán nguyệt.
+ // - Then hoa răng chữ nhật: chỉ hiện thông số then hoa chữ nhật.
+ // - Then hoa răng thân khai: chỉ hiện thông số then hoa thân khai.
+ vSetGroupVisible(`.v_normal_${sec}`, isNormal);
+ vSetGroupVisible(`.v_rect_${sec}`, isRect);
+ vSetGroupVisible(`.v_inv_${sec}`, isInv);
+
+ // Khóa và ẩn ô số rãnh then; số rãnh lấy tự động từ dạng tiết diện.
+ const n=document.getElementById(`v_keyCount${sec}`);
+ if(n){
+   n.value = type==='haiThen' ? '2' : '1';
+   n.disabled = true;
+   const lab=n.closest('label');
+   if(lab){ lab.classList.add('hidden'); lab.style.display='none'; }
+ }
+
+ // Với trục có rãnh then, loại then chỉ được là then bằng/cao/bán nguyệt.
+ const kt=document.getElementById(`v_keyType${sec}`);
+ if(kt && isNormal){
+   const allowed=['thuong','cao','banNguyet'];
+   if(!allowed.includes(kt.value)) kt.value='thuong';
+ }
+
+ // Với then hoa, ẩn toàn bộ thông số then bằng/bán nguyệt và tự nạp bảng then hoa tương ứng.
+ if(isRect){ vRenderRectOptions(sec); vFillRectStd(sec); }
+ if(isInv){ vRenderInvOptions(sec); vFillInvStd(sec); }
+}
+function vRenderRectOptions(sec){ const sel=document.getElementById(`v_rectStd${sec}`); if(!sel) return; const size=document.getElementById(`v_rectSize${sec}`)?.value||'medium'; const d=(window.lastDiagramDataForVerify?.diaResult?.chosen||{})[`d${sec}`]||40; const arr=vRectStdData[size]||vRectStdData.medium; sel.innerHTML=arr.map((r,i)=>`<option value="${i}">${r.z} × ${r.d} × ${r.D}</option>`).join(''); const best=vNearestByD(arr,d,'d'); sel.value=String(arr.indexOf(best)); }
+function vFillRectStd(sec){ const size=document.getElementById(`v_rectSize${sec}`)?.value||'medium'; const arr=vRectStdData[size]||vRectStdData.medium; const idx=Number(document.getElementById(`v_rectStd${sec}`)?.value||0); const r=arr[idx]||arr[0]; const dtb=(r.d+r.D)/2; const el=document.getElementById(`v_rectInfo${sec}`); if(el) el.value=`z=${r.z}; d=${r.d}; D=${r.D}; dtb=${dtb.toFixed(2)}; h=${r.h}; b=${r.b}`; return {...r,dtb}; }
+function vRenderInvOptions(sec){ const sel=document.getElementById(`v_invStd${sec}`); if(!sel) return; const series=document.getElementById(`v_invSeries${sec}`)?.value||'day1'; const d=(window.lastDiagramDataForVerify?.diaResult?.chosen||{})[`d${sec}`]||40; const arr=vInvStdData[series]||vInvStdData.day1; sel.innerHTML=arr.map((r,i)=>`<option value="${i}">${r.D} × ${r.m} × ${r.z}</option>`).join(''); const best=vNearestByD(arr,d,'D'); sel.value=String(arr.indexOf(best)); }
+function vFillInvStd(sec){ const series=document.getElementById(`v_invSeries${sec}`)?.value||'day1'; const arr=vInvStdData[series]||vInvStdData.day1; const idx=Number(document.getElementById(`v_invStd${sec}`)?.value||0); const r=arr[idx]||arr[0]; const dtb=r.m*r.z, h=0.8*r.m; const el=document.getElementById(`v_invInfo${sec}`); if(el) el.value=`D=${r.D}; m=${r.m}; z=${r.z}; dtb=${dtb.toFixed(2)}; h=${h.toFixed(2)}`; return {...r,dtb,h}; }
+function vParseSemi(id,defs){ const txt=(document.getElementById(id)?.value||'').split(';').map(x=>Number(String(x).replace(',','.'))); return defs.map((d,i)=>Number.isFinite(txt[i])?txt[i]:d); }
+function vInvAllow(sec){
+ const fit=document.getElementById(`v_invFit${sec}`)?.value||'fixed';
+ const cond=document.getElementById(`v_invCondition${sec}`)?.value||'b';
+ const heat=document.getElementById(`v_invHeat${sec}`)?.value||'no';
+ const mode=document.getElementById(`v_invAllowMode${sec}`)?.value||'avg';
+ const table={fixed:{a:[40,50],b:[50,70],c:[70,100]},movingNoLoad:{a:[15,20],b:[20,30],c:[30,40]},movingLoad:{a:[10,15],b:[15,25],c:[25,35]}};
+ let rng=(table[fit]||table.fixed)[cond]||[40,60];
+ if(heat==='yes') rng=[rng[0]*1.25,rng[1]*1.25];
+ const sigmaD=mode==='min'?rng[0]:(mode==='max'?rng[1]:(rng[0]+rng[1])/2);
+ const wearMode=document.getElementById(`v_invWearMode${sec}`)?.value||'special';
+ const wearHeat=document.getElementById(`v_invWearHeat${sec}`)?.value||'none';
+ const eol=document.getElementById(`v_invEoverL${sec}`)?.value||'0.50';
+ const specialTable={none:{0:35,0.25:30,0.50:25},improve:{0:45,0.25:38,0.50:32},quench40:{0:65,0.25:55,0.50:45},quench45:{0:80,0.25:68,0.50:55},quench52:{0:100,0.25:85,0.50:70},carburize60:{0:140,0.25:120,0.50:100}};
+ const sigmaMq={none:50,improve:65,quench40:90,quench45:110,quench52:140,carburize60:180};
+ const special=(specialTable[wearHeat]||specialTable.none)[eol]||25;
+ const n=vVal(`v_invSpeed${sec}`,300), Lh=vVal(`v_invLife${sec}`,10000);
+ const N=60*n*Lh;
+ const KN=N<=1e8?1:Math.pow(1e8/N,1/8);
+ const Kc=vVal(`v_invKc${sec}`,0.63), Kb=vVal(`v_invKb${sec}`,1), Kg=vVal(`v_invKg${sec}`,1);
+ const general=(sigmaMq[wearHeat]||50)/(Kc*KN*Kb*Kg);
+ const sigmaM=wearMode==='general'?general:special;
+ return {sigmaD,sigmaM,range:rng,fit,cond,heat,mode,wearMode,wearHeat,eol,N,KN,Kc,Kb,Kg};
+}
+
+function vKeyRow(d,sec){
+ const kt=vCurrentNormalKeyType(sec);
+ let arr = kt==='cao'?vBangThenCao:(kt==='banNguyet'?vBangThenBanNguyet:vBangThen);
+ let row=arr.find(x=>d>x.min&&d<=x.max);
+ if(!row) row=vNearestKey(arr,d);
+ return row;
+}
+function vUpdateKeyDefaults(chosen){ chosen=chosen||window.lastDiagramDataForVerify?.diaResult?.chosen; if(!chosen) return; [['A',chosen.dA],['D',chosen.dD]].forEach(([sec,d])=>{ if(!d)return; vToggleAdvancedSections(sec); const type=document.getElementById(`v_section${sec}`)?.value||'motThen'; if(type==='thenHoaChuNhat'||type==='thenHoaThanKhai'){ vFillSplineDefaults(sec); return; } const row=vKeyRow(d,sec); const lm=vVal(`v_lm${sec}`,60); const n=document.getElementById(`v_keyCount${sec}`); if(n) n.value=type==='haiThen'?'2':'1'; const lAuto=row.l || Math.max(6,Math.round(0.8*lm)); [['b',row.b],['h',row.h],['t',row.t1],['l',lAuto]].forEach(([k,v])=>{ const el=document.getElementById(`v_${k}${sec}`); if(el) el.value=v; }); }); }
+function vLapGroup(d){ return d<=50?'small':'large'; }
+function vLapRatio(d,fit,sb){ const group=vLapGroup(d); const cols=[400,500,600,700,800,900,1000,1200]; let idx=0; for(let i=0;i<cols.length;i++){ if(sb>=cols[i]) idx=i; } const data=vBangLap[group]; return {sigma:data.ksigma[fit]?.[idx]||data.ksigma.k6[idx], tau:data.ktau[fit]?.[idx]||data.ktau.k6[idx], group:data.limit}; }
+function vSuggestFit(sec){ return; }
+function vW(sec,d){ if(sec==='C') return {Wj:Math.PI*d**3/32,W0j:Math.PI*d**3/16,desc:'Trục tròn lắp ổ lăn: W=πd³/32; W0=πd³/16'}; const type=document.getElementById(`v_section${sec}`)?.value||'motThen'; if(type==='thenHoaChuNhat'){ const xi=vVal(`v_xiRect${sec}`,1.205); return {Wj:xi*Math.PI*d**3/32,W0j:xi*Math.PI*d**3/16,desc:`Then hoa răng chữ nhật: W=ξ·πd³/32; W0=ξ·πd³/16 với ξ=${vFmt(xi,3)}`}; } if(type==='thenHoaThanKhai'){ return {Wj:Math.PI*d**3/32,W0j:Math.PI*d**3/16,desc:'Then hoa răng thân khai: lấy gần đúng theo trục tròn W=πd³/32; W0=πd³/16'}; } const n=Number(document.getElementById(`v_keyCount${sec}`)?.value||1); const b=vVal(`v_b${sec}`,0), t=vVal(`v_t${sec}`,0); return {Wj:Math.PI*d**3/32-n*b*t*(d-t)**2/(2*d), W0j:Math.PI*d**3/16-n*b*t*(d-t)**2/(2*d), desc:`Trục có ${n} rãnh then: W=πd³/32−${n}·b·t1·(d−t1)²/(2d); W0 tương tự`}; }
+function vKRatio(sec,d,mat,eps){
+ const fit=document.getElementById(`v_fit${sec}`)?.value||'k6';
+ const lr=vLapRatio(d||40,fit,mat.sb);
+ const lap={name:(sec==='C'?'Lắp ổ lăn':'Lắp có độ dôi'), sigma:lr.sigma,tau:lr.tau, rawSigma:fit, rawTau:fit, es:'-', et:'-'};
+ if(sec==='C') return {sigma:lap.sigma,tau:lap.tau,lap,then:null,rows:[lap],chooseS:'Lắp ổ lăn',chooseT:'Lắp ổ lăn'};
+ const type=document.getElementById(`v_section${sec}`)?.value||'motThen';
+ const loai= type==='thenHoaChuNhat'||type==='thenHoaThanKhai'?'hoa':'then';
+ const gc=(loai==='hoa')?(type==='thenHoaChuNhat'?'rangCN':'rangKhai'):(document.getElementById(`v_machining${sec}`)?.value||'phaydia');
+ const row=(vBangK[vMocK(mat.sb)]||vBangK[600])[loai]||{};
+ const raw=row[gc]||row.phaydia||row.rangCN||[1,1];
+ let name='Rãnh then';
+ if(type==='thenHoaChuNhat') name='Then hoa răng chữ nhật';
+ if(type==='thenHoaThanKhai') name='Then hoa răng thân khai';
+ const then={name, sigma:raw[0]/eps.es,tau:raw[1]/eps.et, rawSigma:raw[0],rawTau:raw[1], es:eps.es, et:eps.et};
+ const rows=[lap,then];
+ const bestS=rows.reduce((a,b)=>b.sigma>a.sigma?b:a,rows[0]);
+ const bestT=rows.reduce((a,b)=>b.tau>a.tau?b:a,rows[0]);
+ return {sigma:bestS.sigma,tau:bestT.tau,lap,then,rows,chooseS:bestS.name,chooseT:bestT.name};
+}
+function vCheckShaft(sec,d,M,T){ if(!d) return null; const mat=vCurrentMaterial(); const W=vW(sec,d); const eps=vEps(d,mat.type); const K=vKRatio(sec,d,mat,eps); const surface=document.getElementById('v_surface')?.value||'tienRa25'; const kx=vBangKx[vMocKx(mat.sb)][surface]; const ky=vKy(mat.sb,document.getElementById('v_strengthen')?.value||'khong'); const psi=vPsi(mat.sb); const sigma_1=mat.type==='cacbon'?0.436*mat.sb:0.35*mat.sb+100; const tau_1=0.58*sigma_1; const sigmaA=Math.abs(M)/W.Wj, sigmaM=0; const mode=document.getElementById('v_torsionMode')?.value||'motChieu'; let tauA,tauM; if(mode==='motChieu'){tauA=Math.abs(T)/(2*W.W0j);tauM=tauA;} else {tauA=Math.abs(T)/W.W0j;tauM=0;} const Ksd=(K.sigma+kx-1)/ky, Ktd=(K.tau+kx-1)/ky; const sSigma=(Ksd*sigmaA+psi.ps*sigmaM)===0?Infinity:sigma_1/(Ksd*sigmaA+psi.ps*sigmaM); const sTau=(Ktd*tauA+psi.pt*tauM)===0?Infinity:tau_1/(Ktd*tauA+psi.pt*tauM); const sTong=(!isFinite(sSigma)&&!isFinite(sTau))?Infinity:(!isFinite(sSigma)?sTau:(!isFinite(sTau)?sSigma:(sSigma*sTau)/Math.sqrt(sSigma*sSigma+sTau*sTau))); const sigmaTinh=Math.abs(M)/(0.1*d**3); const tauTinh=Math.abs(T)/(0.2*d**3); const sigmaTd=Math.sqrt(sigmaTinh**2+3*tauTinh**2); const sigmaCP=0.8*mat.sch; const sAllow=vVal(sec==='C'?'v_sAllowC':'v_sAllow',1.8); return {sec,d,M:Math.abs(M),T:Math.abs(T),mat,W,eps,K,kx,ky,sigma_1,tau_1,sigmaA,sigmaM,tauA,tauM,Ksd,Ktd,sSigma,sTau,sTong,sigmaTinh,tauTinh,sigmaTd,sigmaCP,sAllow,datMoi:sTong>=sAllow,datTinh:sigmaTd<=sigmaCP,datChung:sTong>=sAllow&&sigmaTd<=sigmaCP}; }
+function vTauAllow(base,load){ return load==='tinh'?base:(load==='vaDapNhe'?base*2/3:base/3); }
+function vKeyAllow(sec){ const fit=document.getElementById(`v_keyFit${sec}`)?.value||'coDinh'; const hub=document.getElementById(`v_hub${sec}`)?.value||'thep'; const load=document.getElementById(`v_keyLoad${sec}`)?.value||'vaDapNhe'; const tauBase=vVal(`v_tauBase${sec}`,90); return {sigma:vSigmaDKey[fit][hub][load],tau:vTauAllow(tauBase,load),fit,hub,load}; }
+function vCheckKey(sec,d,T){ if(!d || sec==='C') return null; const type=document.getElementById(`v_section${sec}`)?.value||'motThen'; const lm=vVal(`v_lm${sec}`,60); if(type==='thenHoaChuNhat'){ const st=vFillRectStd(sec); const [sigmaCh,s,Ks,Kr]=vParseSemi(`v_rectParams${sec}`,[350,1.5,1.2,1]); const l=0.8*lm; const fit=document.getElementById(`v_rectFit${sec}`)?.value||'fixed'; const sigmaAllow=fit==='moving'?vVal(`v_rectAllowMoving${sec}`,15):sigmaCh/s/Ks/Kr; const sigmaD=2*Math.abs(T)/(st.dtb*l*st.h*st.z); const e=vVal(`v_rectE${sec}`,24); const dw=vVal(`v_rectDw${sec}`,86.9); const alpha=vVal(`v_rectAlpha${sec}`,20); const beta=vVal(`v_rectBeta${sec}`,15); const Kx=vVal(`v_rectKx${sec}`,1.6); const mount=document.getElementById(`v_rectMount${sec}`)?.value||'torsion'; return {sec,type,d,T:Math.abs(T),z:st.z,dtb:st.dtb,h:st.h,l,e,dw,alpha,beta,Kx,mount,al:{sigma:sigmaAllow,fit},sigmaD,tauC:0,datDap:sigmaD<=sigmaAllow,datCat:true,datChung:sigmaD<=sigmaAllow,desc:`Then hoa răng chữ nhật ${st.z}×${st.d}×${st.D}`}; }
+ if(type==='thenHoaThanKhai'){ const st=vFillInvStd(sec); const phi=vVal(`v_invPhi${sec}`,0.75); const l=0.8*lm; const al=vInvAllow(sec); const sigmaD=2*Math.abs(T)/(st.dtb*l*st.h*st.z*phi); const sigmaM=2*Math.abs(T)/(st.dtb*l*st.h*st.z); return {sec,type,d,T:Math.abs(T),z:st.z,dtb:st.dtb,h:st.h,l,phi,al,sigmaD,sigmaM,tauC:0,datDap:sigmaD<=al.sigmaD,datWear:sigmaM<=al.sigmaM,datCat:true,datChung:sigmaD<=al.sigmaD&&sigmaM<=al.sigmaM,desc:`Then hoa răng thân khai D×m×z = ${st.D}×${st.m}×${st.z}`}; }
+ const n=Number(document.getElementById(`v_keyCount${sec}`)?.value||1); const b=vVal(`v_b${sec}`,0), h=vVal(`v_h${sec}`,0), t1=vVal(`v_t${sec}`,0), l=vVal(`v_l${sec}`,1); const al=vKeyAllow(sec); const sigmaD=2*Math.abs(T)/(n*d*l*(h-t1)); const tauC=2*Math.abs(T)/(n*d*l*b); return {sec,type,d,T:Math.abs(T),n,b,h,t1,l,al,sigmaD,tauC,datDap:sigmaD<=al.sigma,datCat:tauC<=al.tau,datChung:sigmaD<=al.sigma&&tauC<=al.tau,desc:(vCurrentNormalKeyType(sec)==='cao'?'Then bằng cao':(vCurrentNormalKeyType(sec)==='banNguyet'?'Then bán nguyệt':'Then bằng'))}; }
+function vRenderKCompare(r){
+ const rows=(r.K.rows||[r.K.lap]).map(x=>`<tr><td>${x.name}</td><td>${x.rawSigma??'-'}</td><td>${x.es??'-'}</td><td class="${Math.abs(x.sigma-r.K.sigma)<1e-9?'kchoose':''}">${vFmt(x.sigma,3)}</td><td>${x.rawTau??'-'}</td><td>${x.et??'-'}</td><td class="${Math.abs(x.tau-r.K.tau)<1e-9?'kchoose':''}">${vFmt(x.tau,3)}</td></tr>`).join('');
+ return `<table class="kcompare"><thead><tr><th>Nguồn</th><th>Kσ</th><th>εσ</th><th>Kσ/εσ</th><th>Kτ</th><th>ετ</th><th>Kτ/ετ</th></tr></thead><tbody>${rows}<tr><th colspan="3">Chọn Kσ/εσ</th><th>${vFmt(r.K.sigma,3)}<br><span class="small">${r.K.chooseS}</span></th><th colspan="2">Chọn Kτ/ετ</th><th>${vFmt(r.K.tau,3)}<br><span class="small">${r.K.chooseT}</span></th></tr></tbody></table>`;
+}
+function vRenderShaftCard(r){ if(!r) return ''; const s=r.sec; const type=s==='C'?'Trục tròn lắp ổ lăn':'Trục có then'; return `<div class="verify-card-result"><div class="verify-card-head">Tiết diện ${s}: d<sub>${s}</sub> = ${vFmt(r.d)} mm; M<sub>${s}</sub> = ${vFmt(r.M)} N.mm; T<sub>${s}</sub> = ${vFmt(r.T)} N.mm</div><table class="verify-table"><thead><tr><th>Đại lượng</th><th>Công thức / nguồn</th><th>Kết quả</th></tr></thead><tbody>
+<tr><th>Dạng tiết diện</th><td>${type}</td><td>${r.W.desc}</td></tr>
+<tr><th>W<sub>${s}</sub></th><td>W<sub>j</sub> tại tiết diện ${s}</td><td>${vFmt(r.W.Wj)} mm³</td></tr>
+<tr><th>W<sub>0${s}</sub></th><td>W<sub>0j</sub> tại tiết diện ${s}</td><td>${vFmt(r.W.W0j)} mm³</td></tr>
+<tr><th>K/ε chọn</th><td colspan="2">${vRenderKCompare(r)}</td></tr>
+<tr><th>σa / τa</th><td>σa=M/W; τa theo dạng xoắn</td><td>${vFmt(r.sigmaA)} / ${vFmt(r.tauA)} MPa</td></tr>
+<tr><th>Sσ / Sτ</th><td>Hệ số an toàn riêng</td><td>${vFmt(r.sSigma,3)} / ${vFmt(r.sTau,3)}</td></tr>
+<tr><th>S<sub>${s}</sub></th><td>S = SσSτ/√(Sσ²+Sτ²)</td><td>${vFmt(r.sTong,3)} ${r.datMoi?'≥':'<'} [S] = ${vFmt(r.sAllow,2)} → <b class="${r.datMoi?'ok-text':'bad-text'}">${r.datMoi?'Đạt':'Không đạt'}</b></td></tr>
+<tr><th>σtd</th><td>σtd = √(σ² + 3τ²)</td><td>${vFmt(r.sigmaTd)} ${r.datTinh?'≤':'>'} [σ] = ${vFmt(r.sigmaCP)} MPa → <b class="${r.datTinh?'ok-text':'bad-text'}">${r.datTinh?'Đạt':'Không đạt'}</b></td></tr>
+<tr><th>Kết luận</th><td>Bền mỏi và bền tĩnh</td><td><b class="${r.datChung?'ok-text':'bad-text'}">${r.datChung?'Đạt':'Không đạt'}</b></td></tr>
+</tbody></table></div>`; }
+function vRenderKeyCard(k){ if(!k) return ''; if(k.type==='thenHoaChuNhat') return `<div class="verify-card-result"><div class="verify-card-head">Kiểm nghiệm then hoa răng chữ nhật tại ${k.sec}: ${k.desc}; T = ${vFmt(k.T)} N.mm</div><table class="verify-table"><thead><tr><th>Đại lượng</th><th>Công thức / giá trị</th><th>Kết quả</th></tr></thead><tbody><tr><th>Kích thước</th><td>z=${k.z}; dtb=${vFmt(k.dtb)}; h=${vFmt(k.h)}; l=0,8lm=${vFmt(k.l)} mm<br>e=${vFmt(k.e||0)}; dw=${vFmt(k.dw||0)}; αw=${vFmt(k.alpha||0)}°; β=${vFmt(k.beta||0)}°; Kx=${vFmt(k.Kx||0,3)}</td><td>Lấy theo bảng then hoa răng chữ nhật và thông số nhập</td></tr><tr><th>[σd]</th><td>${k.al.fit==='moving'?'Di động: nhập [σd]':'Cố định: [σd]=σch/(s·Ks·Kr)'}</td><td>${vFmt(k.al.sigma)} MPa</td></tr><tr><th>σd</th><td>σd = 2T/(dtb·l·h·z)</td><td>${vFmt(k.sigmaD)} ${k.datDap?'≤':'>'} [σd] → <b class="${k.datDap?'ok-text':'bad-text'}">${k.datDap?'Đạt':'Không đạt'}</b></td></tr><tr><th>Kết luận</th><td>Kiểm nghiệm dập mối ghép then hoa chữ nhật</td><td><b class="${k.datChung?'ok-text':'bad-text'}">${k.datChung?'Đạt':'Không đạt'}</b></td></tr></tbody></table></div>`; if(k.type==='thenHoaThanKhai') return `<div class="verify-card-result"><div class="verify-card-head">Kiểm nghiệm then hoa răng thân khai tại ${k.sec}: ${k.desc}; T = ${vFmt(k.T)} N.mm</div><table class="verify-table"><thead><tr><th>Đại lượng</th><th>Công thức / giá trị</th><th>Kết quả</th></tr></thead><tbody><tr><th>Kích thước</th><td>z=${k.z}; dtb=mz=${vFmt(k.dtb)}; h=0,8m=${vFmt(k.h)}; φ=${vFmt(k.phi,2)}; l=${vFmt(k.l)} mm</td><td>Lấy theo bảng then hoa thân khai</td></tr><tr><th>[σd] / [σm]</th><td>Tra theo loại mối ghép, điều kiện sử dụng, bề mặt làm việc; [σm] theo bảng 9.9 hoặc tổng quát<br>e/l=${k.al.eol}; Kc=${vFmt(k.al.Kc,3)}; Kb=${vFmt(k.al.Kb,3)}; Kg=${vFmt(k.al.Kg,3)}; KN=${vFmt(k.al.KN,3)}</td><td>${vFmt(k.al.sigmaD)} / ${vFmt(k.al.sigmaM)} MPa</td></tr><tr><th>σd</th><td>σd = 2T/(dtb·l·h·z·φ)</td><td>${vFmt(k.sigmaD)} ${k.datDap?'≤':'>'} [σd] → <b class="${k.datDap?'ok-text':'bad-text'}">${k.datDap?'Đạt':'Không đạt'}</b></td></tr><tr><th>σm</th><td>σm = 2T/(dtb·l·h·z)</td><td>${vFmt(k.sigmaM)} ${k.datWear?'≤':'>'} [σm] → <b class="${k.datWear?'ok-text':'bad-text'}">${k.datWear?'Đạt':'Không đạt'}</b></td></tr><tr><th>Kết luận</th><td>Kiểm nghiệm dập và mòn then hoa thân khai</td><td><b class="${k.datChung?'ok-text':'bad-text'}">${k.datChung?'Đạt':'Không đạt'}</b></td></tr></tbody></table></div>`; return `<div class="verify-card-result"><div class="verify-card-head">Kiểm nghiệm ${k.desc} tại ${k.sec}: d<sub>${k.sec}</sub> = ${vFmt(k.d)} mm; T = ${vFmt(k.T)} N.mm</div><table class="verify-table"><thead><tr><th>Đại lượng</th><th>Công thức / giá trị</th><th>Kết quả</th></tr></thead><tbody>
+<tr><th>Kích thước then</th><td>n=${k.n}; b=${vFmt(k.b)}; h=${vFmt(k.h)}; t1=${vFmt(k.t1)}; l=${vFmt(k.l)} mm</td><td>Tự tra theo d<sub>${k.sec}</sub>; l<sub>t</sub>=0,8l<sub>m</sub> rồi chọn theo dãy tiêu chuẩn</td></tr>
+<tr><th>[σd] / [τc]</th><td>Dạng lắp ${k.al.fit==='coDinh'?'cố định':'di động'}, mayơ ${k.al.hub==='thep'?'thép':'gang'}, tải ${k.al.load}</td><td>${vFmt(k.al.sigma)} / ${vFmt(k.al.tau)} MPa</td></tr>
+<tr><th>σd</th><td>σd = 2T/[d·l·(h−t1)]</td><td>${vFmt(k.sigmaD)} ${k.datDap?'≤':'>'} [σd] → <b class="${k.datDap?'ok-text':'bad-text'}">${k.datDap?'Đạt':'Không đạt'}</b></td></tr>
+<tr><th>τc</th><td>τc = 2T/(d·l·b)</td><td>${vFmt(k.tauC)} ${k.datCat?'≤':'>'} [τc] → <b class="${k.datCat?'ok-text':'bad-text'}">${k.datCat?'Đạt':'Không đạt'}</b></td></tr>
+<tr><th>Kết luận then</th><td>Kiểm nghiệm dập và cắt</td><td><b class="${k.datChung?'ok-text':'bad-text'}">${k.datChung?'Đạt':'Không đạt'}</b></td></tr>
+</tbody></table></div>`; }
+function renderVerifyAll(data){ const box=document.getElementById('verifyOutputBox'); if(!box || !data?.chosen) return; ['A','C','D'].forEach(vSuggestFit); const c=data.chosen; const rA=vCheckShaft('A',c.dA,data.M_A,data.T1); const rC=vCheckShaft('C',c.dC,data.M_C,data.T1); const rD=vCheckShaft('D',c.dD,data.M_D,data.T1); const kA=vCheckKey('A',c.dA,data.T1); const kD=vCheckKey('D',c.dD,data.T1); const okS=rA?.datChung&&rC?.datChung&&rD?.datChung; const okK=kA?.datChung&&kD?.datChung; box.innerHTML=`<div class="calc-title">Kết quả kiểm nghiệm trục tại A, C, D</div><div class="verify-pair">${vRenderShaftCard(rA)}${vRenderShaftCard(rC)}${vRenderShaftCard(rD)}</div><div class="calc-title">Kết quả kiểm nghiệm then tại A và D</div><div class="verify-pair" style="grid-template-columns:repeat(2,minmax(0,1fr));">${vRenderKeyCard(kA)}${vRenderKeyCard(kD)}</div><div class="verify-final"><b>Kết luận chung:</b> Trục A ${rA?.datChung?'<span class="ok-text">đạt</span>':'<span class="bad-text">không đạt</span>'}, C ${rC?.datChung?'<span class="ok-text">đạt</span>':'<span class="bad-text">không đạt</span>'}, D ${rD?.datChung?'<span class="ok-text">đạt</span>':'<span class="bad-text">không đạt</span>'}. Then A ${kA?.datChung?'<span class="ok-text">đạt</span>':'<span class="bad-text">không đạt</span>'}, then D ${kD?.datChung?'<span class="ok-text">đạt</span>':'<span class="bad-text">không đạt</span>'}. ${(okS&&okK)?'<b class="ok-text"> Kết luận: đạt kiểm nghiệm tại các tiết diện yêu cầu.</b>':'<b class="bad-text"> Kết luận: chưa đạt, cần tăng đường kính, tăng chiều dài then hoặc đổi thông số.</b>'}</div>`; }
+function initVerify(){ vLoadSteels(); ['A','D'].forEach(sec=>{vToggleAdvancedSections(sec);}); }
+
+
+
+/* ===== CHỐT LOGIC ẨN/HIỆN THEN BẰNG - THEN HOA =====
+   - motThen/haiThen: chỉ hiện then bằng, then bằng cao, then bán nguyệt.
+   - thenHoaChuNhat: chỉ hiện thông số then hoa răng chữ nhật.
+   - thenHoaThanKhai: chỉ hiện thông số then hoa răng thân khai.
+   - Số rãnh then tự lấy theo dạng tiết diện, không cho chọn riêng. */
+function vForceThenVisibility(sec){
+    const section = document.getElementById(`v_section${sec}`)?.value || 'motThen';
+    const isNormal = section === 'motThen' || section === 'haiThen';
+    const isRect = section === 'thenHoaChuNhat';
+    const isInv = section === 'thenHoaThanKhai';
+
+    const setNodes = (selector, show) => {
+        document.querySelectorAll(selector).forEach(node => {
+            node.classList.toggle('hidden', !show);
+            node.style.display = show ? '' : 'none';
+            node.querySelectorAll('input, select, textarea, button').forEach(el => {
+                el.disabled = !show;
+            });
+        });
+    };
+
+    setNodes(`.v_normal_${sec}`, isNormal);
+    setNodes(`.v_rect_${sec}`, isRect);
+    setNodes(`.v_inv_${sec}`, isInv);
+
+    const keyCount = document.getElementById(`v_keyCount${sec}`);
+    if(keyCount){
+        keyCount.value = section === 'haiThen' ? '2' : '1';
+        keyCount.disabled = true;
+        const label = keyCount.closest('label');
+        if(label){
+            label.classList.add('hidden');
+            label.style.display = 'none';
+        }
+    }
+
+    const keyType = document.getElementById(`v_keyType${sec}`);
+    if(keyType && isNormal){
+        [...keyType.options].forEach(op => {
+            op.hidden = !['thuong','cao','banNguyet'].includes(op.value);
+        });
+        if(!['thuong','cao','banNguyet'].includes(keyType.value)) keyType.value = 'thuong';
+    }
+
+    if(isRect){
+        vRenderRectOptions(sec);
+        vFillRectStd(sec);
+    }
+    if(isInv){
+        vRenderInvOptions(sec);
+        vFillInvStd(sec);
+    }
+}
+
+function vForceAllThenVisibility(){
+    ['A','D'].forEach(vForceThenVisibility);
+}
+
+const __oldVToggleAdvancedSections = typeof vToggleAdvancedSections === 'function' ? vToggleAdvancedSections : null;
+vToggleAdvancedSections = function(sec){
+    if(__oldVToggleAdvancedSections) __oldVToggleAdvancedSections(sec);
+    vForceThenVisibility(sec);
+};
+
+const __oldUpdateDiagramsForThenVisibility = typeof updateDiagrams === 'function' ? updateDiagrams : null;
+if(__oldUpdateDiagramsForThenVisibility){
+    updateDiagrams = function(){
+        const result = __oldUpdateDiagramsForThenVisibility.apply(this, arguments);
+        vForceAllThenVisibility();
+        return result;
+    };
+}
+
+
+
+/* ===== FIX THEN HOA: nạp đúng bảng then hoa trước khi kiểm nghiệm =====
+   Lỗi cũ: onchange gọi vFillSplineDefaults(sec) nhưng hàm này chưa có,
+   nên khi chọn then hoa chữ nhật/thân khai, updateDiagrams bị dừng và
+   kết quả kiểm nghiệm then vẫn giữ kết quả cũ của then bằng. */
+function vNormalizeSectionValue(raw){
+    raw = String(raw || 'motThen');
+    if(raw === 'rect' || raw === 'rangCN' || raw === 'thenHoaChuNhat') return 'thenHoaChuNhat';
+    if(raw === 'inv' || raw === 'rangKhai' || raw === 'thenHoaThanKhai') return 'thenHoaThanKhai';
+    if(raw === 'haiThen') return 'haiThen';
+    return 'motThen';
+}
+function vCurrentSection(sec){
+    return vNormalizeSectionValue(document.getElementById(`v_section${sec}`)?.value || 'motThen');
+}
+function vFillSplineDefaults(sec){
+    const section = vCurrentSection(sec);
+    if(section === 'thenHoaChuNhat'){
+        vRenderRectOptions(sec);
+        return vFillRectStd(sec);
+    }
+    if(section === 'thenHoaThanKhai'){
+        vRenderInvOptions(sec);
+        return vFillInvStd(sec);
+    }
+    return null;
+}
+
+/* Ghi đè lại vài hàm dùng trực tiếp value để chắc chắn then hoa không bị rơi về then bằng */
+const __oldVCheckKeyBySection = typeof vCheckKey === 'function' ? vCheckKey : null;
+vCheckKey = function(sec,d,T){
+    if(!d || sec === 'C') return null;
+    const type = vCurrentSection(sec);
+    const lm = vVal(`v_lm${sec}`,60);
+
+    if(type === 'thenHoaChuNhat'){
+        const st = vFillRectStd(sec);
+        const [sigmaCh,s,Ks,Kr] = vParseSemi(`v_rectParams${sec}`,[350,1.5,1.2,1]);
+        const l = 0.8 * lm;
+        const fit = document.getElementById(`v_rectFit${sec}`)?.value || 'fixed';
+        const sigmaAllow = fit === 'moving' ? vVal(`v_rectAllowMoving${sec}`,15) : sigmaCh/(s*Ks*Kr);
+        const sigmaD = 2*Math.abs(T)/(st.dtb*l*st.h*st.z);
+        const e = vVal(`v_rectE${sec}`,24);
+        const dw = vVal(`v_rectDw${sec}`,86.9);
+        const alpha = vVal(`v_rectAlpha${sec}`,20);
+        const beta = vVal(`v_rectBeta${sec}`,15);
+        const Kx = vVal(`v_rectKx${sec}`,1.6);
+        const mount = document.getElementById(`v_rectMount${sec}`)?.value || 'torsion';
+        return {sec,type,d,T:Math.abs(T),z:st.z,dtb:st.dtb,h:st.h,l,e,dw,alpha,beta,Kx,mount,
+            al:{sigma:sigmaAllow,fit,sigmaCh,s,Ks,Kr},sigmaD,tauC:0,
+            datDap:sigmaD<=sigmaAllow,datCat:true,datChung:sigmaD<=sigmaAllow,
+            desc:`Then hoa răng chữ nhật ${st.z}×${st.d}×${st.D}`};
+    }
+
+    if(type === 'thenHoaThanKhai'){
+        const st = vFillInvStd(sec);
+        const phi = vVal(`v_invPhi${sec}`,0.75);
+        const l = 0.8 * lm;
+        const al = vInvAllow(sec);
+        const sigmaD = 2*Math.abs(T)/(st.dtb*l*st.h*st.z*phi);
+        const sigmaM = 2*Math.abs(T)/(st.dtb*l*st.h*st.z);
+        return {sec,type,d,T:Math.abs(T),z:st.z,dtb:st.dtb,h:st.h,l,phi,al,
+            sigmaD,sigmaM,tauC:0,datDap:sigmaD<=al.sigmaD,datWear:sigmaM<=al.sigmaM,
+            datCat:true,datChung:sigmaD<=al.sigmaD && sigmaM<=al.sigmaM,
+            desc:`Then hoa răng thân khai D×m×z = ${st.D}×${st.m}×${st.z}`};
+    }
+
+    const n = type === 'haiThen' ? 2 : 1;
+    const nEl = document.getElementById(`v_keyCount${sec}`);
+    if(nEl) nEl.value = String(n);
+    const b=vVal(`v_b${sec}`,0), h=vVal(`v_h${sec}`,0), t1=vVal(`v_t${sec}`,0), l=vVal(`v_l${sec}`,1);
+    const al=vKeyAllow(sec);
+    const sigmaD=2*Math.abs(T)/(n*d*l*(h-t1));
+    const tauC=2*Math.abs(T)/(n*d*l*b);
+    return {sec,type,d,T:Math.abs(T),n,b,h,t1,l,al,sigmaD,tauC,
+        datDap:sigmaD<=al.sigma,datCat:tauC<=al.tau,datChung:sigmaD<=al.sigma&&tauC<=al.tau,
+        desc:(vCurrentNormalKeyType(sec)==='cao'?'Then bằng cao':(vCurrentNormalKeyType(sec)==='banNguyet'?'Then bán nguyệt':'Then bằng'))};
+};
+
+const __oldVWBySection = typeof vW === 'function' ? vW : null;
+vW = function(sec,d){
+    if(sec==='C') return {Wj:Math.PI*d**3/32,W0j:Math.PI*d**3/16,desc:'Trục tròn lắp ổ lăn: W=πd³/32; W0=πd³/16'};
+    const type = vCurrentSection(sec);
+    if(type==='thenHoaChuNhat'){
+        const xi=vVal(`v_xiRect${sec}`,1.205);
+        return {Wj:xi*Math.PI*d**3/32,W0j:xi*Math.PI*d**3/16,desc:`Then hoa răng chữ nhật: W=ξ·πd³/32; W0=ξ·πd³/16 với ξ=${vFmt(xi,3)}`};
+    }
+    if(type==='thenHoaThanKhai'){
+        const xi=vVal(`v_xiInv${sec}`,1.2);
+        return {Wj:Math.PI*d**3/(32*xi),W0j:Math.PI*d**3/(16*xi),desc:`Then hoa răng thân khai: W=πd³/(32ξ); W0=πd³/(16ξ), ξ=${vFmt(xi,3)}`};
+    }
+    const n=type==='haiThen'?2:1;
+    const b=vVal(`v_b${sec}`,0), t=vVal(`v_t${sec}`,0);
+    return {Wj:Math.PI*d**3/32-n*b*t*(d-t)**2/(2*d), W0j:Math.PI*d**3/16-n*b*t*(d-t)**2/(2*d), desc:`Trục có ${n} rãnh then: W=πd³/32−${n}·b·t1·(d−t1)²/(2d); W0 tương tự`};
+};
+
+// Khởi tạo phần chọn đường kính, kiểm nghiệm và biểu đồ.
+diaLoadSteels();
+initVerify();
+updateDiagrams();
+</script>
+
+<script>
+(function(){
+  function setVal(id,val){ const el=document.getElementById(id); if(el && val!==undefined && val!==null && !Number.isNaN(Number(val))) el.value = Number(val).toFixed(2); }
+  function sendDiam(){
+    try{
+      const c = window.lastDiagramDataForVerify && window.lastDiagramDataForVerify.diaResult && window.lastDiagramDataForVerify.diaResult.chosen;
+      if(c){ parent.postMessage({type:'diam-truc1', d1A:c.dA, d1B:c.dB, d1C:c.dC, d1D:c.dD}, '*'); }
+    }catch(e){}
+  }
+  const old = window.updateDiagrams;
+  if(typeof old === 'function'){
+    window.updateDiagrams = function(){ const r = old.apply(this, arguments); setTimeout(sendDiam, 30); return r; };
+  }
+  window.addEventListener('message', function(ev){
+    const d = ev.data || {}; if(d.type !== 'sync-truc1') return;
+    setVal('chieuQuayTrucI_local', d.chieuQuayTrucI || 'cw'); setVal('Fr1', d.Fr1); setVal('Fa1', d.Fa1); setVal('Ft1', d.Ft1); setVal('Frkn1', d.Fk);
+    setVal('l12', d.l12); setVal('l11', d.l11); setVal('l13', d.l13); setVal('dm1', d.dm1); setVal('T1', d.T1); setVal('tauAllow', d.tau1);
+    const dsb=document.getElementById('dia_dsb'); if(dsb && d.dsb1!==undefined) dsb.value = Number(d.dsb1).toFixed(2);
+    setVal('v_lmA', d.lm12); setVal('v_lmD', d.lm13);
+    if(typeof window.updateDiagrams === 'function') window.updateDiagrams();
+    setTimeout(sendDiam, 80);
+  });
+  window.addEventListener('load', ()=>setTimeout(sendDiam, 300));
+})();
+</script>
+
+
+<script id="fix-key-flat-lm-standard-shaft1">
+/* ===== CẬP NHẬT THEN BẰNG THEO BẢNG 9.1a =====
+   Trục I: lm12 -> lmA, lm13 -> lmD.
+   Với then bằng / then bằng cao: lt = 0,8lm, sau đó chọn theo dãy tiêu chuẩn.
+   Công thức kiểm nghiệm then bằng:
+   σd = 2T/[d·l·(h−t1)] ≤ [σd]
+   τc = 2T/(d·l·b) ≤ [τc]
+*/
+(function(){
+    const STD_THEN_LENGTHS = [6,8,10,12,14,16,18,20,22,25,28,32,36,40,45,50,56,63,70,80,90,100,110,125,140,160,180,200,220,250,280,320,360,400,450,500];
+
+    window.vStdThenLength = function(lm){
+        lm = Number(lm) || 0;
+        const raw = 0.8 * lm;
+        if(raw <= 0) return {raw:0, std:6};
+        let std = STD_THEN_LENGTHS.find(x => x >= raw);
+        if(!std) std = STD_THEN_LENGTHS[STD_THEN_LENGTHS.length - 1];
+        // Nếu tiêu chuẩn vượt quá chiều dài mayơ thì lấy bậc tiêu chuẩn gần nhất không vượt lm.
+        if(std > lm){
+            const lower = STD_THEN_LENGTHS.filter(x => x <= lm).pop();
+            if(lower) std = lower;
+        }
+        return {raw, std};
+    };
+
+    const oldUpdateKeyDefaults = window.vUpdateKeyDefaults;
+    window.vUpdateKeyDefaults = function(chosen){
+        chosen = chosen || window.lastDiagramDataForVerify?.diaResult?.chosen;
+        if(!chosen) return;
+        [['A', chosen.dA], ['D', chosen.dD]].forEach(([sec, d]) => {
+            if(!d) return;
+            if(typeof window.vToggleAdvancedSections === 'function') vToggleAdvancedSections(sec);
+            const type = document.getElementById(`v_section${sec}`)?.value || 'motThen';
+            if(type === 'thenHoaChuNhat' || type === 'thenHoaThanKhai'){
+                if(typeof window.vFillSplineDefaults === 'function') vFillSplineDefaults(sec);
+                return;
+            }
+            const row = vKeyRow(d, sec);
+            const lm = vVal(`v_lm${sec}`, 60);
+            const n = document.getElementById(`v_keyCount${sec}`);
+            if(n) n.value = type === 'haiThen' ? '2' : '1';
+            const keyType = vCurrentNormalKeyType(sec);
+            let lAuto;
+            if(keyType === 'banNguyet'){
+                lAuto = row.l || vStdThenLength(lm).std;
+            }else{
+                lAuto = vStdThenLength(lm).std;
+            }
+            [['b', row.b], ['h', row.h], ['t', row.t1], ['l', lAuto]].forEach(([k,v]) => {
+                const el = document.getElementById(`v_${k}${sec}`);
+                if(el) el.value = v;
+            });
+        });
+    };
+
+    const oldCheckKey = window.vCheckKey;
+    window.vCheckKey = function(sec, d, T){
+        if(!d || sec === 'C') return null;
+        const type = vCurrentSection ? vCurrentSection(sec) : (document.getElementById(`v_section${sec}`)?.value || 'motThen');
+        const lm = vVal(`v_lm${sec}`, 60);
+
+        if(type === 'thenHoaChuNhat' || type === 'thenHoaThanKhai'){
+            return oldCheckKey ? oldCheckKey(sec, d, T) : null;
+        }
+
+        const n = type === 'haiThen' ? 2 : 1;
+        const nEl = document.getElementById(`v_keyCount${sec}`);
+        if(nEl) nEl.value = String(n);
+
+        const row = vKeyRow(d, sec);
+        const keyType = vCurrentNormalKeyType(sec);
+        if(keyType !== 'banNguyet'){
+            const len = vStdThenLength(lm);
+            const lEl = document.getElementById(`v_l${sec}`);
+            if(lEl) lEl.value = len.std;
+        }
+
+        const b = vVal(`v_b${sec}`, row.b || 0);
+        const h = vVal(`v_h${sec}`, row.h || 0);
+        const t1 = vVal(`v_t${sec}`, row.t1 || 0);
+        const l = vVal(`v_l${sec}`, keyType === 'banNguyet' ? (row.l || 1) : vStdThenLength(lm).std);
+        const al = vKeyAllow(sec);
+
+        // Công thức theo bảng người dùng gửi: không đưa n vào mẫu số.
+        const sigmaD = 2 * Math.abs(T) / (d * l * (h - t1) || 1e-9);
+        const tauC = 2 * Math.abs(T) / (d * l * b || 1e-9);
+
+        return {
+            sec, type, d, T: Math.abs(T), n, b, h, t1, l, lm,
+            ltRaw: 0.8 * lm,
+            al, sigmaD, tauC,
+            datDap: sigmaD <= al.sigma,
+            datCat: tauC <= al.tau,
+            datChung: sigmaD <= al.sigma && tauC <= al.tau,
+            desc: (keyType === 'cao' ? 'Then bằng cao' : (keyType === 'banNguyet' ? 'Then bán nguyệt' : 'Then bằng'))
+        };
+    };
+
+    const oldRenderKeyCard = window.vRenderKeyCard;
+    window.vRenderKeyCard = function(k){
+        if(!k || k.type === 'thenHoaChuNhat' || k.type === 'thenHoaThanKhai'){
+            return oldRenderKeyCard ? oldRenderKeyCard(k) : '';
+        }
+        return `<div class="verify-card-result"><div class="verify-card-head">Kiểm nghiệm ${k.desc} tại ${k.sec}: d<sub>${k.sec}</sub> = ${vFmt(k.d)} mm; T = ${vFmt(k.T)} N.mm</div><table class="verify-table"><thead><tr><th>Đại lượng</th><th>Công thức / giá trị</th><th>Kết quả</th></tr></thead><tbody>
+<tr><th>Kích thước then</th><td>n=${k.n}; b=${vFmt(k.b)}; h=${vFmt(k.h)}; t1=${vFmt(k.t1)}; l<sub>m</sub>=${vFmt(k.lm)} mm; l<sub>t</sub>=0,8l<sub>m</sub>=${vFmt(k.ltRaw)} mm → chọn l=${vFmt(k.l)} mm theo dãy tiêu chuẩn</td><td>Tra b, h, t1 theo d<sub>${k.sec}</sub>; chọn l theo dãy: 6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 28, 32, 36, 40, 45, 50, 56, 63, 70, 80, 90, 100, 110, 125...</td></tr>
+<tr><th>[σd] / [τc]</th><td>Dạng lắp ${k.al.fit==='coDinh'?'cố định':'di động'}, mayơ ${k.al.hub==='thep'?'thép':'gang'}, tải ${k.al.load}</td><td>${vFmt(k.al.sigma)} / ${vFmt(k.al.tau)} MPa</td></tr>
+<tr><th>σd</th><td>σd = 2T/[d·l·(h−t1)]</td><td>${vFmt(k.sigmaD)} ${k.datDap?'≤':'>'} [σd] → <b class="${k.datDap?'ok-text':'bad-text'}">${k.datDap?'Đạt':'Không đạt'}</b></td></tr>
+<tr><th>τc</th><td>τc = 2T/(d·l·b)</td><td>${vFmt(k.tauC)} ${k.datCat?'≤':'>'} [τc] → <b class="${k.datCat?'ok-text':'bad-text'}">${k.datCat?'Đạt':'Không đạt'}</b></td></tr>
+<tr><th>Kết luận then</th><td>Kiểm nghiệm dập và cắt</td><td><b class="${k.datChung?'ok-text':'bad-text'}">${k.datChung?'Đạt':'Không đạt'}</b></td></tr>
+</tbody></table></div>`;
+    };
+})();
+</script>
+
+
+<script id="fix-Sj-static-round-display-shaft1">
+/* Hiển thị S quá lớn bằng ∞, tách Sσ / Sτ / Sj, thêm σ tĩnh và τ tĩnh. */
+(function(){
+    function vFmtSafe(x,n=2){
+        if(!isFinite(x)) return "∞";
+        return Number(x).toLocaleString("vi-VN",{maximumFractionDigits:n,minimumFractionDigits:n});
+    }
+    function vFmtS(x,n=3){
+        if(!isFinite(x) || Math.abs(x) > 1e6) return "∞";
+        return Number(x).toLocaleString("vi-VN",{maximumFractionDigits:n,minimumFractionDigits:n});
+    }
+
+    const oldVCheckShaft = window.vCheckShaft;
+    window.vCheckShaft = function(sec,d,M,T){
+        if(!oldVCheckShaft) return null;
+        const r = oldVCheckShaft(sec,d,M,T);
+        if(!r) return r;
+        // Nếu ứng suất uốn gần bằng 0 thì Sσ xem như vô cùng, tránh hiện số rất dài.
+        if(Math.abs(r.sigmaA || 0) < 1e-9){
+            r.sSigma = Infinity;
+        }
+        if(Math.abs(r.tauA || 0) < 1e-9){
+            r.sTau = Infinity;
+        }
+        if(!isFinite(r.sSigma) && !isFinite(r.sTau)) r.sTong = Infinity;
+        else if(!isFinite(r.sSigma)) r.sTong = r.sTau;
+        else if(!isFinite(r.sTau)) r.sTong = r.sSigma;
+        else r.sTong = (r.sSigma*r.sTau)/Math.sqrt(r.sSigma*r.sSigma+r.sTau*r.sTau);
+        r.datMoi = r.sTong >= r.sAllow;
+        r.datChung = r.datMoi && r.datTinh;
+        return r;
+    };
+
+    window.vRenderShaftCard = function(r){
+        if(!r) return '';
+        const s=r.sec;
+        const type=s==='C'?'Trục tròn lắp ổ lăn':'Trục có then';
+        return `<div class="verify-card-result"><div class="verify-card-head">Tiết diện ${s}: d<sub>${s}</sub> = ${vFmtSafe(r.d)} mm; M<sub>${s}</sub> = ${vFmtSafe(r.M)} N.mm; T<sub>${s}</sub> = ${vFmtSafe(r.T)} N.mm</div><table class="verify-table"><thead><tr><th>Đại lượng</th><th>Công thức / nguồn</th><th>Kết quả</th></tr></thead><tbody>
+<tr><th>Dạng tiết diện</th><td>${type}</td><td>${r.W.desc}</td></tr>
+<tr><th>W<sub>${s}</sub></th><td>W<sub>j</sub> tại tiết diện ${s}</td><td>${vFmtSafe(r.W.Wj)} mm³</td></tr>
+<tr><th>W<sub>0${s}</sub></th><td>W<sub>0j</sub> tại tiết diện ${s}</td><td>${vFmtSafe(r.W.W0j)} mm³</td></tr>
+<tr><th>K/ε chọn</th><td colspan="2">${vRenderKCompare(r)}</td></tr>
+<tr><th>σa</th><td>σa = M/W</td><td>${vFmtSafe(r.sigmaA)} MPa</td></tr>
+<tr><th>τa</th><td>τa theo dạng xoắn</td><td>${vFmtSafe(r.tauA)} MPa</td></tr>
+<tr><th>Sσ</th><td>Hệ số an toàn riêng theo uốn</td><td><b>${vFmtS(r.sSigma)}</b></td></tr>
+<tr><th>Sτ</th><td>Hệ số an toàn riêng theo xoắn</td><td><b>${vFmtS(r.sTau)}</b></td></tr>
+<tr><th>S<sub>${s}</sub></th><td>S<sub>j</sub> = SσSτ/√(Sσ²+Sτ²)</td><td><b>${vFmtS(r.sTong)}</b> ${r.datMoi?'≥':'<'} [S] = ${vFmtSafe(r.sAllow,2)} → <b class="${r.datMoi?'ok-text':'bad-text'}">${r.datMoi?'Đạt bền mỏi':'Không đạt bền mỏi'}</b></td></tr>
+<tr><th>σ tĩnh</th><td>σ = M/(0,1d³)</td><td>${vFmtSafe(r.sigmaTinh)} MPa</td></tr>
+<tr><th>τ tĩnh</th><td>τ = T/(0,2d³)</td><td>${vFmtSafe(r.tauTinh)} MPa</td></tr>
+<tr><th>Kiểm bền tĩnh</th><td>σtd = √(σ² + 3τ²)</td><td>${vFmtSafe(r.sigmaTd)} ${r.datTinh?'≤':'>'} [σ] = ${vFmtSafe(r.sigmaCP)} MPa → <b class="${r.datTinh?'ok-text':'bad-text'}">${r.datTinh?'Đạt bền tĩnh':'Không đạt bền tĩnh'}</b></td></tr>
+<tr><th>Kết luận</th><td>Bền mỏi và bền tĩnh</td><td><b class="${r.datChung?'ok-text':'bad-text'}">${r.datChung?'Đạt':'Không đạt'}</b></td></tr>
+</tbody></table></div>`;
+    };
+})();
+</script>
+
+
+<script id="receive-common-material-shaft1">
+(function(){
+    window.applyCommonMaterialToShaft1 = function(d){
+        if(!d) return;
+        const set = (id,val)=>{ const el=document.getElementById(id); if(el && val!==undefined && val!==null) el.value = val; };
+
+        set("chieuQuayTrucI_local", d.chieuQuayTrucI || "cw");
+
+        // Đồng bộ vào các select nội bộ để toàn bộ công thức cũ vẫn chạy.
+        const gbMap = {medium:"medium", heavy:"heavy"};
+        set("dia_gearbox", gbMap[d.commonGearbox] || "medium");
+        if(typeof diaLoadSteels === "function") diaLoadSteels();
+
+        set("dia_steel", d.commonSteel);
+        if(typeof diaLoadHeat === "function") diaLoadHeat();
+
+        set("dia_heat", d.commonHeat);
+
+        // Đồng bộ phần kiểm nghiệm ẩn nếu có.
+        set("v_gearbox", gbMap[d.commonGearbox] || "medium");
+        if(typeof vLoadSteels === "function") vLoadSteels();
+        set("v_steel", d.commonSteel);
+        if(typeof vLoadHeat === "function") vLoadHeat();
+        set("v_heat", d.commonHeat);
+
+        if(typeof updateDiagrams === "function") updateDiagrams();
+    };
+
+    window.addEventListener("message", function(ev){
+        const d = ev.data || {};
+        if(d.commonGearbox || d.chieuQuayTrucI){
+            applyCommonMaterialToShaft1(d);
+        }
+    });
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="restore-force-arrow-heads-trucI-final">
+(function(){
+    function ensureForceArrowMarker(){
+        const svg = document.querySelector("svg");
+        if(!svg) return;
+        let defs = svg.querySelector("defs");
+        if(!defs){
+            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+            svg.insertBefore(defs, svg.firstChild);
+        }
+
+        let marker = svg.querySelector("#forceArrowI");
+        if(marker) marker.remove();
+
+        marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+        marker.setAttribute("id", "forceArrowI");
+        marker.setAttribute("viewBox", "0 0 10 10");
+        marker.setAttribute("markerWidth", "9");
+        marker.setAttribute("markerHeight", "9");
+        marker.setAttribute("refX", "9");
+        marker.setAttribute("refY", "5");
+        marker.setAttribute("orient", "auto");
+        marker.setAttribute("markerUnits", "strokeWidth");
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+        path.setAttribute("fill", "#a83bd8");
+        marker.appendChild(path);
+        defs.appendChild(marker);
+
+        svg.querySelectorAll("line.arrow, path.arrow, line.force, path.force, line.force-arrow, path.force-arrow, line.arrow-force, path.arrow-force").forEach(el=>{
+            el.setAttribute("marker-end", "url(#forceArrowI)");
+            el.setAttribute("stroke", "#a83bd8");
+            el.setAttribute("stroke-width", "1.9");
+            el.setAttribute("stroke-linecap", "round");
+        });
+
+        svg.querySelectorAll('.qy-line, .mx-line, .qx-line, .my-line, .t-line, .diagram-line, .line-diagram, .moment-line, .shear-line').forEach(el=>{
+            el.setAttribute("stroke-width", "2.8");
+            el.setAttribute("stroke-linecap", "round");
+            el.setAttribute("stroke-linejoin", "round");
+            el.setAttribute("fill", "none");
+        });
+    }
+
+    const oldUpdate = window.updateDiagrams;
+    if(typeof oldUpdate === "function" && !window.__forceArrowIFinalPatched){
+        window.__forceArrowIFinalPatched = true;
+        window.updateDiagrams = function(){
+            oldUpdate.apply(this, arguments);
+            ensureForceArrowMarker();
+        };
+        document.addEventListener("DOMContentLoaded", function(){
+            setTimeout(ensureForceArrowMarker, 50);
+            setTimeout(ensureForceArrowMarker, 300);
+        });
+    }else{
+        document.addEventListener("DOMContentLoaded", function(){
+            setTimeout(ensureForceArrowMarker, 50);
+            setTimeout(ensureForceArrowMarker, 300);
+        });
+    }
+})();
+</script>
+
+</body>
+</html>
+<style id="hide-local-material-select-shaft1">
+#shaftDiameterControls .check-grid > .check-field:nth-child(1),
+#shaftDiameterControls .check-grid > .check-field:nth-child(2),
+#shaftDiameterControls .check-grid > .check-field:nth-child(3){
+    display:none !important;
+}
+#shaftDiameterControls h3::after{
+    content:" - nhận từ phần chọn chung Index";
+    color:#64748b;
+    font-weight:600;
+    font-size:13px;
+}
+</style>

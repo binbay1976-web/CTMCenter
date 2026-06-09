@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiết kế trục + lực bánh răng</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg1:#eaf4ff;--bg2:#f8fbff;--bg3:#eefcf6;
+--main:#2563eb;--main2:#1d4ed8;--green:#16a34a;--green2:#22c55e;
+--text:#0f172a;--muted:#64748b
+}
+body{
+font-family:"Segoe UI",Arial,sans-serif;
+background:
+radial-gradient(circle at top left,#dff6ff 0%,transparent 28%),
+radial-gradient(circle at top right,#dcfce7 0%,transparent 24%),
+linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+min-height:100vh;padding:28px;color:#1f2937
+}
+.container{
+width:1380px;max-width:100%;margin:0 auto;background:rgba(255,255,255,.96);
+border-radius:28px;padding:32px;box-shadow:0 24px 55px rgba(0,0,0,.12);
+border:1px solid rgba(255,255,255,.85)
+}
+h1{text-align:center;margin-bottom:10px;color:var(--text);font-size:34px;letter-spacing:1px;text-transform:uppercase}
+.subtitle{text-align:center;color:var(--muted);font-size:15px;margin-bottom:26px}
+.form-box{
+background:linear-gradient(135deg,#f8fbff,#eef8ff 50%,#f0fdf4);
+border:1px solid #d8ebff;border-radius:24px;padding:26px;
+box-shadow:0 12px 26px rgba(30,64,175,.08);margin-bottom:28px
+}
+.form-title{font-size:24px;font-weight:800;color:#0f4c81;margin-bottom:20px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 20px}
+.input-group{display:flex;flex-direction:column}
+.input-group label{font-weight:700;margin-bottom:8px;color:#1e3a8a;font-size:15px}
+.input-group input,
+.input-group select{
+width:100%;
+min-height:50px;
+padding:14px 15px;border-radius:16px;border:1.5px solid #c7defa;
+font-size:15px;outline:none;
+font-family:inherit;
+}
+.input-group select{
+appearance:none;
+-webkit-appearance:none;
+padding-right:38px;
+}
+.input-group input:focus,
+.input-group select:focus{border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.12)}
+.btn-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:22px}
+button{
+padding:15px 18px;border:none;border-radius:18px;font-size:16px;font-weight:800;
+cursor:pointer;color:white;letter-spacing:.5px
+}
+.btn-main{background:linear-gradient(135deg,var(--green),var(--green2))}
+.btn-second{background:linear-gradient(135deg,var(--main2),#3b82f6)}
+.btn-third{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+.note{
+margin-top:12px;text-align:center;color:#64748b;font-size:14px;
+background:rgba(255,255,255,.75);border:1px dashed #cfe2ff;
+padding:10px 14px;border-radius:14px;line-height:1.5
+}
+.section{margin-top:24px}
+.section-title{
+font-size:21px;font-weight:800;color:#0f172a;margin-bottom:12px;
+padding-left:12px;border-left:5px solid #3b82f6
+}
+.table-card{
+background:linear-gradient(135deg,#fff,#f8fbff);border-radius:22px;padding:18px;
+box-shadow:0 12px 28px rgba(0,0,0,.08);border:1px solid #e1efff;
+overflow:auto;margin-bottom:20px
+}
+table{width:100%;border-collapse:collapse;min-width:900px}
+table tr:first-child th{
+background:linear-gradient(135deg,#0f4c81,#2563eb);color:white;
+font-weight:700;padding:13px 10px;text-align:center;font-size:15px
+}
+td,th{padding:12px 10px;text-align:center;border:1px solid #dbeafe}
+tr:nth-child(even) td{background:#f8fbff}
+.highlight{color:#dc2626;font-weight:800;font-size:16px}
+.good{color:#16a34a;font-weight:800}
+.bad{color:#dc2626;font-weight:800}
+.kq{
+margin-top:22px;background:linear-gradient(135deg,#eff6ff,#f0fdf4);
+border:1px solid #d9ebff;padding:22px;border-radius:22px;
+box-shadow:0 12px 28px rgba(0,0,0,.08)
+}
+.result-title{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:18px;text-align:center}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.result-card{
+background:white;border-radius:18px;padding:16px;
+box-shadow:0 8px 18px rgba(0,0,0,.07);border:1px solid #e5eefc
+}
+.result-card h3{margin-bottom:12px;color:#1d4ed8;font-size:18px}
+.result-item{
+padding:10px 12px;margin-bottom:8px;border-radius:12px;
+background:linear-gradient(90deg,#f8fbff,#eef7ff);
+border-left:4px solid #3b82f6;font-size:15px;line-height:1.5
+}
+.result-item b{color:#111827}
+.equal-force{
+margin-top:16px;background:linear-gradient(135deg,#fff7ed,#fefce8);
+border:1px solid #fde68a;border-radius:18px;padding:16px
+}
+.equal-force h3{color:#b45309;margin-bottom:12px;font-size:18px}
+.equal-force .result-item{
+background:linear-gradient(90deg,#fffdf4,#fff7e6);
+border-left:4px solid #f59e0b
+}
+#canvas3d{
+width:100%;height:500px;
+background:
+linear-gradient(135deg,#f8fbff,#edf4ff),
+repeating-linear-gradient(0deg,rgba(37,99,235,.035) 0px,rgba(37,99,235,.035) 1px,transparent 1px,transparent 24px),
+repeating-linear-gradient(90deg,rgba(37,99,235,.035) 0px,rgba(37,99,235,.035) 1px,transparent 1px,transparent 24px);
+margin-top:22px;border-radius:24px;border:1px solid #dbeafe;
+box-shadow:inset 0 2px 6px rgba(0,0,0,.05)
+}
+.footer-note{margin-top:18px;text-align:center;color:#64748b;font-size:13px}
+@media(max-width:1000px){
+.grid,.result-grid,.btn-wrap{grid-template-columns:1fr}
+h1{font-size:28px}body{padding:16px}.container{padding:18px}
+}
+
+.diagram-frame{width:100%;height:1180px;border:1px solid #cbd5e1;border-radius:18px;background:#fff;box-shadow:0 10px 24px rgba(15,23,42,.08)}
+.diagram-frame.tall{height:1180px}
+.sync-note{margin-top:10px;text-align:center;color:#1e3a8a;font-size:13px;font-weight:700}
+.diam-status{margin-top:12px;padding:10px 12px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;font-weight:700;text-align:center;font-size:13px}
+/* === THEME TOGGLE BUTTON === */
+.theme-btn{
+  position:fixed;top:14px;right:16px;z-index:9999;
+  background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);
+  border:1.5px solid rgba(255,255,255,0.3);
+  color:#fff;font-size:18px;width:40px;height:40px;
+  border-radius:50%;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;
+  transition:all 0.25s ease;box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+body.light-theme .theme-btn{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.15);color:#1f2937;}
+.theme-btn:hover{transform:scale(1.1);}
+</style>
+<link rel="stylesheet" href="../shared-dark.css">
+<style>
+/* ══ DARK MODE FORCED OVERRIDES ══
+   Ép dark mode thắng mọi CSS inline / gradient sáng trong module.
+   Chỉ áp dụng khi KHÔNG có class light-theme trên body. */
+body:not(.light-theme) .container {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .form-box {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .form-title { color: #58a6ff !important; }
+body:not(.light-theme) .input-group label { color: #8b949e !important; }
+body:not(.light-theme) .input-group input,
+body:not(.light-theme) .input-group select {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #e6edf3 !important;
+}
+body:not(.light-theme) .input-group input:focus,
+body:not(.light-theme) .input-group select:focus {
+  border-color: #58a6ff !important;
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.15) !important;
+}
+body:not(.light-theme) .input-group input[readonly],
+body:not(.light-theme) .input-group input:disabled,
+body:not(.light-theme) .input-group select:disabled {
+  background: #30363d !important;
+  color: #6e7681 !important;
+}
+body:not(.light-theme) .section-title {
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
+}
+body:not(.light-theme) .table-card {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .kq {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .result-card {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .result-item {
+  background: #21262d !important;
+  border-left-color: #58a6ff !important;
+  color: #e6edf3 !important;
+}
+body:not(.light-theme) .result-item b { color: #e6edf3 !important; }
+body:not(.light-theme) .equal-force {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .note {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #8b949e !important;
+}
+body:not(.light-theme) .diam-status {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #8b949e !important;
+}
+body:not(.light-theme) .diagram-frame,
+body:not(.light-theme) .frame-wrap {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .footer-note { color: #6e7681 !important; }
+body:not(.light-theme) .subtitle { color: #8b949e !important; }
+body:not(.light-theme) .group-title {
+  background: #21262d !important;
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
+}
+
+/* ── Light-theme overrides (khi chuyển sang sáng) ── */
+body.light-theme {
+  background: radial-gradient(circle at top left,#dff6ff 0%,transparent 28%),
+    radial-gradient(circle at top right,#dcfce7 0%,transparent 24%),
+    linear-gradient(135deg,#eaf4ff,#f8fbff,#eefcf6) !important;
+  color: #1f2937 !important;
+}
+body.light-theme .container { background: rgba(255,255,255,.96) !important; }
+body.light-theme h1 { color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background: none !important; }
+body.light-theme .subtitle { color: #64748b !important; }
+body.light-theme .form-box { background: linear-gradient(135deg,#f8fbff,#eef8ff 50%,#f0fdf4) !important; border-color: #d8ebff !important; }
+body.light-theme .form-title { color: #0f4c81 !important; }
+body.light-theme .input-group label { color: #1e3a8a !important; }
+body.light-theme .input-group input, body.light-theme .input-group select { background: linear-gradient(180deg,#fff,#f7fbff) !important; border-color: #c7defa !important; color: #1f2937 !important; }
+body.light-theme .section-title { color: #0f172a !important; border-left-color: #3b82f6 !important; }
+body.light-theme .table-card { background: linear-gradient(135deg,#fff,#f8fbff) !important; border-color: #e1efff !important; }
+body.light-theme table tr:first-child th { background: linear-gradient(135deg,#0f4c81,#2563eb) !important; color: white !important; }
+body.light-theme td, body.light-theme th { border-color: #dbeafe !important; color: #1f2937 !important; background: transparent !important; }
+body.light-theme tr:nth-child(even) td { background: #f8fbff !important; }
+body.light-theme .kq { background: linear-gradient(135deg,#eff6ff,#f0fdf4) !important; border-color: #d9ebff !important; }
+body.light-theme .result-title { color: #0f172a !important; }
+body.light-theme .result-card { background: white !important; border-color: #e5eefc !important; }
+body.light-theme .result-card h3 { color: #1d4ed8 !important; -webkit-text-fill-color: #1d4ed8 !important; background: none !important; padding: 0 !important; border-radius: 0 !important; }
+body.light-theme .result-item { background: linear-gradient(90deg,#f8fbff,#eef7ff) !important; border-left-color: #3b82f6 !important; color: #1f2937 !important; }
+body.light-theme .result-item b { color: #111827 !important; }
+body.light-theme .equal-force { background: linear-gradient(135deg,#fff7ed,#fefce8) !important; border-color: #fde68a !important; }
+body.light-theme .equal-force h3 { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; background: none !important; padding: 0 !important; border-radius: 0 !important; }
+body.light-theme .equal-force .result-item { background: linear-gradient(90deg,#fffdf4,#fff7e6) !important; border-left-color: #f59e0b !important; }
+body.light-theme .note { color: #64748b !important; background: rgba(255,255,255,.75) !important; border-color: #cfe2ff !important; }
+body.light-theme .diam-status { background: #eff6ff !important; border-color: #bfdbfe !important; color: #1e3a8a !important; }
+body.light-theme .footer-note { color: #64748b !important; }
+body.light-theme .highlight { color: #dc2626 !important; }
+body.light-theme .good { color: #16a34a !important; }
+body.light-theme .bad { color: #dc2626 !important; }
+body.light-theme .diagram-frame { background: #fff !important; border-color: #cbd5e1 !important; }
+body.light-theme select { color-scheme: light !important; background: #fff !important; color: #1f2937 !important; }
+body.light-theme button { background: linear-gradient(135deg,#16a34a,#22c55e) !important; }
+body.light-theme .btn-second { background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important; }
+body.light-theme .btn-third { background: linear-gradient(135deg,#7c3aed,#a855f7) !important; }
+</style>
+</head>
+
+<body>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện Sáng/Tối">🌙</button>
+
+<div class="container">
+
+<h1>THIẾT KẾ TRỤC + LỰC BÁNH RĂNG</h1>
+<div class="subtitle">Tính lực bánh răng, phản lực ổ lăn, mô hình 3D và biểu đồ lực hai trục</div>
+
+<div class="form-box">
+<div class="form-title">Nhập thông số tính toán</div>
+
+<div class="grid">
+<div class="input-group"><label for="T1">Mômen xoắn T1</label><input id="T1" value="83235"></div>
+<div class="input-group"><label for="tau1">Ứng suất tiếp cho phép τ1</label><input id="tau1" value="18"></div>
+
+<div class="input-group"><label for="T2">Mômen xoắn T2</label><input id="T2" value="320880"></div>
+<div class="input-group"><label for="tau2">Ứng suất tiếp cho phép τ2</label><input id="tau2" value="25"></div>
+
+<div class="input-group"><label for="alpha">Góc áp lực α (độ)</label><input id="alpha" value="20"></div>
+<div class="input-group"><label for="beta">Góc nghiêng răng β (độ)</label><input id="beta" value="20"></div>
+
+<div class="input-group"><label for="loaiHopChung">Chọn loại hộp giảm tốc</label><select id="loaiHopChung" onchange="capNhatMacThepChung();tinh();syncBieuDo()"><option value="trung_binh">Hộp giảm tốc chịu tải trọng trung bình</option><option value="tai_nang">Hộp giảm tốc chịu tải nặng, trục đặt trên ổ trượt quay nhanh</option></select></div>
+<div class="input-group"><label for="macThepChung">Mác thép</label><select id="macThepChung" onchange="capNhatNhietLuyenChung();tinh();syncBieuDo()"></select></div>
+
+<div class="input-group"><label for="nhietLuyenChung">Phương pháp nhiệt luyện</label><select id="nhietLuyenChung" onchange="tinh();syncBieuDo()"></select></div>
+<div class="input-group"><label for="chieuQuayTrucI">Chiều quay trục I</label><select id="chieuQuayTrucI" onchange="tinh();syncBieuDo()"><option value="cung">Cùng chiều kim đồng hồ</option><option value="nguoc">Ngược chiều kim đồng hồ</option></select></div>
+
+<div class="input-group"><label for="huongNghiengTrucI">Chiều nghiêng bánh răng trục I</label><select id="huongNghiengTrucI" onchange="tinh();syncBieuDo()"><option value="trai">Nghiêng trái</option><option value="phai">Nghiêng phải</option></select></div>
+
+<div class="input-group"><label for="dw1">Đường kính vòng chia d_w1</label><input id="dw1" value="58"></div>
+<div class="input-group"><label for="dw2">Đường kính vòng chia d_w2</label><input id="dw2" value="232"></div>
+
+<div class="input-group"><label for="Fd">Fr(đai) trên trục 1</label><input id="Fd" value="995"></div>
+<div class="input-group"><label for="FK">Lực ngoài Fk trên trục 2</label><input id="FK" value="1333"></div>
+
+<div class="input-group"><label for="k1s1">k1 trục 1, giới hạn 8...15</label><input id="k1s1" value="10"></div>
+
+<div class="input-group"><label for="k2s1">k2 trục 1, giới hạn 5...15</label><input id="k2s1" value="10"></div>
+
+<div class="input-group"><label for="k3Input">k3 dùng chung</label><input id="k3Input" value="15"></div>
+<div class="input-group"><label for="hnInput">hn dùng chung</label><input id="hnInput" value="20"></div>
+</div>
+
+<div class="btn-wrap">
+<button class="btn-main" onclick="tinhVaHienThi()">TÍNH TOÁN</button>
+<button class="btn-second" onclick="ve3DTruc1()">XEM 3D TRỤC 1</button>
+<button class="btn-third" onclick="ve3DTruc2()">XEM 3D TRỤC 2</button>
+</div>
+
+<div class="note">
+Trục 1: AB=l12, BC=l13, BD=l11, CD=l11-l13, BD=BC+CD.<br>
+FDy=(Fr1·BC + Fr(đai)·AB + MFa1)/BD; FBy=Fr(đai)-Fr1+FDy; FDx=(Ft1·BC)/BD; FBx=Ft1-FDx.<br>
+Trục 2: AC=l21, BC=l23, CD=l22, AB=l21-l23, AD=l21+l22.<br>
+FCy=(Fr2·AB-MFa2)/AC; FAy=Fr2-FCy; FCx=(Ft2·AB-Fk·AD)/AC; FAx=-FCx+Ft2-Fk.
+</div>
+</div>
+
+<div id="result-area" style="display:none">
+
+<div class="section">
+<div class="section-title">Kết quả tính đường kính trục</div>
+<div class="table-card">
+<table id="table">
+<tr><th>Trục</th><th>d tính</th><th>d chọn</th><th>b0</th></tr>
+</table>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Khoảng cách các chi tiết trên trục</div>
+<div class="table-card">
+<table id="kc">
+<tr><th colspan="11">Khoảng cách các chi tiết</th></tr>
+<tr>
+<th>Trục</th><th>lm</th><th>k1</th><th>k2</th><th>l11</th><th>l12</th><th>l13</th>
+<th>l21</th><th>l22</th><th>l23</th><th>Ghi chú</th>
+</tr>
+</table>
+</div>
+</div>
+
+<div class="section" style="display:none">
+<div class="section-title">Kiểm tra cân bằng khoảng cách</div>
+<div class="table-card">
+<table id="balanceTable">
+<tr><th>L1</th><th>L2</th><th>2L1</th><th>2L2</th><th>Sai lệch</th><th>Đánh giá</th></tr>
+</table>
+</div>
+</div>
+
+<div class="kq" id="luc">
+<div class="result-title">Kết quả lực sẽ hiển thị tại đây</div>
+</div>
+
+<div id="canvas3d"></div>
+<div id="diamStatus" class="diam-status">Đường kính 3D sẽ lấy theo kết quả kiểm nghiệm từ biểu đồ trục I và trục II sau khi bấm TÍNH TOÁN.</div>
+
+<div class="section">
+<div class="section-title">Biểu đồ lực và kiểm nghiệm trục I</div>
+<div class="table-card">
+<iframe id="frameTrucI" class="diagram-frame tall" src="sodoluctrucI_sync.html"></iframe>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Biểu đồ lực và kiểm nghiệm trục II</div>
+<div class="table-card">
+<iframe id="frameTrucII" class="diagram-frame tall" src="sodoluctrucII_sync.html"></iframe>
+</div>
+</div>
+
+<div class="footer-note">Mô hình 3D thể hiện các bậc trục theo đường kính d1A, d1B, d1C, d1D và d2A, d2B, d2C, d2D.</div>
+
+</div><!-- /result-area -->
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+function degToRad(deg){
+return deg * Math.PI / 180;
+}
+
+function getNumber(id){
+const el = document.getElementById(id);
+if(!el) return NaN;
+let raw = String(el.value || '').trim();
+// Cho phép nhập số thập phân kiểu Việt Nam: 15,1 sẽ hiểu là 15.1
+raw = raw.replace(/,/g, '.');
+return parseFloat(raw);
+}
+
+function lamTronSoNguyen(value){
+let n = Number(value);
+if(!Number.isFinite(n)) return 0;
+return Math.round(n);
+}
+
+let k3 = 10;
+let hn = 20;
+let CHAMFER = 2;
+let data = {};
+
+const vatLieuChung = {
+    trung_binh: {
+        label: "Hộp giảm tốc chịu tải trọng trung bình",
+        thep: {
+            "45": {label:"Thép 45", nhietLuyen:{thuong_hoa:"Thường hóa", toi_cai_thien:"Tôi cải thiện"}},
+            "40X": {label:"Thép 40X", nhietLuyen:{toi_cai_thien:"Tôi cải thiện"}}
+        }
+    },
+    tai_nang: {
+        label: "Hộp giảm tốc chịu tải nặng, trục đặt trên ổ trượt quay nhanh",
+        thep: {
+            "20X": {label:"Thép 20X", nhietLuyen:{tham_cacbon:"Thấm cacbon"}},
+            "12XH3A": {label:"Thép 12XH3A", nhietLuyen:{tham_cacbon:"Thấm cacbon"}},
+            "18XGT": {label:"Thép 18XGT", nhietLuyen:{tham_cacbon:"Thấm cacbon"}}
+        }
+    }
+};
+
+function capNhatMacThepChung(){
+    const loai = document.getElementById('loaiHopChung')?.value || 'trung_binh';
+    const mac = document.getElementById('macThepChung');
+    if(!mac) return;
+    mac.innerHTML = Object.entries(vatLieuChung[loai].thep).map(([key,val]) => `<option value="${key}">${val.label}</option>`).join('');
+    capNhatNhietLuyenChung();
+}
+function capNhatNhietLuyenChung(){
+    const loai = document.getElementById('loaiHopChung')?.value || 'trung_binh';
+    const macKey = document.getElementById('macThepChung')?.value || Object.keys(vatLieuChung[loai].thep)[0];
+    const nl = document.getElementById('nhietLuyenChung');
+    if(!nl) return;
+    const ds = vatLieuChung[loai].thep[macKey].nhietLuyen;
+    nl.innerHTML = Object.entries(ds).map(([key,label]) => `<option value="${key}">${label}</option>`).join('');
+}
+function layVatLieuChung(){
+    const loaiHopChung = document.getElementById('loaiHopChung')?.value || 'trung_binh';
+    const macThepCode = document.getElementById('macThepChung')?.value || Object.keys(vatLieuChung[loaiHopChung].thep)[0];
+    const nhietLuyenCode = document.getElementById('nhietLuyenChung')?.value || Object.keys(vatLieuChung[loaiHopChung].thep[macThepCode].nhietLuyen)[0];
+    const macThepText = vatLieuChung[loaiHopChung].thep[macThepCode].label;
+    const nhietLuyenText = vatLieuChung[loaiHopChung].thep[macThepCode].nhietLuyen[nhietLuyenCode];
+    return {
+        loaiHopChung,
+        loaiHopI: loaiHopChung === 'tai_nang' ? 'nang' : 'tb',
+        loaiHopII: loaiHopChung === 'tai_nang' ? 'tai_nang' : 'trung_binh',
+        macThepCode,
+        macThepText,
+        nhietLuyenCode,
+        nhietLuyenText
+    };
+}
+function layChieuQuayNghiengChung(){
+    const chieuQuayI = document.getElementById('chieuQuayTrucI')?.value || 'cung';
+    const chieuQuayII = chieuQuayI === 'cung' ? 'nguoc' : 'cung';
+    const nghiengI = document.getElementById('huongNghiengTrucI')?.value || 'trai';
+    const nghiengII = nghiengI === 'trai' ? 'phai' : 'trai';
+    return {chieuQuayI, chieuQuayII, nghiengI, nghiengII};
+}
+
+function chonTheoBang(d_tinh){
+let d_std = [20,25,30,35,40,45,50,55,60,65];
+let b0_std = [15,17,19,21,23,25,27,29,31,33];
+
+let d = d_std[d_std.length - 1];
+let b0 = b0_std[b0_std.length - 1];
+
+for(let i = 0; i < d_std.length; i++){
+if(d_std[i] >= d_tinh){
+d = d_std[i];
+b0 = b0_std[i];
+break;
+}
+}
+return {d,b0};
+}
+
+
+function tinh(){
+
+let table = document.getElementById("table");
+let kc = document.getElementById("kc");
+let balanceTable = document.getElementById("balanceTable");
+
+while(table.rows.length > 1) table.deleteRow(1);
+while(kc.rows.length > 2) kc.deleteRow(2);
+while(balanceTable.rows.length > 1) balanceTable.deleteRow(1);
+
+let T1 = getNumber("T1");
+let tau1 = getNumber("tau1");
+let T2 = getNumber("T2");
+let tau2 = getNumber("tau2");
+
+let alpha = degToRad(getNumber("alpha"));
+let beta = degToRad(getNumber("beta"));
+let dw1 = getNumber("dw1");
+let dw2 = getNumber("dw2");
+
+let Fd = getNumber("Fd") || 0;
+let Fk = getNumber("FK") || 0;
+
+let k1s1 = getNumber("k1s1");
+let k2s1 = getNumber("k2s1");
+k3 = getNumber("k3Input");
+hn = getNumber("hnInput");
+
+if(isNaN(T1) || isNaN(tau1) || isNaN(T2) || isNaN(tau2)){
+alert("Nhập thiếu dữ liệu trục!");
+return;
+}
+
+if(isNaN(dw1) || isNaN(dw2)){
+alert("Nhập thiếu dw1 hoặc dw2!");
+return;
+}
+
+
+if(isNaN(k1s1) || k1s1 < 8 || k1s1 > 15){
+alert("k1 trục 1 phải nằm trong khoảng 8 đến 15!");
+return;
+}
+
+if(isNaN(k2s1) || k2s1 < 5 || k2s1 > 15){
+alert("k2 trục 1 phải nằm trong khoảng 5 đến 15!");
+return;
+}
+
+if(isNaN(k3) || isNaN(hn)){
+alert("Nhập thiếu k3 hoặc hn!");
+return;
+}
+
+let d1_tinh = Math.cbrt((16 * T1) / (Math.PI * tau1));
+let chon1 = chonTheoBang(d1_tinh);
+let d1 = chon1.d;
+let b01 = chon1.b0;
+
+let d2_tinh = Math.cbrt((16 * T2) / (Math.PI * tau2));
+let chon2 = chonTheoBang(d2_tinh);
+let d2 = chon2.d;
+let b02 = chon2.b0;
+
+let lm12_raw = 1.3 * (d1 - 5);
+let lm13_raw = 1.3 * (d1 + 5);
+let lm22_raw = 1.8 * (d2 - 5);
+let lm23_raw = 1.3 * (d2 + 5);
+
+let lm12 = lamTronSoNguyen(lm12_raw);
+let lm13 = lamTronSoNguyen(lm13_raw);
+let lm22 = lamTronSoNguyen(lm22_raw);
+let lm23 = lamTronSoNguyen(lm23_raw);
+
+let k1s2 = k1s1;
+let k2s2 = k2s1;
+
+let l13 = lamTronSoNguyen(0.5 * (lm13 + b01) + k1s1 + k2s1);
+let l23 = lamTronSoNguyen(0.5 * (lm23 + b02) + k1s2 + k2s2);
+
+let maxL13L23 = Math.max(l13, l23);
+l13 = maxL13L23;
+l23 = maxL13L23;
+
+let l11 = lamTronSoNguyen(2 * l13);
+let l12 = lamTronSoNguyen(0.5 * (lm12 + b01) + k3 + hn);
+
+let l21 = lamTronSoNguyen(2 * l23);
+let l22 = lamTronSoNguyen(0.5 * (lm22 + b02) + k3 + hn);
+
+let maxL11L21 = Math.max(l11, l21);
+l11 = maxL11L21;
+l21 = maxL11L21;
+
+let maxL12L22 = Math.max(l12, l22);
+l12 = maxL12L22;
+l22 = maxL12L22;
+
+table.insertRow().innerHTML =
+`<td><b>Trục 1</b></td>
+<td>${d1_tinh.toFixed(2)}</td>
+<td class="highlight">${d1}</td>
+<td>${b01}</td>`;
+
+table.insertRow().innerHTML =
+`<td><b>Trục 2</b></td>
+<td>${d2_tinh.toFixed(2)}</td>
+<td class="highlight">${d2}</td>
+<td>${b02}</td>`;
+
+kc.insertRow().innerHTML =
+`<td><b>Trục 1</b></td>
+<td>lm12 = ${lm12}<br>lm13 = ${lm13}</td>
+<td>${k1s1.toFixed(1)}</td>
+<td>${k2s1.toFixed(1)}</td>
+<td>${l11}</td>
+<td>${l12}</td>
+<td>${l13}</td>
+<td>-</td><td>-</td><td>-</td>
+<td>lm12 = 1,3 × (d1 chọn − 5) = 1,3 × (${d1} − 5) = ${lm12_raw.toFixed(2)} → ${lm12}<br>lm13 = 1,3 × (d1 chọn + 5) = 1,3 × (${d1} + 5) = ${lm13_raw.toFixed(2)} → ${lm13}</td>`;
+
+kc.insertRow().innerHTML =
+`<td><b>Trục 2</b></td>
+<td>lm22 = ${lm22}<br>lm23 = ${lm23}</td>
+<td>${k1s2.toFixed(1)}</td>
+<td>${k2s2.toFixed(1)}</td>
+<td>-</td><td>-</td><td>-</td>
+<td>${l21}</td>
+<td>${l22}</td>
+<td>${l23}</td>
+<td>lm22 = 1,8 × (d2 chọn − 5) = 1,8 × (${d2} − 5) = ${lm22_raw.toFixed(2)} → ${lm22}<br>lm23 = 1,3 × (d2 chọn + 5) = 1,3 × (${d2} + 5) = ${lm23_raw.toFixed(2)} → ${lm23}</td>`;
+
+let Ft1 = 2 * T1 / dw1;
+let Fr1 = Ft1 * Math.tan(alpha) / Math.cos(beta);
+let Fa1 = Ft1 * Math.tan(beta);
+
+let Ft2 = Ft1;
+let Fr2 = Fr1;
+let Fa2 = Fa1;
+
+/* PHẢN LỰC TRỤC 1 */
+let AB1 = l12;
+let BC1 = l13;
+let BD1 = l11;
+let CD1 = l11 - l13;
+
+let MFa1 = Fa1 * (dw1 / 2);
+
+BD1 = BC1 + CD1;
+
+let FDy = (Fr1 * BC1 + Fd * AB1 + MFa1) / BD1;
+let FBy = Fd - Fr1 + FDy;
+
+let FDx = (Ft1 * BC1) / BD1;
+let FBx = Ft1 - FDx;
+
+/* PHẢN LỰC TRỤC 2 */
+let AC2 = l21;
+let BC2 = l23;
+let CD2 = l22;
+let AB2 = l21 - l23;
+let AD2 = l21 + l22;
+
+let MFa2 = Fa2 * (dw2 / 2);
+
+let FCy = (Fr2 * AB2 - MFa2) / AC2;
+let FAy = Fr2 - FCy;
+
+let FCx = (Ft2 * AB2 - Fk * AD2) / AC2;
+let FAx = -FCx + Ft2 - Fk;
+
+document.getElementById("luc").innerHTML = `
+<div class="result-title">Kết quả lực và phản lực ổ lăn</div>
+
+<div class="result-grid">
+<div class="result-card">
+<h3>Lực trên bánh răng</h3>
+<div class="result-item"><b>Ft1</b> = ${Ft1.toFixed(2)} N</div>
+<div class="result-item"><b>Fr1</b> = ${Fr1.toFixed(2)} N</div>
+<div class="result-item"><b>Fa1</b> = ${Fa1.toFixed(2)} N</div>
+<div class="result-item"><b>Ft2 = Ft1</b> = ${Ft2.toFixed(2)} N</div>
+<div class="result-item"><b>Fr2 = Fr1</b> = ${Fr2.toFixed(2)} N</div>
+<div class="result-item"><b>Fa2 = Fa1</b> = ${Fa2.toFixed(2)} N</div>
+</div>
+
+<div class="result-card">
+<h3>Moment do lực dọc trục</h3>
+<div class="result-item"><b>MFa1</b> = Fa1 × dw1/2 = ${MFa1.toFixed(2)} N.mm</div>
+<div class="result-item"><b>MFa2</b> = Fa2 × dw2/2 = ${MFa2.toFixed(2)} N.mm</div>
+</div>
+</div>
+
+<div class="equal-force">
+<h3>Phản lực ổ lăn trục 1</h3>
+<div class="result-item"><b>AB</b> = l12 = ${AB1.toFixed(2)} mm</div>
+<div class="result-item"><b>BC</b> = l13 = ${BC1.toFixed(2)} mm</div>
+<div class="result-item"><b>BD</b> = l11 = ${BD1.toFixed(2)} mm</div>
+<div class="result-item"><b>CD</b> = l11 - l13 = ${CD1.toFixed(2)} mm</div>
+<div class="result-item"><b>FDy</b> = ${FDy.toFixed(2)} N</div>
+<div class="result-item"><b>FBy</b> = ${FBy.toFixed(2)} N</div>
+<div class="result-item"><b>FDx</b> = ${FDx.toFixed(2)} N</div>
+<div class="result-item"><b>FBx</b> = ${FBx.toFixed(2)} N</div>
+</div>
+
+<div class="equal-force">
+<h3>Phản lực ổ lăn trục 2</h3>
+<div class="result-item"><b>AC</b> = l21 = ${AC2.toFixed(2)} mm</div>
+<div class="result-item"><b>BC</b> = l23 = ${BC2.toFixed(2)} mm</div>
+<div class="result-item"><b>CD</b> = l22 = ${CD2.toFixed(2)} mm</div>
+<div class="result-item"><b>AB</b> = l21 - l23 = ${AB2.toFixed(2)} mm</div>
+<div class="result-item"><b>AD</b> = l21 + l22 = ${AD2.toFixed(2)} mm</div>
+<div class="result-item"><b>FCy</b> = ${FCy.toFixed(2)} N</div>
+<div class="result-item"><b>FAy</b> = ${FAy.toFixed(2)} N</div>
+<div class="result-item"><b>FCx</b> = ${FCx.toFixed(2)} N</div>
+<div class="result-item"><b>FAx</b> = ${FAx.toFixed(2)} N</div>
+</div>
+
+
+<div class="equal-force">
+<h3>Chamfer 3D</h3>
+<div class="result-item"><b>Chamfer đầu trái</b> = ${CHAMFER} mm</div>
+<div class="result-item"><b>Chamfer đầu phải</b> = ${CHAMFER} mm</div>
+</div>
+`;
+
+data = {
+d1_tinh,d2_tinh,d1,d2,b01,b02,
+lm12,lm13,lm22,lm23,
+k1s1,k2s1,k1s2,k2s2,k3,hn,
+l11,l12,l13,l21,l22,l23,
+T1,tau1,T2,tau2,alpha,beta,dw1,dw2,Fd,Fk,
+Ft1,Fr1,Fa1,Ft2,Fr2,Fa2,
+MFa1,MFa2,FDy,FBy,FDx,FBx,FCy,FAy,FCx,FAx,
+material: layVatLieuChung(),
+chieuQuayNghieng: layChieuQuayNghiengChung()
+};
+syncBieuDo();
+}
+
+function taoLabel(text, x, y, z, scene){
+const canvas = document.createElement("canvas");
+canvas.width = 512;
+canvas.height = 128;
+
+const ctx = canvas.getContext("2d");
+ctx.fillStyle = "rgba(255,255,255,0.92)";
+ctx.fillRect(0,0,512,128);
+ctx.fillStyle = "#0f172a";
+ctx.font = "bold 36px Arial";
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+ctx.fillText(text,256,64);
+
+const texture = new THREE.CanvasTexture(canvas);
+const material = new THREE.SpriteMaterial({map:texture,transparent:true});
+const sprite = new THREE.Sprite(material);
+
+sprite.position.set(x,y,z);
+sprite.scale.set(48,12,1);
+scene.add(sprite);
+}
+
+function taoHinhTru(scene, mat, r1, r2, l, xCenter){
+let g = new THREE.CylinderGeometry(r1, r2, l, 64);
+let m = new THREE.Mesh(g, mat);
+m.rotation.z = Math.PI / 2;
+m.position.x = xCenter;
+scene.add(m);
+
+let edge = new THREE.EdgesGeometry(g);
+let line = new THREE.LineSegments(edge,new THREE.LineBasicMaterial({color:0x1e293b}));
+line.rotation.z = Math.PI / 2;
+line.position.x = xCenter;
+scene.add(line);
+}
+
+function taoDoanTruc(scene, mat, d, l, x, label, chamferLeft, chamferRight){
+let r = d / 2;
+let c = CHAMFER;
+
+if(l <= 2 * c){
+taoHinhTru(scene, mat, r, r, l, x + l / 2);
+}else{
+let startX = x;
+let endX = x + l;
+
+if(chamferLeft){
+taoHinhTru(scene, mat, r - c, r, c, startX + c / 2);
+startX += c;
+}
+
+if(chamferRight){
+taoHinhTru(scene, mat, r, r - c, c, endX - c / 2);
+endX -= c;
+}
+
+let midLen = endX - startX;
+
+if(midLen > 0){
+taoHinhTru(scene, mat, r, r, midLen, startX + midLen / 2);
+}
+}
+
+taoLabel(
+label + "   Ø" + d.toFixed(1) + " / L=" + l.toFixed(1),
+x + l / 2,
+r + 18,
+0,
+scene
+);
+
+return x + l;
+}
+
+function setupScene(){
+let container = document.getElementById("canvas3d");
+container.innerHTML = "";
+
+let scene = new THREE.Scene();
+scene.background = null;
+
+let camera = new THREE.PerspectiveCamera(
+65,
+container.clientWidth / container.clientHeight,
+0.1,
+3000
+);
+
+camera.position.set(0,90,210);
+
+let renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
+
+let controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+scene.add(new THREE.AmbientLight(0xffffff,0.9));
+
+let light = new THREE.DirectionalLight(0xffffff,1);
+light.position.set(90,90,80);
+scene.add(light);
+
+let light2 = new THREE.DirectionalLight(0xffffff,0.55);
+light2.position.set(-80,50,-60);
+scene.add(light2);
+
+let grid = new THREE.GridHelper(500,20,0x93c5fd,0xdbeafe);
+grid.rotation.x = Math.PI / 2;
+grid.position.y = -40;
+scene.add(grid);
+
+function animate(){
+requestAnimationFrame(animate);
+controls.update();
+renderer.render(scene,camera);
+}
+
+animate();
+
+return scene;
+}
+
+
+function cleanDiamSet(obj){
+    if(!obj) return null;
+    const out = {
+        dA: Number(obj.dA),
+        dB: Number(obj.dB),
+        dC: Number(obj.dC),
+        dD: Number(obj.dD)
+    };
+    if([out.dA,out.dB,out.dC,out.dD].some(v => !Number.isFinite(v) || v <= 0)) return null;
+    return out;
+}
+
+function pullVerifiedDiametersFromFrames(){
+    try{
+        const f1 = document.getElementById('frameTrucI');
+        const w1 = f1 && f1.contentWindow;
+        if(w1){
+            const td = w1.trucData ? {
+                dA:w1.trucData.dA,
+                dB:w1.trucData.dB,
+                dC:w1.trucData.dC,
+                dD:w1.trucData.dD
+            } : null;
+            const s1 = cleanDiamSet(td);
+            if(s1) data.verified1 = s1;
+        }
+    }catch(e){}
+
+    try{
+        const f2 = document.getElementById('frameTrucII');
+        const w2 = f2 && f2.contentWindow;
+        if(w2){
+            const cd = w2.lastChosenDiamKN ? {
+                dA:w2.lastChosenDiamKN.dA,
+                dB:w2.lastChosenDiamKN.dB,
+                dC:w2.lastChosenDiamKN.dC,
+                dD:w2.lastChosenDiamKN.dD
+            } : null;
+            const s2 = cleanDiamSet(cd);
+            if(s2) data.verified2 = s2;
+        }
+    }catch(e){}
+    updateDiamStatus();
+}
+
+function getVerifiedDiameters(shaft){
+    pullVerifiedDiametersFromFrames();
+    if(shaft === 1){
+        const s1 = cleanDiamSet(data.verified1);
+        if(s1) return s1;
+        alert('Chưa nhận được dA, dB, dC, dD đã kiểm nghiệm của trục I. Bấm TÍNH TOÁN, chờ biểu đồ trục I cập nhật xong rồi xem 3D.');
+        return null;
+    }
+    const s2 = cleanDiamSet(data.verified2);
+    if(s2) return s2;
+    alert('Chưa nhận được dA, dB, dC, dD đã kiểm nghiệm của trục II. Bấm TÍNH TOÁN, chờ biểu đồ trục II cập nhật xong rồi xem 3D.');
+    return null;
+}
+
+function updateDiamStatus(){
+    const el = document.getElementById('diamStatus');
+    if(!el || !data) return;
+    const s1 = data.verified1;
+    const s2 = data.verified2;
+    const f = v => Number.isFinite(Number(v)) ? Number(v).toFixed(1) : '-';
+    if(s1 && s2){
+        el.innerHTML = `Đường kính 3D đang dùng từ kiểm nghiệm: Trục I d1A=${f(s1.dA)}, d1B=${f(s1.dB)}, d1C=${f(s1.dC)}, d1D=${f(s1.dD)}; Trục II d2A=${f(s2.dA)}, d2B=${f(s2.dB)}, d2C=${f(s2.dC)}, d2D=${f(s2.dD)}.`;
+    }else if(s1){
+        el.innerHTML = `Đã nhận đường kính kiểm nghiệm Trục I: d1A=${f(s1.dA)}, d1B=${f(s1.dB)}, d1C=${f(s1.dC)}, d1D=${f(s1.dD)}. Trục II đang chờ biểu đồ trả kết quả.`;
+    }else if(s2){
+        el.innerHTML = `Đã nhận đường kính kiểm nghiệm Trục II: d2A=${f(s2.dA)}, d2B=${f(s2.dB)}, d2C=${f(s2.dC)}, d2D=${f(s2.dD)}. Trục I đang chờ biểu đồ trả kết quả.`;
+    }else{
+        el.innerHTML = 'Đang chờ kết quả kiểm nghiệm từ biểu đồ trục I và trục II.';
+    }
+}
+
+function ve3DTruc1(){
+syncBieuDo();
+pullVerifiedDiametersFromFrames();
+if(!data.d1){
+alert("Bấm TÍNH TOÁN trước!");
+return;
+}
+
+let scene = setupScene();
+
+let mat = new THREE.MeshPhongMaterial({
+color:0x4fc3f7,
+shininess:120
+});
+
+let dset1 = getVerifiedDiameters(1);
+if(!dset1) return;
+let d1A = dset1.dA;
+let d1B = dset1.dB;
+let d1C = dset1.dC;
+let d1D = dset1.dD;
+
+let x = 0;
+
+let L1 = data.lm12 + data.k3 + data.hn;
+let L2 = data.b01;
+let L3 = data.k2s1 + data.k1s1;
+let L4 = data.lm23;
+let L5 = data.k1s1 + data.k2s1 + data.b01;
+
+x = taoDoanTruc(scene, mat, d1A, L1, x, "d1A", true, false);
+x = taoDoanTruc(scene, mat, d1B, L2, x, "d1B", false, false);
+x = taoDoanTruc(scene, mat, d1B + 10, L3, x, "d1B+10", false, false);
+x = taoDoanTruc(scene, mat, d1C, L4, x, "d1C", false, false);
+x = taoDoanTruc(scene, mat, d1D, L5, x, "d1D", false, true);
+
+taoLabel("MÔ HÌNH 3D TRỤC 1 - CHAMFER 2mm HAI ĐẦU", x / 2, 78, 0, scene);
+}
+
+function ve3DTruc2(){
+syncBieuDo();
+pullVerifiedDiametersFromFrames();
+if(!data.d2){
+alert("Bấm TÍNH TOÁN trước!");
+return;
+}
+
+let scene = setupScene();
+
+let mat = new THREE.MeshPhongMaterial({
+color:0xa78bfa,
+shininess:120
+});
+
+let dset2 = getVerifiedDiameters(2);
+if(!dset2) return;
+let d2A = dset2.dA;
+let d2B = dset2.dB;
+let d2C = dset2.dC;
+let d2D = dset2.dD;
+
+let x = 0;
+
+let L1 = data.b02 + data.k2s2 + data.k1s2;
+let L2 = data.lm23;
+let L3 = data.k1s2 + data.k2s2;
+let L4 = data.b02;
+let L5 = data.hn + data.k3 + data.lm12;
+
+x = taoDoanTruc(scene, mat, d2A, L1, x, "d2A", true, false);
+x = taoDoanTruc(scene, mat, d2B, L2, x, "d2B", false, false);
+x = taoDoanTruc(scene, mat, d2A + 10, L3, x, "d2A+10", false, false);
+x = taoDoanTruc(scene, mat, d2C, L4, x, "d2C", false, false);
+x = taoDoanTruc(scene, mat, d2D, L5, x, "d2D", false, true);
+
+taoLabel("MÔ HÌNH 3D TRỤC 2 - CHAMFER 2mm HAI ĐẦU", x / 2, 78, 0, scene);
+}
+
+
+
+function round2(v){
+    const n = Number(v);
+    if(!Number.isFinite(n)) return v;
+    return Number(n.toFixed(2));
+}
+function buildPayloads(){
+    if(!data || !data.d1) return null;
+    return {
+        trucI:{
+            type:'SYNC_TRUC_I', Fr:round2(data.Fd), Fd:round2(data.Fd), Fr1:round2(data.Fr1), Fa1:round2(data.Fa1), Ft1:round2(data.Ft1), T1:round2(data.T1), T:round2(data.T1),
+            tauAllow:round2(data.tau1), dw1:round2(data.dw1), AB:round2(data.l12), BC:round2(data.l13), CD:round2(data.l11),
+            lmA:round2(data.lm12), lmC:round2(data.lm13), lm12:round2(data.lm12), lm13:round2(data.lm13), beta:round2(getNumber('beta')), dw:round2(data.dw1),
+            chieuQuay:data.chieuQuayNghieng.chieuQuayI, huongNghiengC:data.chieuQuayNghieng.nghiengI, material:data.material
+        },
+        trucII:{
+            type:'SYNC_TRUC_II', Fk:round2(data.Fk), Fr2:round2(data.Fr2), Fa2:round2(data.Fa2), Ft2:round2(data.Ft2), T1:round2(data.T2), T2:round2(data.T2), T:round2(data.T2),
+            tauAllowTop:round2(data.tau2), tauAllow:round2(data.tau2), dw2:round2(data.dw2), l21:round2(data.l21), l23:round2(data.l23), l22:round2(data.l22),
+            d2SoBo:round2(data.d2_tinh), lmB:round2(data.lm23), lmD:round2(data.lm22), lm22:round2(data.lm22), lm23:round2(data.lm23), beta:round2(getNumber('beta')), dw:round2(data.dw2),
+            rotationDirection:data.chieuQuayNghieng.chieuQuayII, helixDirection:data.chieuQuayNghieng.nghiengII, fkDirection:'duong', material:data.material
+        }
+    };
+}
+function postToFrame(frameId, payload){
+    const frame = document.getElementById(frameId);
+    if(frame && frame.contentWindow){
+        frame.contentWindow.postMessage(payload, '*');
+    }
+}
+function syncBieuDo(){
+    const payloads = buildPayloads();
+    if(!payloads) return;
+    const sendNow = () => {
+        postToFrame('frameTrucI', payloads.trucI);
+        postToFrame('frameTrucII', payloads.trucII);
+    };
+    sendNow();
+    [100, 300, 700, 1200, 1800].forEach(t => setTimeout(sendNow, t));
+    setTimeout(pullVerifiedDiametersFromFrames, 350);
+    setTimeout(pullVerifiedDiametersFromFrames, 900);
+    setTimeout(pullVerifiedDiametersFromFrames, 1600);
+}
+window.addEventListener('message', function(event){
+    const msg = event.data || {};
+    if(!msg || !msg.type) return;
+    if(msg.type === 'DIAM_TRUC_I'){
+        data.verified1 = {dA:Number(msg.dA), dB:Number(msg.dB), dC:Number(msg.dC), dD:Number(msg.dD)};
+        updateDiamStatus();
+    }
+    if(msg.type === 'DIAM_TRUC_II'){
+        data.verified2 = {dA:Number(msg.dA), dB:Number(msg.dB), dC:Number(msg.dC), dD:Number(msg.dD)};
+        updateDiamStatus();
+    }
+});
+const f1=document.getElementById('frameTrucI');
+const f2=document.getElementById('frameTrucII');
+if(f1) f1.addEventListener('load', ()=>setTimeout(syncBieuDo,250));
+if(f2) f2.addEventListener('load', ()=>setTimeout(syncBieuDo,250));
+window.addEventListener("load",()=>{
+  capNhatMacThepChung();
+  /* Đen là mặc định - shared-dark.css đã load sẵn.
+     Chỉ chuyển sang sáng nếu user đã chọn trước đó. */
+  if (localStorage.getItem('ctmc_theme_nghieng') === 'light') applyTheme(false);
+});
+
+function applyTheme(isDark){
+  if(isDark){
+    /* Tối: xóa light-theme → shared-dark.css tự áp dụng */
+    document.body.classList.remove('light-theme');
+    document.getElementById('theme-btn').textContent = '🌙';
+  } else {
+    /* Sáng: thêm light-theme để override shared-dark.css */
+    document.body.classList.add('light-theme');
+    document.getElementById('theme-btn').textContent = '☀️';
+  }
+  const fi = document.getElementById('frameTrucI');
+  const fii = document.getElementById('frameTrucII');
+  const themeVal = isDark ? 'dark' : 'light';
+  if(fi && fi.contentWindow) fi.contentWindow.postMessage({ theme: themeVal }, '*');
+  if(fii && fii.contentWindow) fii.contentWindow.postMessage({ theme: themeVal }, '*');
+}
+function toggleTheme(){
+  const isLight = document.body.classList.contains('light-theme');
+  applyTheme(isLight); /* đang sáng → tối, đang tối → sáng */
+  try{ localStorage.setItem('ctmc_theme_nghieng', isLight ? 'dark' : 'light'); }catch(e){}
+}
+function tinhVaHienThi(){
+  tinh();
+  syncBieuDo();
+  document.getElementById('result-area').style.display = 'block';
+  setTimeout(()=>{
+    document.getElementById('result-area').scrollIntoView({behavior:'smooth'});
+  }, 80);
+}
+/* Nhận theme từ shell parent */
+window.addEventListener('message', function(ev){
+  const msg = ev.data || {};
+  if(msg.theme === 'dark') applyTheme(true);
+  if(msg.theme === 'light') applyTheme(false);
+});
+</script>
+
+</body>
+</html>

@@ -830,3 +830,101 @@ body.light-theme {
 body.light-theme tr:nth-child(even) td {
   background-color: rgba(0,0,0,0.03) !important;
 }
+
+/* ══════════════════════════════════════
+   24. CTM3 — Class overrides (sodoluctrucI/II + index1)
+   Dùng biến --dm-* nên tự động đổi khi sang light-theme
+   ══════════════════════════════════════ */
+
+/* ── Wrapper / page title ── */
+.wrap { background: transparent !important; }
+.page-title {
+  background: var(--dm-surface) !important;
+  border-color: var(--dm-border) !important;
+  color: var(--dm-text) !important;
+}
+.page-title h1 { color: var(--dm-text) !important; }
+.page-title p   { color: var(--dm-text-2) !important; }
+
+/* ── Form groups (sodoluctrucI) ── */
+.group {
+  background: var(--dm-surface2) !important;
+  border-color: var(--dm-border) !important;
+}
+.group-title { color: var(--dm-blue) !important; }
+
+/* ── Input cards (sodoluctrucII) ── */
+.input-card {
+  background: var(--dm-surface2) !important;
+  border-color: var(--dm-border) !important;
+}
+.input-card-title { color: var(--dm-blue) !important; }
+
+/* ── Verify panels ── */
+.verify-panel,
+.verify-bottom-wrap {
+  background: var(--dm-surface) !important;
+  border-color: var(--dm-border) !important;
+}
+.verify-title { color: var(--dm-blue) !important; }
+
+.verify-card-result { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.verify-card-head   { background: linear-gradient(135deg,#1f6feb,#388bfd) !important; color: #fff !important; }
+.verify-mini        { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; }
+.verify-mini h4     { color: var(--dm-blue) !important; }
+.verify-final       { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.verify-output-box  { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.verify-note        { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; color: var(--dm-text) !important; }
+
+/* ── Section boxes ── */
+.section-box   { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.section-body  { background: var(--dm-surface) !important; }
+.section-head  { background: linear-gradient(135deg,#1f6feb,#388bfd) !important; color: #fff !important; }
+.section-card  { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; }
+.section-card .section-title { color: var(--dm-blue) !important; border-color: var(--dm-border) !important; }
+.section-note  { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; color: var(--dm-text) !important; }
+
+.verify-section-card { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.verify-section-head { background: linear-gradient(135deg,#1f6feb,#388bfd) !important; color: #fff !important; }
+
+/* ── Integrated panel (kiểm nghiệm trục I) ── */
+.integrated-panel  { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.integrated-card   { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; }
+.integrated-title  { color: var(--dm-blue) !important; }
+.integrated-sub    { color: var(--dm-text-2) !important; }
+
+/* ── IV result blocks ── */
+.iv-result-block  { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.iv-result-title  { background: linear-gradient(135deg,#1f6feb,#388bfd) !important; color: #fff !important; }
+.iv-result-body   { background: var(--dm-surface) !important; }
+.iv-empty-result  { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; color: var(--dm-text-2) !important; }
+.iv-selected-info { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; color: var(--dm-text) !important; }
+
+/* ── Tables inside verify ── */
+.verify-formula-table th,
+.small-verify-table th { background: var(--dm-surface3) !important; color: var(--dm-blue) !important; border-color: var(--dm-border) !important; }
+.verify-formula-table td,
+.small-verify-table td { border-color: var(--dm-border) !important; color: var(--dm-text) !important; }
+.verify-formula-table tbody th { background: var(--dm-surface) !important; color: var(--dm-text) !important; }
+
+/* ── Calc title ── */
+.calc-title { color: var(--dm-blue) !important; border-left-color: var(--dm-blue) !important; }
+
+/* ── index1.html specific ── */
+.card  { background: var(--dm-surface2) !important; border-color: var(--dm-border) !important; }
+.title { color: var(--dm-blue) !important; border-left-color: var(--dm-blue) !important; }
+.mini  { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.mini h3 { color: var(--dm-blue) !important; }
+.line  { background: var(--dm-surface2) !important; border-left-color: var(--dm-blue) !important; }
+.sub   { color: var(--dm-text-2) !important; }
+.svgbox { background: var(--dm-surface) !important; border-color: var(--dm-border) !important; }
+.status { color: var(--dm-text-2) !important; }
+
+/* ── Light theme resets cho các class dùng gradient cứng ── */
+body.light-theme .section-head,
+body.light-theme .verify-section-head,
+body.light-theme .verify-card-head,
+body.light-theme .iv-result-title {
+  background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important;
+  color: #fff !important;
+}

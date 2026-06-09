@@ -521,6 +521,12 @@ body {
 .module-card.card-ctm2b::before { background: var(--accent-green); }
 .module-card.card-ctm3 { --border-hover: var(--accent-purple); }
 .module-card.card-ctm3::before { background: var(--accent-purple); }
+.module-card.card-thang { --border-hover: #2dd4bf; }
+.module-card.card-thang::before { background: #2dd4bf; }
+.module-card.card-con { --border-hover: #fb923c; }
+.module-card.card-con::before { background: #fb923c; }
+.module-card.card-nghieng { --border-hover: #f472b6; }
+.module-card.card-nghieng::before { background: #f472b6; }
 
 .card-icon {
   font-size: 28px;
@@ -540,6 +546,9 @@ body {
 .badge-orange { background: rgba(240,136,62,0.15); color: var(--accent-orange); }
 .badge-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
 .badge-purple { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
+.badge-teal { background: rgba(45,212,191,0.15); color: #2dd4bf; }
+.badge-amber { background: rgba(251,146,60,0.15); color: #fb923c; }
+.badge-rose { background: rgba(244,114,182,0.15); color: #f472b6; }
 
 .card-title {
   font-size: 14px;
@@ -725,6 +734,9 @@ body {
 .icon-bg-orange { background: rgba(240,136,62,0.15); }
 .icon-bg-green { background: rgba(63,185,80,0.15); }
 .icon-bg-purple { background: rgba(188,140,255,0.15); }
+.icon-bg-teal { background: rgba(45,212,191,0.15); }
+.icon-bg-amber { background: rgba(251,146,60,0.15); }
+.icon-bg-rose { background: rgba(244,114,182,0.15); }
 
 /* ===========================
    SCROLLBAR
@@ -771,6 +783,173 @@ body {
 #sidebar { transition: width 0.25s ease, transform var(--transition); }
 #app.sidebar-collapsed #sidebar { width: 0; overflow: hidden; border-right: none; }
 #app.sidebar-collapsed .logo-area { border-right: none; }
+
+/* ===========================
+   SUB-GROUP (3rd level)
+=========================== */
+.nav-sub-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 42px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  position: relative;
+}
+.nav-sub-group-header:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-sub-group-header.active {
+  background: rgba(88,166,255,0.12);
+  color: var(--accent-blue);
+}
+.sub-chv {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: auto;
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+.sub-chv.open { transform: rotate(90deg); }
+
+.nav-sub-sub-items {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+.nav-sub-sub-items.open { max-height: 600px; }
+
+.nav-sub-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 58px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 12px;
+  color: var(--text-secondary);
+  position: relative;
+}
+.nav-sub-sub-item::before {
+  content: '';
+  position: absolute;
+  left: 42px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  transition: var(--transition);
+}
+.nav-sub-sub-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-sub-sub-item:hover::before { background: var(--accent-blue); }
+.nav-sub-sub-item.active {
+  background: rgba(88,166,255,0.12);
+  color: var(--accent-blue);
+  font-weight: 500;
+}
+.nav-sub-sub-item.active::before { background: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue); }
+
+/* ===========================
+   CTM3 BRANCH HEADERS (2nd level inside CTM3)
+=========================== */
+.nav-branch-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 28px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.nav-branch-header:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-branch-header.active { background: rgba(188,140,255,0.1); color: var(--accent-purple); }
+.branch-chv {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: auto;
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+.branch-chv.open { transform: rotate(90deg); }
+
+.nav-branch-items {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+.nav-branch-items.open { max-height: 400px; }
+
+/* 3rd level sub-group inside CTM3 branch */
+.nav-branch-subhdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 44px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.nav-branch-subhdr:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-branch-subhdr.active { background: rgba(88,166,255,0.1); color: var(--accent-blue); }
+.branch-sub-chv {
+  font-size: 8px;
+  color: var(--text-muted);
+  margin-left: auto;
+  transition: transform var(--transition);
+}
+.branch-sub-chv.open { transform: rotate(90deg); }
+
+.nav-branch-sub-items {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+.nav-branch-sub-items.open { max-height: 200px; }
+
+.nav-branch-leaf {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 62px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  margin: 1px 6px;
+  transition: var(--transition);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  position: relative;
+}
+.nav-branch-leaf::before {
+  content: '';
+  position: absolute;
+  left: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  transition: var(--transition);
+}
+.nav-branch-leaf:hover { background: var(--bg-hover); color: var(--text-primary); }
+.nav-branch-leaf:hover::before { background: var(--accent-purple); }
+.nav-branch-leaf.active { background: rgba(188,140,255,0.1); color: var(--accent-purple); font-weight: 500; }
+.nav-branch-leaf.active::before { background: var(--accent-purple); box-shadow: 0 0 5px var(--accent-purple); }
 </style>
 </head>
 <body>
@@ -842,38 +1021,57 @@ body {
           <span class="nav-chevron" id="chv-ctm2a">▶</span>
         </div>
         <div class="nav-sub-items" id="sub-ctm2a">
-          <div class="nav-sub-item" id="sub-br1"
-               onclick="loadModule('CTM2.a', 'BR Trụ Thẳng', 'br1.html', this)">
-            ⚙️ BR Trụ Thẳng
+
+          <!-- Nhóm 1: Bộ truyền trong -->
+          <div class="nav-sub-group-header" id="subhdr-bttrong"
+               onclick="toggleSubGroup('bttrong', null, null, null, this)">
+            ⚙️ Thiết kế bộ truyền trong
+            <span class="sub-chv" id="subchv-bttrong">▶</span>
           </div>
-          <div class="nav-sub-item" id="sub-br2"
-               onclick="loadModule('CTM2.a', 'BR Trụ Nghiêng', 'br2.html', this)">
-            ⚙️ BR Trụ Nghiêng
+          <div class="nav-sub-sub-items" id="subsub-bttrong">
+            <div class="nav-sub-sub-item" id="sub-br1"
+                 onclick="loadModule('CTM2.a', 'BR Trụ Thẳng', 'br1.html', this)">
+              ⚙️ BR Trụ Thẳng
+            </div>
+            <div class="nav-sub-sub-item" id="sub-br2"
+                 onclick="loadModule('CTM2.a', 'BR Trụ Nghiêng', 'br2.html', this)">
+              ⚙️ BR Trụ Nghiêng
+            </div>
+            <div class="nav-sub-sub-item" id="sub-br3"
+                 onclick="loadModule('CTM2.a', 'BR Côn Thẳng', 'br3.html', this)">
+              📐 BR Côn Thẳng
+            </div>
+            <div class="nav-sub-sub-item" id="sub-br4"
+                 onclick="loadModule('CTM2.a', 'BR Côn Cung Tròn', 'br4.html', this)">
+              📐 BR Côn Cung Tròn
+            </div>
+            <div class="nav-sub-sub-item" id="sub-br5"
+                 onclick="loadModule('CTM2.a', 'BR Hành Tinh', 'br5.html', this)">
+              🚀 BR Hành Tinh
+            </div>
+            <div class="nav-sub-sub-item" id="sub-tv"
+                 onclick="loadModule('CTM2.a', 'Thiết Kế Trục Vít', 'tt_trucvit2.html', this)">
+              🌀 Thiết kế trục vít
+            </div>
           </div>
-          <div class="nav-sub-item" id="sub-br3"
-               onclick="loadModule('CTM2.a', 'BR Côn Thẳng', 'br3.html', this)">
-            📐 BR Côn Thẳng
+
+          <!-- Nhóm 2: Bộ truyền ngoài -->
+          <div class="nav-sub-group-header" id="subhdr-btngoai"
+               onclick="toggleSubGroup('btngoai', null, null, null, this)">
+            〰️ Thiết kế bộ truyền ngoài
+            <span class="sub-chv" id="subchv-btngoai">▶</span>
           </div>
-          <div class="nav-sub-item" id="sub-br4"
-               onclick="loadModule('CTM2.a', 'BR Côn Cung Tròn', 'br4.html', this)">
-            📐 BR Côn Cung Tròn
+          <div class="nav-sub-sub-items" id="subsub-btngoai">
+            <div class="nav-sub-sub-item" id="sub-dai"
+                 onclick="loadModule('CTM2.a', 'Thiết Kế Bộ Truyền Đai', 'tt_dai7.3.html', this)">
+              〰️ Thiết kế bộ truyền đai
+            </div>
+            <div class="nav-sub-sub-item" id="sub-xich"
+                 onclick="loadModule('CTM2.a', 'Thiết Kế Bộ Truyền Xích', 'tt_xich1.html', this)">
+              🔗 Thiết kế bộ truyền xích
+            </div>
           </div>
-          <div class="nav-sub-item" id="sub-br5"
-               onclick="loadModule('CTM2.a', 'BR Hành Tinh', 'br5.html', this)">
-            🚀 BR Hành Tinh
-          </div>
-          <div class="nav-sub-item" id="sub-dai"
-               onclick="loadModule('CTM2.a', 'Thiết Kế Bộ Truyền Đai', 'tt_dai7.3.html', this)">
-            〰️ Thiết kế bộ truyền đai
-          </div>
-          <div class="nav-sub-item" id="sub-xich"
-               onclick="loadModule('CTM2.a', 'Thiết Kế Bộ Truyền Xích', 'tt_xich1.html', this)">
-            🔗 Thiết kế bộ truyền xích
-          </div>
-          <div class="nav-sub-item" id="sub-tv"
-               onclick="loadModule('CTM2.a', 'Thiết Kế Trục Vít', 'tt_trucvit2.html', this)">
-            🌀 Thiết kế trục vít
-          </div>
+
         </div>
       </div>
 
@@ -889,41 +1087,91 @@ body {
         </div>
       </div>
 
-      <!-- MODULE 4: CTM3 -->
+
+      <!-- MODULE 4: CTM3 (BR Thẳng / BR Côn / BR Nghiêng) -->
       <div class="nav-module">
         <div class="nav-module-header" id="hdr-ctm3" onclick="toggleModule('ctm3')">
           <div class="nav-module-icon icon-bg-purple">📐</div>
           <div class="nav-module-info">
             <div class="nav-module-name">CTM3</div>
-            <div class="nav-module-desc">Trục & Biểu đồ nội lực</div>
+            <div class="nav-module-desc">Trục &amp; Biểu đồ nội lực</div>
           </div>
           <span class="nav-chevron" id="chv-ctm3">▶</span>
         </div>
         <div class="nav-sub-items" id="sub-ctm3">
-          <div class="nav-sub-item"
-               onclick="loadModule('CTM3', 'Tính Trục + Lực Bánh Răng', 'tínhtruc+luc1.html', this)">
-            📏 Tính trục + Lực bánh răng
+
+          <!-- Branch: BR Thẳng -->
+          <div class="nav-branch-header" id="branchhdr-thang"
+               onclick="toggleBranch('thang', this)">
+            ⚙️ BR Thẳng
+            <span class="branch-chv" id="branchchv-thang">▶</span>
           </div>
-          <div class="nav-sub-item"
-               onclick="loadModule('CTM3', 'Biểu Đồ Trục I (BR Thẳng)', 'bieudolucbanhrangthang.html', this)">
-            📊 Biểu đồ Trục I (BR thẳng)
+          <div class="nav-branch-items" id="branch-thang">
+            <div class="nav-branch-subhdr" id="branchsubhdr-thang-tong"
+                 onclick="toggleBranchSub('thang-tong', 'CTM3', 'BR Thẳng — Tổng Hợp', 'thẳng/index.html', this)">
+              🔗 Tổng hợp: Trục + Biểu đồ + 3D
+              <span class="branch-sub-chv" id="branchsubchv-thang-tong">▶</span>
+            </div>
+            <div class="nav-branch-sub-items" id="branchsub-thang-tong">
+              <div class="nav-branch-leaf" id="leaf-thang-truc1"
+                   onclick="loadModule('CTM3 · BR Thẳng', 'Kiểm Nghiệm Trục I', 'thẳng/sodoluctrucI_sync.html', this)">
+                📊 Kiểm nghiệm Trục I
+              </div>
+              <div class="nav-branch-leaf" id="leaf-thang-truc2"
+                   onclick="loadModule('CTM3 · BR Thẳng', 'Kiểm Nghiệm Trục II', 'thẳng/sodoluctrucII_sync.html', this)">
+                📊 Kiểm nghiệm Trục II
+              </div>
+            </div>
           </div>
-          <div class="nav-sub-item"
-               onclick="loadModule('CTM3', 'Biểu Đồ Trục I (BR Nghiêng)', 'bieudolucbanhrangnghiengtruc1.html', this)">
-            📊 Biểu đồ Trục I (BR nghiêng)
+
+          <!-- Branch: BR Côn -->
+          <div class="nav-branch-header" id="branchhdr-con"
+               onclick="toggleBranch('con', this)">
+            📐 BR Côn
+            <span class="branch-chv" id="branchchv-con">▶</span>
           </div>
-          <div class="nav-sub-item"
-               onclick="loadModule('CTM3', 'Biểu Đồ Trục I (Nâng Cấp)', 'banrangthangtruc1phan2.html', this)">
-            📊 Biểu đồ Trục I (nâng cấp)
+          <div class="nav-branch-items" id="branch-con">
+            <div class="nav-branch-subhdr" id="branchsubhdr-con-tong"
+                 onclick="toggleBranchSub('con-tong', 'CTM3', 'BR Côn — Tổng Hợp', 'côn/index.html', this)">
+              🔗 Tổng hợp: Trục + Biểu đồ + 3D
+              <span class="branch-sub-chv" id="branchsubchv-con-tong">▶</span>
+            </div>
+            <div class="nav-branch-sub-items" id="branchsub-con-tong">
+              <div class="nav-branch-leaf" id="leaf-con-truc1"
+                   onclick="loadModule('CTM3 · BR Côn', 'Sơ Đồ Lực + Then Trục I', 'côn/soldolucthenbanhrangconI_sync.html', this)">
+                📊 Sơ Đồ Lực + Then Trục I
+              </div>
+              <div class="nav-branch-leaf" id="leaf-con-truc2"
+                   onclick="loadModule('CTM3 · BR Côn', 'Kiểm Nghiệm Trục II', 'côn/sodolucbanhrangcontrucII_sync.html', this)">
+                📊 Kiểm nghiệm Trục II
+              </div>
+            </div>
           </div>
-          <div class="nav-sub-item"
-               onclick="loadModule('CTM3', 'Biểu Đồ Trục II (BR Nghiêng)', 'sodoluctrucIIrangnghieng.html', this)">
-            📊 Biểu đồ Trục II (BR nghiêng)
+
+          <!-- Branch: BR Nghiêng -->
+          <div class="nav-branch-header" id="branchhdr-nghieng"
+               onclick="toggleBranch('nghieng', this)">
+            📏 BR Nghiêng
+            <span class="branch-chv" id="branchchv-nghieng">▶</span>
           </div>
-          <div class="nav-sub-item"
-               onclick="loadModule('CTM3', 'Phản Lực Ổ Đỡ', 'tt_thu.html', this)">
-            🔍 Phản lực ổ đỡ (Sơ đồ)
+          <div class="nav-branch-items" id="branch-nghieng">
+            <div class="nav-branch-subhdr" id="branchsubhdr-nghieng-tong"
+                 onclick="toggleBranchSub('nghieng-tong', 'CTM3', 'BR Nghiêng — Tổng Hợp', 'nghiêng/index.html', this)">
+              🔗 Tổng hợp: Trục + Biểu đồ + 3D
+              <span class="branch-sub-chv" id="branchsubchv-nghieng-tong">▶</span>
+            </div>
+            <div class="nav-branch-sub-items" id="branchsub-nghieng-tong">
+              <div class="nav-branch-leaf" id="leaf-nghieng-truc1"
+                   onclick="loadModule('CTM3 · BR Nghiêng', 'Kiểm Nghiệm Trục I', 'nghiêng/sodoluctrucI_sync.html', this)">
+                📊 Kiểm nghiệm Trục I
+              </div>
+              <div class="nav-branch-leaf" id="leaf-nghieng-truc2"
+                   onclick="loadModule('CTM3 · BR Nghiêng', 'Kiểm Nghiệm Trục II', 'nghiêng/sodoluctrucII_sync.html', this)">
+                📊 Kiểm nghiệm Trục II
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
 
@@ -1002,13 +1250,14 @@ body {
           <div class="module-card card-ctm3" onclick="toggleModule('ctm3')">
             <div class="card-icon">📐</div>
             <span class="card-badge badge-purple">CTM3</span>
-            <div class="card-title">Tính Trục & Biểu Đồ Nội Lực</div>
-            <div class="card-desc">Tính đường kính trục, vẽ biểu đồ Qy, Mx, Qx, My, T.</div>
+            <div class="card-title">Tính Trục &amp; Biểu Đồ Nội Lực</div>
+            <div class="card-desc">Tính đường kính trục, vẽ biểu đồ nội lực, kiểm nghiệm trục &amp; then, mô hình 3D — cho 3 loại bánh răng.</div>
             <div class="card-subs">
-              <span class="card-sub-tag">Trục I</span>
-              <span class="card-sub-tag">Trục II</span>
-              <span class="card-sub-tag">BR thẳng</span>
-              <span class="card-sub-tag">BR nghiêng</span>
+              <span class="card-sub-tag">BR Thẳng</span>
+              <span class="card-sub-tag">BR Côn</span>
+              <span class="card-sub-tag">BR Nghiêng</span>
+              <span class="card-sub-tag">Kiểm nghiệm</span>
+              <span class="card-sub-tag">Mô hình 3D</span>
             </div>
           </div>
         </div>
@@ -1133,6 +1382,65 @@ function toggleModule(modId) {
     chvEl.classList.add('open');
     hdrEl.classList.add('active-module');
   }
+}
+
+/* ===========================
+   SUB-GROUP TOGGLE (3rd level)
+=========================== */
+function toggleSubGroup(groupId, modName, itemName, file, hdrEl) {
+  const subEl = document.getElementById('subsub-' + groupId);
+  const chvEl = document.getElementById('subchv-' + groupId);
+  const isOpen = subEl.classList.contains('open');
+
+  // Toggle expand/collapse
+  subEl.classList.toggle('open');
+  chvEl.classList.toggle('open');
+
+  // Highlight header
+  document.querySelectorAll('.nav-sub-group-header').forEach(el => el.classList.remove('active'));
+  if (!isOpen) hdrEl.classList.add('active');
+
+  // Chỉ load file nếu có (group không nhất thiết phải có file)
+  if (file) _load(file, modName, itemName);
+}
+
+/* ===========================
+   CTM3 BRANCH TOGGLE (BR Thẳng / BR Côn / BR Nghiêng)
+=========================== */
+function toggleBranch(branchId, hdrEl) {
+  const itemsEl = document.getElementById('branch-' + branchId);
+  const chvEl   = document.getElementById('branchchv-' + branchId);
+  const isOpen  = itemsEl.classList.contains('open');
+
+  // Close all other branches
+  document.querySelectorAll('.nav-branch-items.open').forEach(el => {
+    if (el.id !== 'branch-' + branchId) {
+      el.classList.remove('open');
+      const otherId = el.id.replace('branch-', '');
+      const otherChv = document.getElementById('branchchv-' + otherId);
+      const otherHdr = document.getElementById('branchhdr-' + otherId);
+      if (otherChv) otherChv.classList.remove('open');
+      if (otherHdr) otherHdr.classList.remove('active');
+    }
+  });
+
+  itemsEl.classList.toggle('open', !isOpen);
+  chvEl.classList.toggle('open', !isOpen);
+  hdrEl.classList.toggle('active', !isOpen);
+}
+
+function toggleBranchSub(subId, modName, itemName, file, hdrEl) {
+  const subEl = document.getElementById('branchsub-' + subId);
+  const chvEl = document.getElementById('branchsubchv-' + subId);
+  const isOpen = subEl.classList.contains('open');
+
+  subEl.classList.toggle('open');
+  chvEl.classList.toggle('open');
+
+  document.querySelectorAll('.nav-branch-subhdr').forEach(el => el.classList.remove('active'));
+  if (!isOpen) hdrEl.classList.add('active');
+
+  if (file) _load(file, modName, itemName);
 }
 
 /* ===========================

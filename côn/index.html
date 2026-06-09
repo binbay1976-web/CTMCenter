@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiết kế trục + lực bánh răng côn</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg1:#eaf4ff;
+    --bg2:#f8fbff;
+    --bg3:#eefcf6;
+    --main:#2563eb;
+    --main2:#1d4ed8;
+    --green:#16a34a;
+    --green2:#22c55e;
+    --text:#0f172a;
+    --muted:#64748b;
+    --card:#ffffff;
+    --line:#dbeafe;
+    --orange:#f59e0b;
+    --red:#dc2626;
+}
+
+body{
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:
+        radial-gradient(circle at top left, #dff6ff 0%, transparent 28%),
+        radial-gradient(circle at top right, #dcfce7 0%, transparent 24%),
+        linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    min-height:100vh;
+    padding:28px;
+    color:#1f2937;
+}
+
+.container{
+    width:1500px;
+    max-width:100%;
+    margin:0 auto;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(10px);
+    border-radius:28px;
+    padding:32px;
+    box-shadow:0 24px 55px rgba(0,0,0,0.12);
+    border:1px solid rgba(255,255,255,0.85);
+    position:relative;
+    overflow:hidden;
+}
+
+.container::before{
+    content:"";
+    position:absolute;
+    top:-70px;
+    right:-70px;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(37,99,235,0.14), transparent 70%);
+    pointer-events:none;
+}
+
+.container::after{
+    content:"";
+    position:absolute;
+    bottom:-80px;
+    left:-60px;
+    width:240px;
+    height:240px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(34,197,94,0.10), transparent 70%);
+    pointer-events:none;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+    color:var(--text);
+    font-size:34px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    text-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.subtitle{
+    text-align:center;
+    color:var(--muted);
+    font-size:15px;
+    margin-bottom:26px;
+}
+
+.form-box{
+    background:linear-gradient(135deg,#f8fbff,#eef8ff 50%,#f0fdf4);
+    border:1px solid #d8ebff;
+    border-radius:24px;
+    padding:26px;
+    box-shadow:0 12px 26px rgba(30,64,175,0.08);
+    margin-bottom:28px;
+    position:relative;
+}
+
+.form-title{
+    font-size:24px;
+    font-weight:800;
+    color:#0f4c81;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+.group-title{
+    grid-column:1/-1;
+    padding:12px 14px;
+    margin-top:8px;
+    border-radius:16px;
+    font-weight:800;
+    color:#0f172a;
+    background:linear-gradient(135deg,#dbeafe,#ecfdf5);
+    border-left:5px solid #2563eb;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px 20px;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.input-group label{
+    font-weight:700;
+    margin-bottom:8px;
+    color:#1e3a8a;
+    font-size:14px;
+}
+
+.input-group input,
+.input-group select{
+    padding:13px 14px;
+    border-radius:16px;
+    border:1.5px solid #c7defa;
+    background:linear-gradient(180deg,#ffffff,#f7fbff);
+    font-size:15px;
+    outline:none;
+    transition:all 0.25s ease;
+    box-shadow:
+        inset 0 1px 3px rgba(0,0,0,0.03),
+        0 4px 10px rgba(37,99,235,0.04);
+}
+
+.input-group input:focus,
+.input-group select:focus{
+    border-color:#3b82f6;
+    box-shadow:
+        0 0 0 4px rgba(59,130,246,0.12),
+        0 8px 18px rgba(37,99,235,0.10);
+    transform:translateY(-1px);
+}
+
+.hide{
+    display:none !important;
+}
+
+.btn-wrap{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:16px;
+    margin-top:22px;
+}
+
+button{
+    padding:15px 18px;
+    border:none;
+    border-radius:18px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    transition:all 0.25s ease;
+    color:white;
+    letter-spacing:0.5px;
+}
+
+.btn-main{
+    background:linear-gradient(135deg,var(--green),var(--green2));
+    box-shadow:0 10px 20px rgba(34,197,94,0.25);
+}
+
+.btn-main:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 24px rgba(34,197,94,0.32);
+}
+
+.btn-second{
+    background:linear-gradient(135deg,var(--main2),#3b82f6);
+    box-shadow:0 10px 20px rgba(59,130,246,0.25);
+}
+
+.btn-second:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 24px rgba(59,130,246,0.32);
+}
+
+.note{
+    margin-top:12px;
+    text-align:center;
+    color:#64748b;
+    font-size:14px;
+    background:rgba(255,255,255,0.7);
+    border:1px dashed #cfe2ff;
+    padding:10px 14px;
+    border-radius:14px;
+}
+
+.section{
+    margin-top:24px;
+}
+
+.section-title{
+    font-size:21px;
+    font-weight:800;
+    color:#0f172a;
+    margin-bottom:12px;
+    padding-left:12px;
+    border-left:5px solid #3b82f6;
+}
+
+.table-card{
+    background:linear-gradient(135deg,#ffffff,#f8fbff);
+    border-radius:22px;
+    padding:18px;
+    box-shadow:0 12px 28px rgba(0,0,0,0.08);
+    border:1px solid #e1efff;
+    overflow:auto;
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:16px;
+    min-width:950px;
+}
+
+thead th,
+table tr:first-child th{
+    background:linear-gradient(135deg,#0f4c81,#2563eb);
+    color:white;
+    font-weight:700;
+    padding:13px 10px;
+    text-align:center;
+    font-size:15px;
+}
+
+td,th{
+    padding:12px 10px;
+    text-align:center;
+    border:1px solid #dbeafe;
+    vertical-align:middle;
+}
+
+tr:nth-child(even) td{
+    background:#f8fbff;
+}
+
+tr:hover td{
+    background:#eef6ff;
+}
+
+.highlight{
+    color:#dc2626;
+    font-weight:800;
+    font-size:16px;
+}
+
+.kq{
+    margin-top:22px;
+    background:linear-gradient(135deg,#eff6ff,#f0fdf4);
+    border:1px solid #d9ebff;
+    padding:22px;
+    border-radius:22px;
+    box-shadow:0 12px 28px rgba(0,0,0,0.08);
+}
+
+.result-title{
+    font-size:22px;
+    font-weight:800;
+    color:#0f172a;
+    margin-bottom:18px;
+    text-align:center;
+}
+
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+.result-card{
+    background:white;
+    border-radius:18px;
+    padding:16px;
+    box-shadow:0 8px 18px rgba(0,0,0,0.07);
+    border:1px solid #e5eefc;
+}
+
+.result-card h3{
+    margin-bottom:12px;
+    color:#1d4ed8;
+    font-size:18px;
+}
+
+.result-item{
+    padding:10px 12px;
+    margin-bottom:8px;
+    border-radius:12px;
+    background:linear-gradient(90deg,#f8fbff,#eef7ff);
+    border-left:4px solid #3b82f6;
+    font-size:15px;
+    line-height:1.5;
+}
+
+.result-item b{
+    color:#111827;
+}
+
+.equal-force{
+    margin-top:16px;
+    background:linear-gradient(135deg,#fff7ed,#fefce8);
+    border:1px solid #fde68a;
+    border-radius:18px;
+    padding:16px;
+    box-shadow:0 8px 18px rgba(245,158,11,0.12);
+}
+
+.equal-force h3{
+    color:#b45309;
+    margin-bottom:12px;
+    font-size:18px;
+}
+
+.equal-force .result-item{
+    background:linear-gradient(90deg,#fffdf4,#fff7e6);
+    border-left:4px solid #f59e0b;
+}
+
+#canvas3d{
+    width:100%;
+    height:500px;
+    background:
+        linear-gradient(135deg,#f8fbff,#edf4ff),
+        repeating-linear-gradient(
+            0deg,
+            rgba(37,99,235,0.03) 0px,
+            rgba(37,99,235,0.03) 1px,
+            transparent 1px,
+            transparent 24px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(37,99,235,0.03) 0px,
+            rgba(37,99,235,0.03) 1px,
+            transparent 1px,
+            transparent 24px
+        );
+    margin-top:22px;
+    border-radius:24px;
+    border:1px solid #dbeafe;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,0.05);
+    position:relative;
+}
+
+
+.frame-wrap{width:100%;height:1420px;border:1px solid #cbd5e1;border-radius:18px;background:#fff;overflow:hidden;box-shadow:0 12px 28px rgba(0,0,0,.08)}
+.frame-wrap iframe{width:100%;height:100%;border:0;display:block;background:#fff;}
+.diam-status{margin-top:12px;background:#f8fbff;border:1px solid #dbeafe;border-radius:14px;padding:12px;line-height:1.6;color:#334155;font-size:14px}
+.footer-note{
+    margin-top:18px;
+    text-align:center;
+    color:#64748b;
+    font-size:13px;
+}
+
+.small-text{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.5;
+}
+
+@media (max-width:1000px){
+    .grid,
+    .result-grid,
+    .btn-wrap{
+        grid-template-columns:1fr;
+    }
+
+    h1{
+        font-size:27px;
+    }
+
+    body{
+        padding:16px;
+    }
+
+    .container{
+        padding:18px;
+    }
+}
+/* === THEME TOGGLE BUTTON === */
+.theme-btn{
+  position:fixed;top:14px;right:16px;z-index:9999;
+  background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);
+  border:1.5px solid rgba(255,255,255,0.3);
+  color:#fff;font-size:18px;width:40px;height:40px;
+  border-radius:50%;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;
+  transition:all 0.25s ease;box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+body.light-theme .theme-btn{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.15);color:#1f2937;}
+.theme-btn:hover{transform:scale(1.1);}
+</style>
+<link rel="stylesheet" href="../shared-dark.css">
+<style>
+/* ══ DARK MODE FORCED OVERRIDES ══ */
+body:not(.light-theme) .container {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .form-box {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .form-title { color: #58a6ff !important; }
+body:not(.light-theme) .group-title {
+  background: #21262d !important;
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
+}
+body:not(.light-theme) .input-group label { color: #8b949e !important; }
+body:not(.light-theme) .input-group input,
+body:not(.light-theme) .input-group select {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #e6edf3 !important;
+}
+body:not(.light-theme) .input-group input:focus,
+body:not(.light-theme) .input-group select:focus {
+  border-color: #58a6ff !important;
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.15) !important;
+}
+body:not(.light-theme) .input-group input[readonly],
+body:not(.light-theme) .input-group input:disabled,
+body:not(.light-theme) .input-group select:disabled {
+  background: #30363d !important;
+  color: #6e7681 !important;
+}
+body:not(.light-theme) .section-title {
+  color: #58a6ff !important;
+  border-left-color: #58a6ff !important;
+}
+body:not(.light-theme) .table-card {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .kq {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .result-card {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .result-item {
+  background: #21262d !important;
+  border-left-color: #58a6ff !important;
+  color: #e6edf3 !important;
+}
+body:not(.light-theme) .result-item b { color: #e6edf3 !important; }
+body:not(.light-theme) .equal-force {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .note {
+  background: #21262d !important;
+  border-color: #30363d !important;
+  color: #8b949e !important;
+}
+body:not(.light-theme) .small-text { color: #6e7681 !important; }
+body:not(.light-theme) .diagram-frame,
+body:not(.light-theme) .frame-wrap {
+  background: #161b22 !important;
+  border-color: #30363d !important;
+}
+body:not(.light-theme) .footer-note { color: #6e7681 !important; }
+body:not(.light-theme) .subtitle { color: #8b949e !important; }
+
+/* ── Light-theme overrides ── */
+body.light-theme {
+  background: radial-gradient(circle at top left,#dff6ff 0%,transparent 28%),
+    radial-gradient(circle at top right,#dcfce7 0%,transparent 24%),
+    linear-gradient(135deg,#eaf4ff,#f8fbff,#eefcf6) !important;
+  color: #1f2937 !important;
+}
+body.light-theme .container { background: rgba(255,255,255,.96) !important; }
+body.light-theme h1 { color: #0f172a !important; -webkit-text-fill-color: #0f172a !important; background: none !important; }
+body.light-theme .subtitle { color: #64748b !important; }
+body.light-theme .form-box { background: linear-gradient(135deg,#f8fbff,#eef8ff 50%,#f0fdf4) !important; border-color: #d8ebff !important; }
+body.light-theme .form-title { color: #0f4c81 !important; }
+body.light-theme .group-title { background: linear-gradient(135deg,#dbeafe,#ecfdf5) !important; color: #0f172a !important; }
+body.light-theme .input-group label { color: #1e3a8a !important; }
+body.light-theme .input-group input, body.light-theme .input-group select { background: linear-gradient(180deg,#fff,#f7fbff) !important; border-color: #c7defa !important; color: #1f2937 !important; }
+body.light-theme .section-title { color: #0f172a !important; border-left-color: #3b82f6 !important; }
+body.light-theme .table-card { background: linear-gradient(135deg,#fff,#f8fbff) !important; border-color: #e1efff !important; }
+body.light-theme table tr:first-child th, body.light-theme thead th { background: linear-gradient(135deg,#0f4c81,#2563eb) !important; color: white !important; }
+body.light-theme td, body.light-theme th { border-color: #dbeafe !important; color: #1f2937 !important; background: transparent !important; }
+body.light-theme tr:nth-child(even) td { background: #f8fbff !important; }
+body.light-theme tr:hover td { background: #eef6ff !important; }
+body.light-theme .kq { background: linear-gradient(135deg,#eff6ff,#f0fdf4) !important; border-color: #d9ebff !important; }
+body.light-theme .result-title { color: #0f172a !important; }
+body.light-theme .result-card { background: white !important; border-color: #e5eefc !important; }
+body.light-theme .result-card h3 { color: #1d4ed8 !important; -webkit-text-fill-color: #1d4ed8 !important; background: none !important; padding: 0 !important; border-radius: 0 !important; }
+body.light-theme .result-item { background: linear-gradient(90deg,#f8fbff,#eef7ff) !important; border-left-color: #3b82f6 !important; color: #1f2937 !important; }
+body.light-theme .result-item b { color: #111827 !important; }
+body.light-theme .equal-force { background: linear-gradient(135deg,#fff7ed,#fefce8) !important; border-color: #fde68a !important; }
+body.light-theme .equal-force h3 { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; background: none !important; padding: 0 !important; border-radius: 0 !important; }
+body.light-theme .equal-force .result-item { background: linear-gradient(90deg,#fffdf4,#fff7e6) !important; border-left-color: #f59e0b !important; }
+body.light-theme .note { color: #64748b !important; background: rgba(255,255,255,.75) !important; border-color: #cfe2ff !important; }
+body.light-theme .small-text { color: #64748b !important; }
+body.light-theme .footer-note { color: #64748b !important; }
+body.light-theme .highlight { color: #dc2626 !important; }
+body.light-theme .frame-wrap { background: #fff !important; border-color: #cbd5e1 !important; }
+body.light-theme select { color-scheme: light !important; background: #fff !important; color: #1f2937 !important; }
+body.light-theme button { background: linear-gradient(135deg,#16a34a,#22c55e) !important; }
+body.light-theme .btn-second { background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important; }
+</style>
+</head>
+
+<body>
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Đổi giao diện Sáng/Tối">🌙</button>
+
+<div class="container">
+
+    <h1>THIẾT KẾ TRỤC + LỰC BÁNH RĂNG CÔN</h1>
+    <div class="subtitle">Tính d chọn, d ổ lăn, b0 theo bảng 10.2, khoảng cách trục, dm1/dm2 và mô hình 3D trục 1 và trục 2</div>
+
+    <div class="form-box">
+        <div class="form-title">Nhập thông số tính toán</div>
+
+        <div class="grid">
+            
+            <div class="group-title">0. Chọn chung chiều quay và vật liệu trục</div>
+
+            <div class="input-group">
+                <label for="chieuQuayTrucI">Chiều quay trục I</label>
+                <select id="chieuQuayTrucI" onchange="capNhatChonChung(); tinhToan();">
+                    <option value="cw" selected>Trục I quay cùng chiều kim đồng hồ</option>
+                    <option value="ccw">Trục I quay ngược chiều kim đồng hồ</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="chieuQuayTrucII_note">Chiều quay trục II</label>
+                <input id="chieuQuayTrucII_note" value="Trục II quay ngược chiều kim đồng hồ" readonly>
+            </div>
+
+            <div class="input-group">
+                <label for="common_gearbox">1. Điều kiện hộp giảm tốc</label>
+                <select id="common_gearbox" onchange="commonLoadSteels(); capNhatChonChung(); tinhToan();">
+                    <option value="medium" selected>Hộp giảm tốc chịu tải trọng trung bình</option>
+                    <option value="heavy">Hộp giảm tốc chịu tải nặng, trục đặt trên ổ trượt quay nhanh</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="common_steel">2. Nhãn hiệu thép dùng cho trục</label>
+                <select id="common_steel" onchange="commonLoadHeat(); capNhatChonChung(); tinhToan();"></select>
+            </div>
+
+            <div class="input-group">
+                <label for="common_heat">3. Phương pháp nhiệt luyện</label>
+                <select id="common_heat" onchange="capNhatChonChung(); tinhToan();"></select>
+            </div>
+
+            <div class="input-group">
+                <label>Ghi chú chọn chung</label>
+                <input id="common_note" value="Vật liệu dùng chung cho trục I và trục II" readonly>
+            </div>
+
+            <div class="group-title">1. Thông số mômen và ứng suất</div>
+
+            <div class="input-group">
+                <label for="T1">Mômen xoắn T1 - trục 1 (N.mm)</label>
+                <input id="T1" placeholder="Nhập T1" value="57730.067">
+            </div>
+
+            <div class="input-group">
+                <label for="tau1">Ứng suất tiếp cho phép τ1 (MPa)</label>
+                <input id="tau1" placeholder="Nhập τ1" value="18">
+            </div>
+
+            <div class="input-group">
+                <label for="T2">Mômen xoắn T2 - trục 2 (N.mm)</label>
+                <input id="T2" placeholder="Nhập T2" value="210139.292">
+            </div>
+
+            <div class="input-group">
+                <label for="tau2">Ứng suất tiếp cho phép τ2 (MPa)</label>
+                <input id="tau2" placeholder="Nhập τ2" value="25">
+            </div>
+
+            <div class="group-title">2. Kích thước bố trí chung</div>
+
+            <div class="input-group">
+                <label for="k1">k1 (mm)</label>
+                <input id="k1" value="10">
+            </div>
+
+            <div class="input-group">
+                <label for="k2">k2 (mm)</label>
+                <input id="k2" value="15">
+            </div>
+
+            <div class="input-group">
+                <label for="k3">k3 (mm)</label>
+                <input id="k3" value="10">
+            </div>
+
+            <div class="input-group">
+                <label for="hn">hn (mm)</label>
+                <input id="hn" value="20">
+            </div>
+
+            <div class="input-group">
+                <label for="b13">Chiều rộng răng b13 - trục 1 (mm)</label>
+                <input id="b13" value="20">
+            </div>
+
+            <div class="input-group">
+                <label for="b23">Chiều rộng vành răng b23 - trục 2 (mm)</label>
+                <input id="b23" value="20">
+            </div>
+
+
+            <div class="group-title">3. Hệ số chọn chiều dài mayơ</div>
+
+            <div class="input-group">
+                <label for="hs_lm12">Hệ số lm12 = hs.d11, khoảng 1.4 ÷ 2.5</label>
+                <input id="hs_lm12" value="1.8">
+            </div>
+
+            <div class="input-group">
+                <label for="hs_lm13">Hệ số lm13 = hs.d12, khoảng 1.2 ÷ 1.4</label>
+                <input id="hs_lm13" value="1.3">
+            </div>
+
+            <div class="input-group">
+                <label for="hs_l11">Hệ số l11 = hs.d1, khoảng 2.5 ÷ 3</label>
+                <input id="hs_l11" value="2.7">
+            </div>
+
+            <div class="input-group">
+                <label for="hs_lm22">Hệ số lm22 = hs.d21, khoảng 1.2 ÷ 1.5</label>
+                <input id="hs_lm22" value="1.3">
+            </div>
+
+            <div class="input-group">
+                <label for="hs_lm23">Hệ số lm23 = hs.d22, khoảng 1.2 ÷ 1.4</label>
+                <input id="hs_lm23" value="1.3">
+            </div>
+
+            <div class="group-title">4. Chọn trường hợp bánh răng côn</div>
+
+            <div class="input-group">
+                <label for="loaiRang">Loại bánh răng côn</label>
+                <select id="loaiRang" onchange="capNhatThongSoBanhRang()">
+                    <option value="thang">Bánh răng côn răng thẳng</option>
+                    <option value="nghieng">Bánh răng côn răng nghiêng / cung tròn</option>
+                </select>
+            </div>
+
+            <div id="boxRangThang" class="grid" style="grid-column:1/-1;">
+                <div class="group-title">Thông số bánh răng côn răng thẳng</div>
+
+                <div class="input-group">
+                    <label for="alpha_thang">Góc áp lực α (độ)</label>
+                    <input id="alpha_thang" value="20">
+                </div>
+
+                <div class="input-group">
+                    <label for="delta1_thang">Góc côn chia δ1 (độ)</label>
+                    <input id="delta1_thang" value="30">
+                </div>
+
+                <div class="input-group">
+                    <label for="delta2_thang">Góc côn chia δ2 (độ)</label>
+                    <input id="delta2_thang" value="60">
+                </div>
+
+                <div class="input-group">
+                    <label for="dm1_thang">Đường kính vòng chia trung bình dm1 (mm)</label>
+                    <input id="dm1_thang" value="80">
+                </div>
+
+                <div class="input-group">
+                    <label for="dm2_thang">Đường kính vòng chia trung bình dm2 (mm)</label>
+                    <input id="dm2_thang" value="160">
+                </div>
+
+                <div class="input-group">
+                    <label for="dm_note">Công thức nhắc lại</label>
+                    <input id="dm_note" value="dm = de(1 - 0.5Kbe)" readonly>
+                </div>
+            </div>
+
+            <div id="boxRangNghieng" class="grid hide" style="grid-column:1/-1;">
+                <div class="group-title">Thông số bánh răng côn răng nghiêng / cung tròn</div>
+
+                <div class="input-group">
+                    <label for="beta_m">Góc nghiêng βm (độ)</label>
+                    <input id="beta_m" value="15">
+                </div>
+
+                <div class="input-group">
+                    <label for="alpha_n">Góc áp lực pháp αn (độ)</label>
+                    <input id="alpha_n" value="20">
+                </div>
+
+                <div class="input-group">
+                    <label for="dm1_nghieng">Đường kính vòng chia trung bình dm1 (mm)</label>
+                    <input id="dm1_nghieng" value="80">
+                </div>
+
+                <div class="input-group">
+                    <label for="dm2_nghieng">Đường kính vòng chia trung bình dm2 (mm)</label>
+                    <input id="dm2_nghieng" value="160">
+                </div>
+
+                <div class="input-group">
+                    <label for="delta1_nghieng">Góc côn chia δ1 (độ)</label>
+                    <input id="delta1_nghieng" value="30">
+                </div>
+
+                <div class="input-group">
+                    <label for="delta2_nghieng">Góc côn chia δ2 (độ)</label>
+                    <input id="delta2_nghieng" value="60">
+                </div>
+            </div>
+        </div>
+
+        
+            <div class="group-title">5. Lực xích tác dụng lên trục II</div>
+
+            <div class="input-group">
+                <label for="Fr_chain_total">Lực tổng Fr (N)</label>
+                <input id="Fr_chain_total" value="150" oninput="capNhatLucXich(); tinhToan();">
+            </div>
+
+            <div class="input-group">
+                <label for="alpha1_chain">Góc nghiêng xích α1 (°)</label>
+                <input id="alpha1_chain" value="30" oninput="capNhatLucXich(); tinhToan();">
+            </div>
+
+            <div class="input-group">
+                <label for="Fry_calc">Fry = Fr.cosα1 (N)</label>
+                <input id="Fry_calc" value="" readonly>
+            </div>
+
+            <div class="input-group">
+                <label for="Frx_calc">Frx = Fr.sinα1 (N)</label>
+                <input id="Frx_calc" value="" readonly>
+            </div>
+
+<div class="btn-wrap">
+            <button class="btn-main" onclick="tinhVaHienThi()">TÍNH TOÁN</button>
+            <button class="btn-second" onclick="ve3D(1)">XEM 3D TRỤC 1</button>
+            <button class="btn-second" onclick="ve3D(2)">XEM 3D TRỤC 2</button>
+        </div>
+
+        <div class="note">Các ô hệ số mayơ là hệ số nhân với đường kính tương ứng, không phải nhập trực tiếp chiều dài mm.</div>
+    </div>
+
+    <div id="result-area" style="display:none">
+
+    <div class="section">
+        <div class="section-title">Bảng 10.2 dùng để chọn d và b0</div>
+        <div class="table-card">
+            <table id="bang102"></table>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Kết quả tính đường kính trục và ổ lăn</div>
+        <div class="table-card">
+            <table id="table">
+                <tr>
+                    <th>Trục</th>
+                    <th>d tính</th>
+                    <th>d chọn</th>
+                    <th>d ổ lăn</th>
+                    <th>d tra bảng ổ lăn</th>
+                    <th>b0 chọn theo d ổ lăn</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Khoảng cách các chi tiết trên trục</div>
+        <div class="table-card">
+            <table id="kc">
+                <tr>
+                    <th>Trục</th>
+                    <th>Đường kính lắp chi tiết</th>
+                    <th>Mayơ</th>
+                    <th>Khoảng cách</th>
+                    <th>Công thức chính</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="kq" id="luc">
+        <div class="result-title">Kết quả lực sẽ hiển thị tại đây</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Mô hình 3D SolidWorks mini trục 1 và trục 2</div>
+        <div id="canvas3d"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Biểu đồ lực và kiểm nghiệm trục I</div>
+        <div class="frame-wrap"><iframe id="frameTruc1" src="soldolucthenbanhrangconI_sync.html"></iframe></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Biểu đồ lực và kiểm nghiệm trục II</div>
+        <div class="frame-wrap"><iframe id="frameTruc2" src="sodolucbanhrangcontrucII_sync.html"></iframe></div>
+    </div>
+
+    <div class="footer-note">File đã sửa thuật toán theo yêu cầu: chọn d, chọn d ổ lăn, chọn b0, tính khoảng cách trục 2 theo lc22, l21, l22, l23, rẽ nhánh lực và mô hình 3D trục 1 và trục 2.</div>
+
+</div><!-- /result-area -->
+
+</div>
+
+<script>
+const d_std = [20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,100];
+const b0_std = [15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,47];
+
+let d1_global = 0;
+let d11_global = 0;
+let d12_global = 0;
+let d1_ol_global = 0;
+let b01_global = 0;
+
+let lm12_global = 0;
+let lm13_global = 0;
+let l11_global = 0;
+
+let k1_global = 0;
+let k2_global = 0;
+let k3_global = 0;
+let hn_global = 0;
+
+let b02_global = 0;
+let lm22_global = 0, lm23_global = 0, l21_global = 0, l22_global = 0, l23_global = 0, lc22_global = 0, b23_global = 0, delta1_global = 0;
+let latestDiamTruc1 = null, latestDiamTruc2 = null, lastSyncData = null;
+
+function degToRad(deg){
+    return deg * Math.PI / 180;
+}
+
+function laySo(id){
+    return parseFloat(document.getElementById(id).value);
+}
+
+function chonTheoBang(giaTri){
+    for(let i = 0; i < d_std.length; i++){
+        if(d_std[i] >= giaTri){
+            return {
+                d: d_std[i],
+                b0: b0_std[i]
+            };
+        }
+    }
+
+    return {
+        d: d_std[d_std.length - 1],
+        b0: b0_std[b0_std.length - 1]
+    };
+}
+
+function chonB0TheoDuongKinh(d_ol){
+    for(let i = 0; i < d_std.length; i++){
+        if(d_std[i] >= d_ol){
+            return {
+                dTraBang: d_std[i],
+                b0: b0_std[i]
+            };
+        }
+    }
+
+    return {
+        dTraBang: d_std[d_std.length - 1],
+        b0: b0_std[b0_std.length - 1]
+    };
+}
+
+function hienThiBang102(){
+    let bang = document.getElementById("bang102");
+
+    bang.innerHTML = `
+        <tr>
+            <th>d, mm</th>
+            ${d_std.map(x => `<th>${x}</th>`).join("")}
+        </tr>
+        <tr>
+            <th>b0, mm</th>
+            ${b0_std.map(x => `<td>${x}</td>`).join("")}
+        </tr>
+    `;
+}
+
+function capNhatThongSoBanhRang(){
+    let loai = document.getElementById("loaiRang").value;
+
+    if(loai === "thang"){
+        document.getElementById("boxRangThang").classList.remove("hide");
+        document.getElementById("boxRangNghieng").classList.add("hide");
+    }else{
+        document.getElementById("boxRangThang").classList.add("hide");
+        document.getElementById("boxRangNghieng").classList.remove("hide");
+    }
+}
+
+function kiemTraHeSo(hs, min, max){
+    if(hs >= min && hs <= max){
+        return `<span style="color:#16a34a;font-weight:800;">Đạt</span>`;
+    }
+    return `<span style="color:#dc2626;font-weight:800;">Ngoài khoảng</span>`;
+}
+
+function tinh(){
+
+    let table = document.getElementById("table");
+    let kc = document.getElementById("kc");
+
+    while(table.rows.length > 1) table.deleteRow(1);
+    while(kc.rows.length > 1) kc.deleteRow(1);
+
+    let T1 = laySo("T1");
+    let tau1 = laySo("tau1");
+    let T2 = laySo("T2");
+    let tau2 = laySo("tau2");
+
+    let k1 = laySo("k1");
+    let k2 = laySo("k2");
+    let k3 = laySo("k3");
+    let hn = laySo("hn");
+
+    let b13 = laySo("b13");
+    let b23 = laySo("b23");
+
+    let hs_lm12 = laySo("hs_lm12");
+    let hs_lm13 = laySo("hs_lm13");
+    let hs_l11  = laySo("hs_l11");
+    let hs_lm22 = laySo("hs_lm22");
+    let hs_lm23 = laySo("hs_lm23");
+
+    let loaiRang = document.getElementById("loaiRang").value;
+
+    let alpha = 0;
+    let alpha_n = 0;
+    let beta_m = 0;
+    let delta1 = 0;
+    let delta2 = 0;
+    let dm1 = 0;
+    let dm2 = 0;
+
+    if(loaiRang === "thang"){
+        alpha = degToRad(laySo("alpha_thang"));
+        delta1 = degToRad(laySo("delta1_thang"));
+        delta2 = degToRad(laySo("delta2_thang"));
+        dm1 = laySo("dm1_thang");
+        dm2 = laySo("dm2_thang");
+    }else{
+        beta_m = degToRad(laySo("beta_m"));
+        alpha_n = degToRad(laySo("alpha_n"));
+        dm1 = laySo("dm1_nghieng");
+        dm2 = laySo("dm2_nghieng");
+        delta1 = degToRad(laySo("delta1_nghieng"));
+        delta2 = degToRad(laySo("delta2_nghieng"));
+    }
+
+    if(
+        isNaN(T1) || isNaN(tau1) || isNaN(T2) || isNaN(tau2) ||
+        isNaN(k1) || isNaN(k2) || isNaN(k3) || isNaN(hn) ||
+        isNaN(b13) || isNaN(b23) || isNaN(delta2) ||
+        isNaN(hs_lm12) || isNaN(hs_lm13) || isNaN(hs_l11) ||
+        isNaN(hs_lm22) || isNaN(hs_lm23) ||
+        isNaN(delta1) || isNaN(dm1) || isNaN(dm2)
+    ){
+        alert("Bạn nhập thiếu dữ liệu hoặc dữ liệu không hợp lệ!");
+        return;
+    }
+
+    // =========================
+    // 1. TÍNH VÀ CHỌN d TRỤC 1
+    // =========================
+    let d1_tinh = Math.cbrt((16 * T1) / (Math.PI * tau1));
+    let chonD1 = chonTheoBang(d1_tinh);
+    let d1 = chonD1.d;
+
+    let d1_ol = d1 + 10;
+    let chonOl1 = chonB0TheoDuongKinh(d1_ol);
+    let b01 = chonOl1.b0;
+
+    // =========================
+    // 2. TÍNH VÀ CHỌN d TRỤC 2
+    // =========================
+    let d2_tinh = Math.cbrt((16 * T2) / (Math.PI * tau2));
+    let chonD2 = chonTheoBang(d2_tinh);
+    let d2 = chonD2.d;
+
+    let d2_ol = d2 + 5;
+    let chonOl2 = chonB0TheoDuongKinh(d2_ol);
+    let b02 = chonOl2.b0;
+
+    // =========================
+    // 3. KHOẢNG CÁCH TRỤC 1
+    // =========================
+    let d11 = d1;
+    let d12 = d1 + 5;
+
+    let lm12 = hs_lm12 * d11;
+    let lm13 = hs_lm13 * d12;
+
+    let l12 = k3 + hn + 0.5 * lm12 + 0.5 * b01;
+    let l11 = hs_l11 * d1;
+    let l13 = l11 + k1 + k2 + lm13 + 0.5 * (b01 - b13 * Math.cos(delta1));
+
+    // =========================
+    // 4. KHOẢNG CÁCH TRỤC 2
+    // =========================
+    let d21 = d2;
+    let d22 = d2 + 10;
+
+    let lm22 = hs_lm22 * d21;
+    let lm23 = hs_lm23 * d22;
+
+    // Theo yêu cầu mới:
+    // lc22 = 0.5.(lm22 + b02) + k3 + hn
+    // l23  = 0.5.b02 + k1 + k2 + lm23 - 0.5.b23.cosδ2
+    // l21  = 2.l23 + dm1
+    // l22  = l21 + lc22
+    let lc22 = 0.5 * (lm22 + b02) + k3 + hn;
+    let l23 = 0.5 * b02 + k1 + k2 + lm23 - 0.5 * b23 * Math.cos(delta2);
+    let l21 = 2 * l23 + dm1;
+    let l22 = l21 + lc22;
+
+    // Làm tròn các khoảng cách theo quy tắc 28,5 → 29; 28,4 → 28
+    lm12 = Math.round(lm12);
+    lm13 = Math.round(lm13);
+    l12  = Math.round(l12);
+    l11  = Math.round(l11);
+    l13  = Math.round(l13);
+
+    lm22 = Math.round(lm22);
+    lm23 = Math.round(lm23);
+    lc22 = Math.round(lc22);
+    l23  = Math.round(l23);
+    l21  = Math.round(l21);
+    l22  = Math.round(l22);
+
+    // Lưu biến cho 3D trục 1
+    d1_global = d1;
+    d11_global = d11;
+    d12_global = d12;
+    d1_ol_global = d1_ol;
+    b01_global = b01;
+
+    lm12_global = lm12;
+    lm13_global = lm13;
+    l11_global = l11;
+
+    k1_global = k1;
+    k2_global = k2;
+    k3_global = k3;
+    hn_global = hn;
+
+    b02_global = b02;
+    lm22_global = lm22;
+    lm23_global = lm23;
+    l23_global = l23;
+    l21_global = l21;
+    l22_global = l22;
+    lc22_global = lc22;
+    b23_global = b23;
+    delta1_global = delta1;
+
+    // =========================
+    // 5. XUẤT BẢNG d
+    // =========================
+    table.insertRow().innerHTML = `
+        <td><b>Trục 1</b></td>
+        <td>${d1_tinh.toFixed(2)} mm</td>
+        <td class="highlight">${d1} mm</td>
+        <td>${d1_ol} mm</td>
+        <td>${chonOl1.dTraBang} mm</td>
+        <td class="highlight">${b01} mm</td>
+    `;
+
+    table.insertRow().innerHTML = `
+        <td><b>Trục 2</b></td>
+        <td>${d2_tinh.toFixed(2)} mm</td>
+        <td class="highlight">${d2} mm</td>
+        <td>${d2_ol} mm</td>
+        <td>${chonOl2.dTraBang} mm</td>
+        <td class="highlight">${b02} mm</td>
+    `;
+
+    // =========================
+    // 6. XUẤT BẢNG KHOẢNG CÁCH
+    // =========================
+    kc.insertRow().innerHTML = `
+        <td><b>Trục 1</b></td>
+        <td>
+            d11 = d1 = ${d11.toFixed(2)} mm<br>
+            d12 = d1 + 5 = ${d12.toFixed(2)} mm<br>
+            d ổ lăn = d1 + 10 = ${d1_ol.toFixed(2)} mm
+        </td>
+        <td>
+            lm12 = ${hs_lm12}.d11 = ${lm12} mm 
+            <br><span class="small-text">Khoảng 1.4 ÷ 2.5: ${kiemTraHeSo(hs_lm12,1.4,2.5)}</span><br>
+            lm13 = ${hs_lm13}.d12 = ${lm13} mm
+            <br><span class="small-text">Khoảng 1.2 ÷ 1.4: ${kiemTraHeSo(hs_lm13,1.2,1.4)}</span>
+        </td>
+        <td>
+            l11 = ${hs_l11}.d1 = ${l11} mm
+            <br><span class="small-text">Khoảng 2.5 ÷ 3: ${kiemTraHeSo(hs_l11,2.5,3)}</span><br>
+            l12 = ${l12} mm<br>
+            l13 = ${l13} mm
+        </td>
+        <td class="small-text">
+            l12 = k3 + hn + 0.5lm12 + 0.5b01<br>
+            l13 = l11 + k1 + k2 + lm13 + 0.5(b01 - b13.cosδ1)
+        </td>
+    `;
+
+    kc.insertRow().innerHTML = `
+        <td><b>Trục 2</b></td>
+        <td>
+            d21 = d2 = ${d21.toFixed(2)} mm<br>
+            d22 = d2 + 10 = ${d22.toFixed(2)} mm<br>
+            d ổ lăn = d2 + 5 = ${d2_ol.toFixed(2)} mm
+        </td>
+        <td>
+            lm22 = ${hs_lm22}.d21 = ${lm22} mm
+            <br><span class="small-text">Khoảng 1.2 ÷ 1.5: ${kiemTraHeSo(hs_lm22,1.2,1.5)}</span><br>
+            lm23 = ${hs_lm23}.d22 = ${lm23} mm
+            <br><span class="small-text">Khoảng 1.2 ÷ 1.4: ${kiemTraHeSo(hs_lm23,1.2,1.4)}</span>
+        </td>
+        <td>
+            lc22 = ${lc22} mm<br>
+            l21 = ${l21} mm<br>
+            l22 = ${l22} mm<br>
+            l23 = ${l23} mm
+        </td>
+        <td class="small-text">
+            lc22 = 0.5(lm22 + b02) + k3 + hn<br>
+            l23 = 0.5b02 + k1 + k2 + lm23 - 0.5b23.cosδ2<br>
+            l21 = 2l23 + dm1<br>
+            l22 = l21 + lc22
+        </td>
+    `;
+
+    // =========================
+    // 7. TÍNH LỰC BÁNH RĂNG CÔN
+    // =========================
+    let Ft1 = 2 * T1 / dm1;
+    let Ft2 = 2 * T2 / dm2;
+    let saiLechFt = Math.abs(Ft2 - Ft1);
+
+    let Fr1, Fa1, Fr2, Fa2;
+    let tenLoai = "";
+
+    if(loaiRang === "thang"){
+        tenLoai = "Bánh răng côn răng thẳng";
+
+        Fr1 = Ft1 * Math.tan(alpha) * Math.cos(delta1);
+        Fa1 = Ft1 * Math.tan(alpha) * Math.sin(delta1);
+
+        Fr2 = Fa1;
+        Fa2 = Fr1;
+    }else{
+        tenLoai = "Bánh răng côn răng nghiêng / cung tròn";
+
+        Fr1 = (Ft1 / Math.cos(beta_m)) * (Math.tan(alpha_n) * Math.cos(delta1) - Math.sin(beta_m) * Math.sin(delta1));
+        Fa1 = (Ft1 / Math.cos(beta_m)) * (Math.tan(alpha_n) * Math.sin(delta1) + Math.sin(beta_m) * Math.cos(delta1));
+
+        Fr2 = Fa1;
+        Fa2 = Fr1;
+    }
+
+    document.getElementById("luc").innerHTML = `
+        <div class="result-title">Kết quả tính lực bánh răng côn</div>
+
+        <div class="result-grid">
+            <div class="result-card">
+                <h3>Trường hợp đang chọn</h3>
+                <div class="result-item"><b>Loại bánh răng:</b> ${tenLoai}</div>
+                <div class="result-item"><b>T1</b> = ${T1.toFixed(3)} N.mm</div>
+                <div class="result-item"><b>dm1</b> = ${dm1.toFixed(3)} mm</div>
+                <div class="result-item"><b>dm2</b> = ${dm2.toFixed(3)} mm</div>
+                <div class="result-item"><b>δ1</b> = ${(delta1 * 180 / Math.PI).toFixed(3)}°</div>
+                <div class="result-item"><b>δ2</b> = ${(delta2 * 180 / Math.PI).toFixed(3)}°</div>
+                ${loaiRang === "thang" 
+                    ? `<div class="result-item"><b>α</b> = ${(alpha * 180 / Math.PI).toFixed(3)}°</div>`
+                    : `<div class="result-item"><b>αn</b> = ${(alpha_n * 180 / Math.PI).toFixed(3)}°</div>
+                       <div class="result-item"><b>βm</b> = ${(beta_m * 180 / Math.PI).toFixed(3)}°</div>`
+                }
+            </div>
+
+            <div class="result-card">
+                <h3>Lực trên bánh chủ động</h3>
+                <div class="result-item"><b>Ft1</b> = ${Ft1.toFixed(2)} N</div>
+                <div class="result-item"><b>Fr1</b> = ${Fr1.toFixed(2)} N</div>
+                <div class="result-item"><b>Fa1</b> = ${Fa1.toFixed(2)} N</div>
+            </div>
+
+            <div class="result-card">
+                <h3>Lực trên bánh bị dẫn</h3>
+                <div class="result-item"><b>Ft2</b> = ${Ft2.toFixed(2)} N</div>
+                <div class="result-item"><b>Công thức Ft2</b> = 2T2 / dm2</div>
+                <div class="result-item"><b>Fr2 = Fa1</b> = ${Fr2.toFixed(2)} N</div>
+                <div class="result-item"><b>Fa2 = Fr1</b> = ${Fa2.toFixed(2)} N</div>
+            </div>
+
+            <div class="result-card">
+                <h3>Quan hệ lực</h3>
+                <div class="result-item"><b>Ft1</b> = ${Ft1.toFixed(2)} N, <b>Ft2</b> = ${Ft2.toFixed(2)} N</div>
+                <div class="result-item"><b>Sai lệch |Ft2 - Ft1|</b> = ${saiLechFt.toFixed(2)} N</div>
+                <div class="result-item"><b>Fr2 = Fa1</b> = ${Fr2.toFixed(2)} N</div>
+                <div class="result-item"><b>Fa2 = Fr1</b> = ${Fa2.toFixed(2)} N</div>
+            </div>
+        </div>
+
+        <div class="equal-force">
+            <h3>Công thức đang dùng</h3>
+            ${
+                loaiRang === "thang"
+                ? `
+                    <div class="result-item"><b>Ft1</b> = 2T1 / dm1, <b>Ft2</b> = 2T2 / dm2</div>
+                    <div class="result-item"><b>dm1, dm2</b> là đường kính vòng chia trung bình nhập từ thông số bánh răng</div>
+                    <div class="result-item"><b>Fr1</b> = Ft1.tanα.cosδ1</div>
+                    <div class="result-item"><b>Fa1</b> = Ft1.tanα.sinδ1</div>
+                    <div class="result-item"><b>Fr2 = Fa1</b>, <b>Fa2 = Fr1</b></div>
+                `
+                : `
+                    <div class="result-item"><b>Ft1</b> = 2T1 / dm1, <b>Ft2</b> = 2T2 / dm2</div>
+                    <div class="result-item"><b>Fr1</b> = (Ft1 / cosβm).(tanαn.cosδ1 - sinβm.sinδ1)</div>
+                    <div class="result-item"><b>Fa1</b> = (Ft1 / cosβm).(tanαn.sinδ1 + sinβm.cosδ1)</div>
+                    <div class="result-item"><b>Fr2 = Fa1</b>, <b>Fa2 = Fr1</b></div>
+                `
+            }
+        </div>
+    `;
+
+
+    lastSyncData = {T1,T2,tau1,tau2,k1,k2,k3,hn,b13,b23,dm1,dm2,delta1,delta2,d1,d2,d11,d12,d21,d22,d1_tinh,d2_tinh,d1_ol,d2_ol,b01,b02,lm12,lm13,lm22,lm23,l11,l12,l13,l21,l22,l23,lc22,Ft1,Ft2,Fr1,Fa1,Fr2,Fa2,Fk:0,Fx:0};
+    syncIframes();
+}
+
+
+function ve3D(which=1){
+
+    if(!d1_global){
+        alert("Bấm TÍNH trước!");
+        return;
+    }
+
+    const container = document.getElementById("canvas3d");
+    container.innerHTML = "";
+
+    if(!latestDiamTruc1 || !latestDiamTruc2){
+        container.innerHTML = `<div style="padding:22px;line-height:1.7;color:#0f172a;background:#fff;border:1px solid #dbeafe;border-radius:18px;margin:18px;">Đang chờ đường kính kiểm nghiệm từ biểu đồ trục I và trục II. Bấm <b>TÍNH TOÁN</b> rồi chờ biểu đồ cập nhật, sau đó bấm lại xem 3D.</div>`;
+        syncIframes();
+        return;
+    }
+
+    const d1A = Number(latestDiamTruc1.d1A);
+    const d1B = Number(latestDiamTruc1.d1B);
+    const d1C = Number(latestDiamTruc1.d1C);
+    const d1D = Number(latestDiamTruc1.d1D);
+
+    const d2E = Number(latestDiamTruc2.d2E);
+    const d2F = Number(latestDiamTruc2.d2F);
+    const d2G = Number(latestDiamTruc2.d2G);
+    const d2H = Number(latestDiamTruc2.d2H);
+
+    const safeLen = (v) => Number.isFinite(v) ? Math.max(v, 1) : 1;
+
+    const truc1 = {
+        title:"TRỤC 1",
+        note:"Từ trái sang phải: lm12 → k3+hn → ổ lăn b01 → đoạn giữa l11-b01 → ổ lăn b01 → k2+k1 → bánh răng côn lm13.",
+        props:[
+            `d1A = Ø${d1A} mm`,
+            `d1B = Ø${d1B} mm`,
+            `d1B + 5 = Ø${d1B + 5} mm`,
+            `d1C = Ø${d1C} mm`,
+            `d1D = Ø${d1D} mm`,        ],
+        segments:[
+            {name:"Đầu trái lm12", short:"lm12", length:safeLen(lm12_global), dia:d1A, color:"#3f7f9f", formula:"L = lm12"},
+            {name:"Đoạn k3 + hn", short:"k3+hn", length:safeLen(k3_global + hn_global), dia:d1A, color:"#3f7f9f", formula:"L = k3 + hn"},
+            {name:"Ổ lăn trái b01", short:"b01", length:safeLen(b01_global), dia:d1B, color:"#8b98a8", formula:"L = b01"},
+            {name:"Đoạn giữa l11 - b01", short:"l11-b01", length:safeLen(l11_global - b01_global), dia:d1B + 5, color:"#2f6f8f", formula:"L = l11 - b01"},
+            {name:"Ổ lăn phải b01", short:"b01", length:safeLen(b01_global), dia:d1C, color:"#8b98a8", formula:"L = b01"},
+            {name:"Đoạn k2 + k1", short:"k2+k1", length:safeLen(k2_global + k1_global), dia:d1D, color:"#5aa0bd", formula:"L = k2 + k1"},
+            {name:"Lắp bánh răng côn lm13", short:"lm13", length:safeLen(lm13_global), dia:d1D, color:"#d4a373", formula:"L = lm13"}
+        ]
+    };
+
+    const lenTruc2Giua = l23_global - 0.5 * b23_global * Math.cos(delta1_global) - 2 * k1_global - k2_global;
+    const truc2 = {
+        title:"TRỤC 2",
+        note:"Từ trái sang phải: đầu trái k2+k1+b02 → bánh răng lm23 → vai k1 → đoạn giữa → ổ lăn k2+k1+b02 → đầu phải lm22",
+        props:[
+            `d2E = Ø${d2E} mm`,
+            `d2F = Ø${d2F} mm`,
+            `d2F + 5 = Ø${d2F + 5} mm`,
+            `d2G = Ø${d2G} mm`,
+            `d2H = Ø${d2H} mm`,
+            `Đoạn giữa = l23 - 0,5·b23·cosδ1 - 2·k1 - k2 = ${lenTruc2Giua.toFixed(2)} mm`
+        ],
+        segments:[
+            {name:"Đầu trái k2+k1+b02", short:"k2+k1+b02", length:safeLen(k2_global + k1_global + b02_global), dia:d2E, color:"#3f7f9f", formula:"L = k2 + k1 + b02"},
+            {name:"Lắp bánh răng lm23", short:"lm23", length:safeLen(lm23_global), dia:d2F, color:"#d4a373", formula:"L = lm23"},
+            {name:"Vai trục k1", short:"k1", length:safeLen(k1_global), dia:d2F + 5, color:"#2f6f8f", formula:"L = k1"},
+            {name:"Đoạn giữa", short:"l23-0.5b23cosδ1-2k1-k2", length:safeLen(lenTruc2Giua), dia:d2F, color:"#5aa0bd", formula:"L = l23 - 0,5·b23·cosδ1 - 2·k1 - k2"},
+            {name:"Lắp ổ lăn k2+k1+b02", short:"k2+k1+b02", length:safeLen(k2_global + k1_global + b02_global), dia:d2G, color:"#8b98a8", formula:"L = k2 + k1 + b02"},
+            {name:"Đầu phải lm22", short:"lm22", length:safeLen(lm22_global), dia:d2H, color:"#3f7f9f", formula:"L = lm22"}
+        ]
+    };
+
+    let currentModel = (which===2 ? truc2 : truc1);
+
+    const panel = document.createElement("div");
+    panel.style.width = "100%";
+    panel.style.height = "100%";
+    panel.style.minHeight = "500px";
+    panel.style.display = "grid";
+    panel.style.gridTemplateColumns = "300px 1fr";
+    panel.style.borderRadius = "24px";
+    panel.style.overflow = "hidden";
+    panel.style.border = "1px solid #cbd5e1";
+    panel.style.background = "#f8fafc";
+    panel.style.boxShadow = "inset 0 2px 8px rgba(15,23,42,0.06)";
+    container.appendChild(panel);
+
+    const left = document.createElement("div");
+    left.style.background = "linear-gradient(180deg,#eef6ff,#f8fafc)";
+    left.style.borderRight = "1px solid #cbd5e1";
+    left.style.padding = "14px";
+    left.style.overflow = "auto";
+    panel.appendChild(left);
+
+    const main = document.createElement("div");
+    main.style.position = "relative";
+    main.style.background = "radial-gradient(circle at 30% 20%, #ffffff 0%, #eef7ff 42%, #dbeafe 100%)";
+    panel.appendChild(main);
+
+    left.innerHTML = `
+        <div style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:10px;">SolidWorks mini</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <button id="btnTruc1" class="swTab">TRỤC 1</button>
+            <button id="btnTruc2" class="swTab">TRỤC 2</button>
+        </div>
+        <div id="modelTitle" style="font-size:14px;font-weight:900;color:#1d4ed8;margin-bottom:8px;"></div>
+        <div id="modelNote" style="font-size:12px;line-height:1.45;color:#475569;background:white;border:1px solid #dbeafe;border-radius:12px;padding:9px;margin-bottom:10px;"></div>
+        <div style="font-size:13px;font-weight:800;color:#334155;margin-bottom:7px;">FeatureManager Design Tree</div>
+        <div id="featureTree3d"></div>
+        <div style="font-size:13px;font-weight:800;color:#334155;margin-top:12px;margin-bottom:7px;">Thông số mô hình</div>
+        <div id="props3d" style="font-size:12px;line-height:1.65;color:#334155;background:white;border:1px solid #dbeafe;border-radius:12px;padding:10px;"></div>
+    `;
+
+    const css = document.createElement("style");
+    css.textContent = `
+        .swTab{
+            padding:10px 8px;border-radius:12px;border:1px solid #93c5fd;background:#fff;color:#0f172a;
+            font-size:12px;font-weight:900;cursor:pointer;box-shadow:0 5px 12px rgba(37,99,235,0.10);
+        }
+        .swTab.active{background:linear-gradient(135deg,#1d4ed8,#38bdf8);color:white;border-color:#1d4ed8;}
+        .featureItem3d{cursor:pointer;background:white;border:1px solid #dbeafe;border-radius:11px;padding:8px 9px;margin-bottom:7px;box-shadow:0 4px 10px rgba(15,23,42,0.04);}
+        .featureItem3d.active{background:#dbeafe;border-color:#60a5fa;}
+    `;
+    container.appendChild(css);
+
+    const toolbar = document.createElement("div");
+    toolbar.style.position = "absolute";
+    toolbar.style.left = "14px";
+    toolbar.style.top = "14px";
+    toolbar.style.right = "14px";
+    toolbar.style.zIndex = "5";
+    toolbar.style.display = "flex";
+    toolbar.style.flexWrap = "wrap";
+    toolbar.style.gap = "8px";
+    main.appendChild(toolbar);
+
+    const state = {rotX:-0.42, rotY:0.72, zoom:1, panX:0, panY:22, selected:-1, dragging:false, lastX:0, lastY:0};
+
+    function toolButton(txt, fn){
+        const b = document.createElement("button");
+        b.textContent = txt;
+        b.style.padding = "8px 11px";
+        b.style.borderRadius = "10px";
+        b.style.border = "1px solid #93c5fd";
+        b.style.background = "linear-gradient(180deg,#ffffff,#e0f2fe)";
+        b.style.color = "#0f172a";
+        b.style.fontSize = "12px";
+        b.style.fontWeight = "800";
+        b.style.cursor = "pointer";
+        b.style.boxShadow = "0 4px 10px rgba(37,99,235,0.12)";
+        b.onclick = fn;
+        toolbar.appendChild(b);
+    }
+
+    toolButton("Isometric", () => {state.rotX=-0.42; state.rotY=0.72; state.zoom=1; draw();});
+    toolButton("Front", () => {state.rotX=0; state.rotY=0; state.zoom=1; draw();});
+    toolButton("Top", () => {state.rotX=-Math.PI/2; state.rotY=0; state.zoom=1; draw();});
+    toolButton("Right", () => {state.rotX=0; state.rotY=Math.PI/2; state.zoom=1; draw();});
+    toolButton("Phóng +", () => {state.zoom=Math.min(4.5,state.zoom*1.15); draw();});
+    toolButton("Thu -", () => {state.zoom=Math.max(0.35,state.zoom/1.15); draw();});
+    toolButton("Reset", () => {state.rotX=-0.42; state.rotY=0.72; state.zoom=1; state.panX=0; state.panY=22; state.selected=-1; draw();});
+
+    const hint = document.createElement("div");
+    hint.textContent = "Kéo chuột để xoay · Lăn chuột để zoom · Bấm feature để tô sáng đoạn trục · Màu trục kiểu thép xanh-xám";
+    hint.style.marginLeft = "auto";
+    hint.style.background = "rgba(255,255,255,0.86)";
+    hint.style.border = "1px solid #bfdbfe";
+    hint.style.borderRadius = "10px";
+    hint.style.padding = "8px 10px";
+    hint.style.fontSize = "12px";
+    hint.style.color = "#334155";
+    toolbar.appendChild(hint);
+
+    const canvas = document.createElement("canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.display = "block";
+    main.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function setActiveTab(){
+        left.querySelector("#btnTruc1").classList.toggle("active", currentModel === truc1);
+        left.querySelector("#btnTruc2").classList.toggle("active", currentModel === truc2);
+    }
+
+    left.querySelector("#btnTruc1").onclick = () => {currentModel = truc1; state.selected=-1; setActiveTab(); renderTree(); resize();};
+    left.querySelector("#btnTruc2").onclick = () => {currentModel = truc2; state.selected=-1; setActiveTab(); renderTree(); resize();};
+
+    function renderTree(){
+        const segments = currentModel.segments;
+        const totalLength = segments.reduce((sum,s)=>sum+s.length,0);
+        const maxD = Math.max(...segments.map(s=>s.dia));
+
+        left.querySelector("#modelTitle").textContent = currentModel.title;
+        left.querySelector("#modelNote").textContent = currentModel.note;
+        let treeHtml = segments.map((s,i)=>`
+            <div class="featureItem3d ${i===state.selected?'active':''}" data-i="${i}">
+                <div style="font-weight:900;color:#0f172a;font-size:12px;display:flex;gap:6px;align-items:center;">
+                    <span style="width:10px;height:10px;border-radius:3px;background:${s.color};display:inline-block;"></span>${i+1}. ${s.name}
+                </div>
+                <div style="font-size:11px;color:#64748b;margin-top:3px;">${s.formula}</div>
+                <div style="font-size:11px;color:#334155;margin-top:2px;">L = ${s.length.toFixed(2)} mm · Ø = ${s.dia.toFixed(2)} mm</div>
+            </div>
+        `).join("");
+
+        if(currentModel.key){
+            const k = currentModel.key;
+            treeHtml += `
+                <div class="featureItem3d ${state.selected===1000?'active':''}" data-i="1000">
+                    <div style="font-weight:900;color:#0f172a;font-size:12px;display:flex;gap:6px;align-items:center;">
+                        <span style="width:10px;height:10px;border-radius:3px;background:${k.color};display:inline-block;"></span>Extrude-Cut. ${k.name}
+                    </div>
+                    <div style="font-size:11px;color:#64748b;margin-top:3px;">${k.formula}</div>
+                    <div style="font-size:11px;color:#334155;margin-top:2px;">Cắt lõm vào trục đặc tại lm12 · l30 b6 t1=5 R3</div>
+                </div>
+            `;
+        }
+
+        left.querySelector("#featureTree3d").innerHTML = treeHtml;
+        left.querySelectorAll(".featureItem3d").forEach(el=>{
+            el.onclick = () => {
+                state.selected = Number(el.getAttribute("data-i"));
+                renderTree();
+                draw();
+            };
+        });
+        left.querySelector("#props3d").innerHTML = `
+            ${currentModel.props.map(x=>`• ${x}`).join("<br>")}<br>
+            <hr style="border:none;border-top:1px solid #dbeafe;margin:8px 0;">
+            Tổng chiều dài: <b>${totalLength.toFixed(2)} mm</b><br>
+            Đường kính lớn nhất: <b>Ø${maxD.toFixed(2)} mm</b>
+        `;
+    }
+
+    function resize(){
+        canvas.width = Math.max(main.clientWidth, 640);
+        canvas.height = Math.max(main.clientHeight, 500);
+        draw();
+    }
+
+    function hexToRgb(hex){
+        hex = hex.replace('#','');
+        return {r:parseInt(hex.substring(0,2),16), g:parseInt(hex.substring(2,4),16), b:parseInt(hex.substring(4,6),16)};
+    }
+
+    function shade(hex, f){
+        const c = hexToRgb(hex);
+        // f > 1: pha trắng tạo ánh kim; f < 1: làm tối.
+        let r, g, b;
+        if(f >= 1){
+            const k = Math.min(1, f - 1);
+            r = c.r + (255 - c.r) * k;
+            g = c.g + (255 - c.g) * k;
+            b = c.b + (255 - c.b) * k;
+        }else{
+            r = c.r * f;
+            g = c.g * f;
+            b = c.b * f;
+        }
+        return `rgb(${Math.round(Math.max(0,Math.min(255,r)))},${Math.round(Math.max(0,Math.min(255,g)))},${Math.round(Math.max(0,Math.min(255,b)))})`;
+    }
+
+    function rotate(p){
+        let x = p.x, y = p.y, z = p.z;
+        const cx = Math.cos(state.rotX), sx = Math.sin(state.rotX);
+        const cy = Math.cos(state.rotY), sy = Math.sin(state.rotY);
+        const y1 = y*cx - z*sx;
+        const z1 = y*sx + z*cx;
+        const x2 = x*cy + z1*sy;
+        const z2 = -x*sy + z1*cy;
+        return {x:x2,y:y1,z:z2};
+    }
+
+    function project(p, scale){
+        const r = rotate(p);
+        const persp = 900 / (900 + r.z);
+        return {x:canvas.width/2 + state.panX + r.x*scale*persp, y:canvas.height/2 + state.panY - r.y*scale*persp, z:r.z, persp};
+    }
+
+    function drawGrid(){
+        ctx.save();
+        ctx.strokeStyle = "rgba(37,99,235,0.08)";
+        ctx.lineWidth = 1;
+        for(let x=0;x<canvas.width;x+=32){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+        for(let y=0;y<canvas.height;y+=32){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+        ctx.restore();
+    }
+
+    function buildFaces(totalLength){
+        const segments = currentModel.segments;
+        const faces = [];
+        const n = 56;
+        let x0 = -totalLength/2;
+        for(let si=0; si<segments.length; si++){
+            const s = segments[si];
+            const x1 = x0 + s.length;
+            const r = s.dia/2;
+            const base = state.selected === si ? "#ef4444" : s.color;
+            for(let j=0;j<n;j++){
+                const a1 = 2*Math.PI*j/n;
+                const a2 = 2*Math.PI*(j+1)/n;
+                const p1 = {x:x0,y:r*Math.cos(a1),z:r*Math.sin(a1)};
+                const p2 = {x:x1,y:r*Math.cos(a1),z:r*Math.sin(a1)};
+                const p3 = {x:x1,y:r*Math.cos(a2),z:r*Math.sin(a2)};
+                const p4 = {x:x0,y:r*Math.cos(a2),z:r*Math.sin(a2)};
+                const mid = rotate({x:(x0+x1)/2,y:r*Math.cos((a1+a2)/2),z:r*Math.sin((a1+a2)/2)});
+                const light = 0.62 + 0.50*Math.max(0, Math.cos((a1+a2)/2 - 0.85));
+                faces.push({pts:[p1,p2,p3,p4], color:shade(base,light), z:mid.z, si});
+            }
+            const capL = [], capR = [];
+            for(let j=0;j<n;j++){
+                const a = 2*Math.PI*j/n;
+                capL.push({x:x0,y:r*Math.cos(a),z:r*Math.sin(a)});
+                capR.push({x:x1,y:r*Math.cos(a),z:r*Math.sin(a)});
+            }
+            faces.push({pts:capL, color:shade(base,0.92), z:rotate({x:x0,y:0,z:0}).z, si});
+            faces.push({pts:capR, color:shade(base,0.64), z:rotate({x:x1,y:0,z:0}).z, si});
+            x0 = x1;
+        }
+        faces.sort((a,b)=>a.z-b.z);
+        return faces;
+    }
+
+    function drawDimensions(totalLength, maxD, scale){
+        const segments = currentModel.segments;
+        let x0 = -totalLength/2;
+        const yBase = -maxD*1.05;
+        ctx.save();
+        ctx.font = "12px Segoe UI, Arial";
+        ctx.textAlign = "center";
+        for(let i=0;i<segments.length;i++){
+            const s = segments[i];
+            const x1=x0+s.length;
+            const p0=project({x:x0,y:yBase,z:0},scale);
+            const p1=project({x:x1,y:yBase,z:0},scale);
+            ctx.strokeStyle = i===state.selected ? "#ef4444" : "#334155";
+            ctx.fillStyle = i===state.selected ? "#ef4444" : "#0f172a";
+            ctx.lineWidth = i===state.selected ? 2.4 : 1.3;
+            ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(p0.x,p0.y-5); ctx.lineTo(p0.x,p0.y+5); ctx.moveTo(p1.x,p1.y-5); ctx.lineTo(p1.x,p1.y+5); ctx.stroke();
+            ctx.fillText(`${s.short}: ${s.length.toFixed(1)} | Ø${s.dia.toFixed(0)}`, (p0.x+p1.x)/2, (p0.y+p1.y)/2 + 18);
+            x0=x1;
+        }
+        ctx.restore();
+    }
+
+
+    function drawThenLm12(totalLength, scale){
+        // Đã bỏ rãnh then theo yêu cầu.
+        return;
+    }
+
+    function drawAxis(totalLength, maxD, scale){
+        // Ẩn toàn bộ đường tâm/nét ảo để mô hình chỉ còn khối trục đặc và rãnh cắt.
+        return;
+    }
+
+    function roundRect(ctx, x, y, w, h, r){
+        ctx.beginPath();
+        ctx.moveTo(x+r,y);
+        ctx.lineTo(x+w-r,y);
+        ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+        ctx.lineTo(x+w,y+h-r);
+        ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+        ctx.lineTo(x+r,y+h);
+        ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+        ctx.lineTo(x,y+r);
+        ctx.quadraticCurveTo(x,y,x+r,y);
+        ctx.closePath();
+    }
+
+    function draw(){
+        if(!canvas.width || !canvas.height) return;
+        const segments = currentModel.segments;
+        const totalLength = segments.reduce((sum,s)=>sum+s.length,0);
+        const maxD = Math.max(...segments.map(s=>s.dia));
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        drawGrid();
+        let scale = Math.min((canvas.width-180)/totalLength, (canvas.height-210)/maxD) * state.zoom;
+        scale = Math.max(scale, 1);
+
+        const faces = buildFaces(totalLength);
+        for(const f of faces){
+            const pts = f.pts.map(p=>project(p,scale));
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x, pts[0].y);
+            for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x, pts[i].y);
+            ctx.closePath();
+            ctx.fillStyle = f.color;
+            ctx.fill();
+            ctx.strokeStyle = state.selected === f.si ? "rgba(127,29,29,0.58)" : "rgba(15,23,42,0.09)";
+            ctx.lineWidth = state.selected === f.si ? 1.3 : 0.55;
+            ctx.stroke();
+        }
+        drawThenLm12(totalLength, scale);
+        drawAxis(totalLength, maxD, scale);
+        drawDimensions(totalLength, maxD, scale);
+
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.strokeStyle = "#bfdbfe";
+        ctx.lineWidth = 1;
+        roundRect(ctx, 18, canvas.height-68, 520, 52, 12);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "bold 14px Segoe UI, Arial";
+        ctx.fillText(`SolidWorks mini - ${currentModel.title} dựng theo thứ tự trái → phải`, 32, canvas.height-42);
+        ctx.font = "12px Segoe UI, Arial";
+        ctx.fillStyle = "#475569";
+        ctx.fillText(`Tổng L = ${totalLength.toFixed(2)} mm · Ømax = ${maxD.toFixed(2)} mm`, 32, canvas.height-22);
+        ctx.restore();
+    }
+
+    canvas.addEventListener("mousedown", e=>{state.dragging=true; state.lastX=e.clientX; state.lastY=e.clientY;});
+    window.addEventListener("mouseup", ()=>{state.dragging=false;});
+    window.addEventListener("mousemove", e=>{
+        if(!state.dragging) return;
+        const dx=e.clientX-state.lastX;
+        const dy=e.clientY-state.lastY;
+        state.rotY += dx*0.008;
+        state.rotX += dy*0.008;
+        state.lastX=e.clientX;
+        state.lastY=e.clientY;
+        draw();
+    });
+    canvas.addEventListener("wheel", e=>{
+        e.preventDefault();
+        state.zoom *= e.deltaY < 0 ? 1.08 : 0.92;
+        state.zoom = Math.max(0.35, Math.min(4.5, state.zoom));
+        draw();
+    }, {passive:false});
+
+    setActiveTab();
+    renderTree();
+    window.addEventListener("resize", resize);
+    resize();
+}
+
+
+function round2(v){ return Number.isFinite(Number(v)) ? Number(Number(v).toFixed(2)) : 0; }
+function syncIframes(){
+    if(!lastSyncData) return;
+    const d = lastSyncData;
+    const f1 = document.getElementById('frameTruc1');
+    const f2 = document.getElementById('frameTruc2');
+    if(f1 && f1.contentWindow){
+        f1.contentWindow.postMessage({type:'sync-truc1', Fr1:round2(d.Fr1), Fa1:round2(d.Fa1), Ft1:round2(d.Ft1), Fk:round2(d.Fk), l12:Math.round(d.l12), l11:Math.round(d.l11), l13:Math.round(d.l13), dm1:round2(d.dm1), T1:round2(d.T1), tau1:round2(d.tau1), dsb1:round2(d.d1), lm12:Math.round(d.lm12), lm13:Math.round(d.lm13)}, '*');
+    }
+    if(f2 && f2.contentWindow){
+        f2.contentWindow.postMessage({type:'sync-truc2', Fr2:round2(d.Fr2), Fa2:round2(d.Fa2), Ft2:round2(d.Ft2), Fx:round2(d.Fx), l23:Math.round(d.l23), l21:Math.round(d.l21), l22:Math.round(d.l22), lc22:Math.round(d.lc22), dm2:round2(d.dm2), T2:round2(d.T2), tau2:round2(d.tau2), dsb2:round2(d.d2), lm22:Math.round(d.lm22), lm23:Math.round(d.lm23)}, '*');
+    }
+}
+window.addEventListener('message', function(ev){
+    const d = ev.data || {};
+    if(d.type === 'diam-truc1'){
+        latestDiamTruc1 = d;
+    }
+    if(d.type === 'diam-truc2'){
+        latestDiamTruc2 = d;
+    }
+});
+window.addEventListener('load', function(){
+    setTimeout(syncIframes, 400);
+    setTimeout(syncIframes, 1200);
+});
+
+window.addEventListener("load", () => {
+    hienThiBang102();
+    capNhatThongSoBanhRang();
+});
+
+function tinhVaHienThi(){
+  tinh();
+  const area = document.getElementById('result-area');
+  if(area) area.style.display = '';
+  syncIframes();
+}
+
+function toggleTheme(){
+  const isDark = !document.body.classList.contains('light-theme');
+  document.body.classList.toggle('light-theme', isDark);
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('ctm-theme', isDark ? 'light' : 'dark');
+  try{ window.parent.postMessage({type:'THEME_CHANGE', theme: isDark ? 'light':'dark'}, '*'); }catch(e){}
+}
+
+function initTheme(){
+  const saved = localStorage.getItem('ctm-theme');
+  if(saved === 'light'){
+    document.body.classList.add('light-theme');
+    const btn = document.getElementById('theme-btn');
+    if(btn) btn.textContent = '☀️';
+  }
+}
+
+window.addEventListener('message', function(e){
+  const msg = e.data || {};
+  if(msg.type === 'SET_THEME'){
+    const isLight = msg.theme === 'light';
+    document.body.classList.toggle('light-theme', isLight);
+    const btn = document.getElementById('theme-btn');
+    if(btn) btn.textContent = isLight ? '☀️' : '🌙';
+    localStorage.setItem('ctm-theme', msg.theme);
+  }
+});
+
+document.addEventListener('DOMContentLoaded', initTheme);
+</script>
+
+
+<script id="common-material-and-rotation-final">
+(function(){
+    window.COMMON_STEELS = {
+        medium: {
+            label: "Hộp giảm tốc chịu tải trọng trung bình",
+            steels: {
+                "thep45": {
+                    name: "Thép 45",
+                    materialType: "cacbon",
+                    heats: {
+                        "thuongHoa": {name:"Thường hóa", sigmaB:600, group:"Thép cacbon"},
+                        "toiCaiThien": {name:"Tôi cải thiện", sigmaB:750, group:"Thép cacbon"}
+                    }
+                },
+                "thep40X": {
+                    name: "Thép 40X",
+                    materialType: "hopkim",
+                    heats: {
+                        "toiCaiThien": {name:"Tôi cải thiện", sigmaB:900, group:"Thép hợp kim"}
+                    }
+                }
+            }
+        },
+        heavy: {
+            label: "Hộp giảm tốc chịu tải nặng, trục trên ổ trượt quay nhanh",
+            steels: {
+                "thep20X": {
+                    name: "Thép 20X",
+                    materialType: "hopkim",
+                    heats: {
+                        "thamCacbon": {name:"Thấm cacbon", sigmaB:650, group:"Thép hợp kim"}
+                    }
+                },
+                "thep12XH3A": {
+                    name: "12XH3A",
+                    materialType: "hopkim",
+                    heats: {
+                        "thamCacbon": {name:"Thấm cacbon", sigmaB:950, group:"Thép hợp kim"}
+                    }
+                },
+                "thep18XGT": {
+                    name: "18XGT",
+                    materialType: "hopkim",
+                    heats: {
+                        "thamCacbon": {name:"Thấm cacbon", sigmaB:900, group:"Thép hợp kim"}
+                    }
+                }
+            }
+        }
+    };
+
+    window.commonLoadSteels = function(){
+        const gearbox = document.getElementById("common_gearbox")?.value || "medium";
+        const steelSel = document.getElementById("common_steel");
+        if(!steelSel) return;
+        const old = steelSel.value;
+        const steels = COMMON_STEELS[gearbox].steels;
+        steelSel.innerHTML = Object.entries(steels).map(([key,val]) => `<option value="${key}">${val.name}</option>`).join("");
+        if(steels[old]) steelSel.value = old;
+        commonLoadHeat();
+    };
+
+    window.commonLoadHeat = function(){
+        const gearbox = document.getElementById("common_gearbox")?.value || "medium";
+        const steel = document.getElementById("common_steel")?.value || Object.keys(COMMON_STEELS[gearbox].steels)[0];
+        const heatSel = document.getElementById("common_heat");
+        if(!heatSel) return;
+        const heats = COMMON_STEELS[gearbox].steels[steel].heats;
+        const old = heatSel.value;
+        heatSel.innerHTML = Object.entries(heats).map(([key,val]) => `<option value="${key}">${val.name}</option>`).join("");
+        if(heats[old]) heatSel.value = old;
+        capNhatChonChung();
+    };
+
+    window.getCommonMaterialData = function(){
+        const gearbox = document.getElementById("common_gearbox")?.value || "medium";
+        const steel = document.getElementById("common_steel")?.value || Object.keys(COMMON_STEELS[gearbox].steels)[0];
+        const heat = document.getElementById("common_heat")?.value || Object.keys(COMMON_STEELS[gearbox].steels[steel].heats)[0];
+        const s = COMMON_STEELS[gearbox].steels[steel];
+        const h = s.heats[heat];
+        const chieuQuayTrucI = document.getElementById("chieuQuayTrucI")?.value || "cw";
+        const chieuQuayTrucII = chieuQuayTrucI === "cw" ? "ccw" : "cw";
+        return {
+            chieuQuayTrucI,
+            chieuQuayTrucII,
+            commonGearbox: gearbox,
+            commonSteel: steel,
+            commonHeat: heat,
+            commonSteelName: s.name,
+            commonHeatName: h.name,
+            commonMaterialType: s.materialType,
+            commonGroup: h.group,
+            commonSigmaB: h.sigmaB
+        };
+    };
+
+    window.capNhatChonChung = function(){
+        const d = getCommonMaterialData();
+        const note2 = document.getElementById("chieuQuayTrucII_note");
+        if(note2){
+            note2.value = d.chieuQuayTrucII === "ccw" ? "Trục II quay ngược chiều kim đồng hồ" : "Trục II quay cùng chiều kim đồng hồ";
+        }
+        const note = document.getElementById("common_note");
+        if(note){
+            note.value = `${d.commonGroup} - ${d.commonSteelName} - ${d.commonHeatName} - σb=${d.commonSigmaB} MPa`;
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", function(){
+        commonLoadSteels();
+        capNhatChonChung();
+    });
+})();
+</script>
+
+
+<script id="force-chain-Fr-to-Fry-Frx-final">
+(function(){
+    window.capNhatLucXich = function(){
+        const Fr = parseFloat(document.getElementById("Fr_chain_total")?.value) || 0;
+        const alpha = parseFloat(document.getElementById("alpha1_chain")?.value);
+        const a = isNaN(alpha) ? 30 : alpha;
+        const rad = a * Math.PI / 180;
+        const Fry = Fr * Math.cos(rad);
+        const Frx = Fr * Math.sin(rad);
+        const fryEl = document.getElementById("Fry_calc");
+        const frxEl = document.getElementById("Frx_calc");
+        if(fryEl) fryEl.value = Fry.toFixed(2);
+        if(frxEl) frxEl.value = Frx.toFixed(2);
+        return {FrChain: Fr, alpha1Chain: a, Fry, Frx};
+    };
+    document.addEventListener("DOMContentLoaded", capNhatLucXich);
+})();
+</script>
+
+</body>
+</html>
