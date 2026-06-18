@@ -12,7 +12,12 @@ build/
 venv/
 .venv/
 
-# Node.js (nếu dùng sau này)
+# Python scripts (tool / helper scripts, không phải source code dự án)
+*.py
+doc_content.txt
+temp_*.txt
+
+# Node.js
 node_modules/
 npm-debug.log*
 
@@ -30,3 +35,30 @@ Thumbs.db
 
 # OS files
 desktop.ini
+
+# Tài liệu Word / PDF / CAD / ảnh cá nhân (không phải code)
+*.docx
+*.pdf
+*.dwg
+*.dxf
+*.bak
+*.7z
+*.zip
+*.tmp
+~$*
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# Thư mục tạm / output
+doc1_images/
+sua_images/
+ảnh/
+cv/
+ppt-master/
+nghieng đen/
+
+# Agent workspace
+.agent/
